@@ -1,1 +1,59 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
+@import '../node_modules/quill/dist//quill.bubble.css';
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: "Roboto Condensed", "Helvetica Neue", sans-serif; }
+
+.button {
+    font-weight: 700;
+    border: none;
+    color: white;
+    padding: 10px 40px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 25px;
+  }
+
+.button--confirm{
+    background-color: #407dda;
+}
+
+.button--cancel{
+    background-color: #eb5757;
+}
+
+.button--alt{
+    background-color: white;
+    color: #407dda;
+}
+
+h1{
+    color: #407dda;
+}
+
+.subtitle{
+    color:#7a7a7a;
+}   
+    
+
+.progress-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: 64px;
+    bottom: 0;
+    z-index: 9999999;
+  }
+
+  button:focus { outline: none; }
+

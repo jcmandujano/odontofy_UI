@@ -1,0 +1,29 @@
+<mat-toolbar class="main-toolbar">
+    <img src="/img/logo.png" alt="" routerLink="/dashboard">
+    
+    <span class="spacer"></span>
+    <button class="menu-item" cli mat-button (click)="goToDashboard()">
+        <span>Inicio</span>
+    </button>
+    <button class="menu-item" cli mat-button (click)="goToPatients()">
+        <span>Pacientes</span>
+    </button>
+    <button class="menu-item" mat-button (click)="goToAgenda()">
+        <span>Agenda</span>
+    </button>
+    <!-- <button class="menu-item" mat-button>
+        <span>Recetas</span>
+    </button>
+    <button class="menu-item" mat-button>
+        <span>Finanzas</span>
+    </button> -->
+    <button class="menu-item" mat-button (click)="goToConfig()">
+        <span>Configuraciones</span>
+    </button>
+    <!-- <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="doLogout()">
+        <mat-icon>logout</mat-icon>
+      </button> -->
+      <button mat-mini-fab class="mat-elevation-z0">
+        <mat-icon>logout</mat-icon>
+      </button>
+  </mat-toolbar>

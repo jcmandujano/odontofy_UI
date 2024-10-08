@@ -1,0 +1,28 @@
+<h2 mat-dialog-title class="dialog-title">Imprimir Consentimiento</h2>
+<mat-dialog-content>
+    <mat-form-field class="full-width">
+        <mat-label>Paciente</mat-label>
+        <input matInput [formControl]="patientName">
+    </mat-form-field>
+    <mat-form-field class="full-width">
+        <mat-label>Elige el consentimiento</mat-label>
+        <mat-select [formControl]="informedConsent" >
+            @for(consent of informedConsentList; track consent.name){
+                <mat-option [value]="consent.name">{{consent.name}}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+    <ngx-dropzone [multiple]="false" (change)="onSelect($event)" class="custom-dropzone">
+        <ngx-dropzone-label>Arrastra y suelta tu archivo</ngx-dropzone-label>
+        @for(f of files; track f.name){
+            <ngx-dropzone-preview [removable]="true" (removed)="onRemove(f)">
+                <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+            </ngx-dropzone-preview>
+        }
+        
+    </ngx-dropzone>
+</mat-dialog-content>
+<mat-dialog-actions align="center">
+    <button mat-button (click)="cancel()" color="warn">Cancelar</button>
+    <button mat-button (click)="onSave()" color="primary">Guardar</button>
+</mat-dialog-actions>

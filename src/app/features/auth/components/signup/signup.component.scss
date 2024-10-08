@@ -1,0 +1,145 @@
+.login_row {
+    display: flex;
+}
+    
+/* Create two equal columns that sits next to each other */
+.login_form_column {
+    flex: 60%;
+    // padding: 10px;
+    height: 100vh; /* Should be removed. Only for demonstration */
+    background-color: white;
+}
+
+.extra_info_column {
+    background-image: url('/img/dummy.jpg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    flex: 40%;
+    //padding: 10px;
+    height: 100vh; /* Should be removed. Only for demonstration */
+}
+
+.login_form_container{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding-top: 40px;
+}
+
+.custom{
+    overflow: auto;
+    height: 100%;
+}
+
+h1{
+    font-weight: 700;
+}
+
+.login_form_title{
+    font-size: 45px;
+}
+
+.login_form_control{
+    width: 100%;
+}
+
+.login_form_pass_toggle{
+    background: transparent;
+    border: 0;
+    color: #c0d9ff !important;
+}
+
+::ng-deep .mat-focused .mat-form-field-label {
+    /*change color of label*/
+    color: #407dda !important;
+}
+
+::ng-deep.mat-form-field-underline {
+    /*change color of underline*/
+    background-color: #407dda !important;
+} 
+
+::ng-deep.mat-form-field-ripple {
+    /*change color of underline when focused*/
+    background-color: #407dda !important;;
+}
+
+mat-label {
+    color: #407dda;
+}
+
+.mat-input-element{
+    margin-top: 5px;
+}
+
+mat-label {
+    padding-left: 15px;
+}
+
+.prefix_form_color{
+    color: #407dda !important;
+    margin: 0px 20 !important;
+}
+
+.login_form_logo{
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+.login_form_container_welcome{
+    margin-bottom: 40px;
+}
+
+.login_form_container_form{
+    margin-bottom: 30px;
+}
+
+.button{
+    margin-bottom: 40px;
+}
+.login_form_containe_legal{
+    margin-top: 60px;
+}
+
+.subtitle{
+    font-size: 17px;
+}
+
+.legal_text{
+    font-size: 17px;
+    color: #b8b8b8;
+    text-decoration: underline;
+}
+
+.options_text{
+    font-size: 18px;
+    font-weight: 500;
+    color: #407dda;
+    margin-bottom: 20px;
+}
+
+.legal_text:hover{
+    cursor: pointer;
+}
+
+.options_text:hover{
+    cursor: pointer;
+}
+
+
+input{
+    margin-left: 10px;
+}
+
+.encuesta{
+    width: 100%;
+    text-align: left;
+}
+
+h4{
+    color: #407dda;
+}
+
+mat-radio-button{
+    margin: 0 25px;
+}

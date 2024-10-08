@@ -1,0 +1,25 @@
+.full-width {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.dialog-title {
+    color: #407DDA;
+}
+
+.custom-content{
+    padding-top: 5px !important;
+}
+
+::ng-deep .mdc-notched-outline__leading {
+    border-color: #6CA6FE !important;
+}
+::ng-deep .mdc-notched-outline__notch {
+    border-color: #6CA6FE !important;
+}
+::ng-deep .mdc-notched-outline__trailing {
+    border-color: #6CA6FE !important;
+}
+
+:host ::ng-deep .mdc-text-field__input::-webkit-calendar-picker-indicator {
+    display: block;
+  }

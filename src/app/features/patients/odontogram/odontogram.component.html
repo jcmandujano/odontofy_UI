@@ -1,0 +1,152 @@
+<app-nav-bar></app-nav-bar>
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="pacientes_navigation">Inicio > Pacientes > Odontograma</span>
+        </div>
+    </div>
+    <div class="row pacientes_header_row">
+        <div class="col-6">
+            <div class="title_container">
+                <mat-icon svgIcon="odontograma" class="dashboard_agenda_icon"></mat-icon>
+                <span class="pacientes_title">Odontograma</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="default-button mat-elevation-z0" >Guardar</button> </div>
+            
+        </div>
+    </div>
+    <div class="row filters_row">
+        <div class="col-6 flex-container">
+            <button mat-fab extended class="default-button odontogram-button mat-elevation-z0" >Inicial</button>
+            <button mat-fab extended class="default-button odontogram-button mat-elevation-z0" >Actual</button>
+            <mat-radio-group aria-label="Select an option">
+                <mat-radio-button value="1">Adulto</mat-radio-button>
+                <mat-radio-button value="2">Infantil</mat-radio-button>
+              </mat-radio-group>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 border-bottom border-right">
+            <div class="flex-container odontograma-container">
+                @for (item of dentalIzqSuperior; track item) {
+                    <div class="odontogram-item">
+                        <img [src]="item.asset" class="odontogram-element">
+                          <svg height="50" width="50" id="p18" #p18>
+                              <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
+                                #p18l1 />
+                              <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
+                                #p18l2 />
+                              <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
+                              <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
+                              <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
+                                (click)="changeColor(p18l5)" id="l5" #p18l5 />
+                              <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
+                                #p18l6 />
+                              <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
+                                #p18l7 />
+                              <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
+                                #p18l8 />
+                              <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
+                                #p18l9 />
+                              <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
+                                #p18l10 />
+                            </svg>
+                            <p class="odontogram-numeration">{{item.position}}</p>
+                      </div>
+                }
+            </div>
+        </div>
+        <div class="col-6 border-bottom border-left">
+            <div class="flex-container odontograma-container">
+                @for (item of dentalDerSuperior; track item) {
+                    <div class="odontogram-item">
+                        <img [src]="item.asset" class="odontogram-element flipped">
+                          <svg height="50" width="50" id="p18" #p18>
+                              <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
+                                #p18l1 />
+                              <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
+                                #p18l2 />
+                              <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
+                              <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
+                              <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
+                                (click)="changeColor(p18l5)" id="l5" #p18l5 />
+                              <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
+                                #p18l6 />
+                              <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
+                                #p18l7 />
+                              <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
+                                #p18l8 />
+                              <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
+                                #p18l9 />
+                              <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
+                                #p18l10 />
+                            </svg>
+                            <p class="odontogram-numeration">{{item.position}}</p>
+                      </div>
+                }
+            </div>
+        </div>
+        <div class="col-6 border-top border-right">
+            <div class="flex-container odontograma-container">
+                @for (item of dentalIzqInferior; track item) {
+                    <div class="odontogram-item">
+                        <p class="odontogram-botom-numeration">{{item.position}}</p>
+                        <svg height="50" width="50" id="p18" #p18>
+                            <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
+                              #p18l1 />
+                            <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
+                              #p18l2 />
+                            <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
+                            <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
+                            <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
+                              (click)="changeColor(p18l5)" id="l5" #p18l5 />
+                            <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
+                              #p18l6 />
+                            <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
+                              #p18l7 />
+                            <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
+                              #p18l8 />
+                            <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
+                              #p18l9 />
+                            <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
+                              #p18l10 />
+                          </svg>
+                          <img [src]="item.asset" class="odontogram-element rotated ">
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-6 border-top border-left">
+            <div class="flex-container odontograma-container">
+                @for (item of dentalDerInferior; track item) {
+                    <div class="odontogram-item">
+                        <p class="odontogram-botom-numeration">{{item.position}}</p>
+                        <svg height="50" width="50" id="p18" #p18>
+                            <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
+                              #p18l1 />
+                            <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
+                              #p18l2 />
+                            <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
+                            <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
+                            <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
+                              (click)="changeColor(p18l5)" id="l5" #p18l5 />
+                            <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
+                              #p18l6 />
+                            <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
+                              #p18l7 />
+                            <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
+                              #p18l8 />
+                            <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
+                              #p18l9 />
+                            <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
+                              #p18l10 />
+                          </svg>
+                          <img [src]="item.asset" class="odontogram-element rotated ">
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

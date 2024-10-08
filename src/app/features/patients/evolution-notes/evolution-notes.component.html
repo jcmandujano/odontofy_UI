@@ -1,0 +1,79 @@
+<app-nav-bar></app-nav-bar>
+<div class="progress-loader" *ngIf="spinner">
+    <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
+  </div>
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="pacientes_navigation">Inicio > Pacientes > Notas de Evolucion</span>
+        </div>
+    </div>
+    <div class="row pacientes_header_row">
+        <div class="col-6">
+            <div class="title_container">
+                <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+                <span class="pacientes_title">Notas de Evolucion</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="creaNotaDialog()">Agregar Nota</button> </div>
+        </div>
+    </div>
+    <div class="row filters_row">
+        <div class="col-6 flex-container">
+            <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
+                <mat-label>Buscar</mat-label>
+                <input matInput placeholder="" [(ngModel)]="searchCriteria" (keyup.enter)="onEnterKey($event)">
+                <button *ngIf="searchCriteria" matSuffix mat-icon-button aria-label="Clear" (click)="clearCriteria()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+            </mat-form-field>
+            <button mat-icon-button color="primary" class="searchButtton" (click)="searchByCriteria(searchCriteria)">
+                <mat-icon>search</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef class="id-header-column"> ID</th>
+                  <td mat-cell *matCellDef="let element" class="id-content-column"> {{element.id}} </td>
+                </ng-container>
+                <ng-container matColumnDef="fecha">
+                    <th mat-header-cell *matHeaderCellDef class="signin-header-column"> Fecha </th>
+                    <td mat-cell *matCellDef="let element"class="signin-content-column"> {{element.createdAt | date }} </td>
+                  </ng-container>
+                <ng-container matColumnDef="nota">
+                  <th mat-header-cell *matHeaderCellDef class="name-header-column"> Nota </th>
+                  <td mat-cell *matCellDef="let element" class="name-content-column"> {{element.note}}</td>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Acciones </th>
+                    <td mat-cell *matCellDef="let element" class="nextdate-content-column"> 
+                        <div class="dashboard_list_container">
+                            <div class="dashboard_list_actons">
+                                <mat-icon class="dashboard_logout_icon" svgIcon="editaCita" (click)="editarNotaDialog(element)"></mat-icon>
+                                <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita" (click)="eliminarNota(element.id)"></mat-icon>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <mat-paginator
+                [length]="this.dataSource?.length"
+                [pageSize]="10"
+                [pageSizeOptions]="[10, 30]"
+                aria-label="Select page"
+                class="custom-paginator">
+            </mat-paginator>
+        </div>
+    </div>
+</div>

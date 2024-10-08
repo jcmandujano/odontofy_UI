@@ -1,0 +1,102 @@
+<app-nav-bar></app-nav-bar>
+@if(spinner){
+    <div class="progress-loader">
+        <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
+      </div>
+}
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="pacientes_navigation">Inicio > Pacientes > Expediente</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="custom_card_header">
+                <div class="custom_icon">
+                    <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title">
+                    <p class="custom_card_title">{{paciente?.name}} {{paciente?.middle_name}} {{paciente?.last_name}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="finanzas_container">
+                <div>
+                    <p class="dashboard_finanzas_table_title">Total</p>
+                    <p class="dashboard_finanzas_table_total">$0.00</p>
+                </div>
+                <div>
+                    <p class="dashboard_finanzas_table_title">Ingreso</p>
+                    <p class="dashboard_finanzas_table_ingreso">$0.00</p>
+                </div>
+                <div>
+                    <p class="dashboard_finanzas_table_title">Adeudo Total</p>
+                    <p class="dashboard_finanzas_table_adeudo">$0.00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row menu_row">
+        <div class="col-6">
+            <div class="custom_card_header">
+                <div class="custom_icon">
+                    <mat-icon svgIcon="ficha_id" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title" (click)="goToExpediente()">
+                    <p class="custom_card_title">Ficha de Identificación</p>
+                    <span class="custom-card-subtitle">Consulta y modifica los datos</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="custom_card_header">
+                <div class="custom_icon">
+                    <mat-icon svgIcon="concentimientos" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title" (click)="goToConsentimientos()">
+                    <p class="custom_card_title">Concentimientos</p>
+                    <span class="custom-card-subtitle">Imprime y almacena consentimientos personalizados</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row menu_row">
+        <div class="col-6">
+            <div class="custom_card_header">
+                <div class="custom_icon">
+                    <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title" (click)="goToNotasEvolucion()">
+                    <p class="custom_card_title">Notas de evolución</p>
+                    <span class="custom-card-subtitle">Agrega una nueva o revisa el historial</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="custom_card_header">
+                <div class="custom_icon">
+                    <mat-icon color="primary" svgIcon="odontograma" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title" (click)="goToOdontograma()">
+                    <p class="custom_card_title">Odontográma</p>
+                    <span class="custom-card-subtitle">Consulta y modifica el odontográma de este paciente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row menu_row">
+        <div class="col-12">
+            <div class="custom_card_header">
+                <div class="custom_icon">
+                    <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title" (click)="goToHistorialPagos()">
+                    <p class="custom_card_title">Historial de pagos</p>
+                    <span class="custom-card-subtitle">Resumen de pagos del usuario</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

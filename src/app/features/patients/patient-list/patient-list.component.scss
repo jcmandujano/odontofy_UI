@@ -1,0 +1,216 @@
+@use "../../../../vars.scss" as *;
+
+.spacer {
+ flex: 1 1 auto;
+}
+
+.container-fluid{
+  width: 80vw;
+}
+
+.logout-navbar-button{
+  height: 30px;
+  background-color: $second--blue;
+  letter-spacing: 0.02em;
+  box-shadow: none !important;
+}
+
+.pacientes_header_row{
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.navigation_row{
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.filters_row{
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.pacientes_title{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 30px;
+  letter-spacing: 0.01em;
+  color: $primary--blue;
+}
+
+.dashboard_agenda_icon{
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.title_container{
+  display: flex;
+  align-items: center;
+}
+
+.nuevo_paciente_button_container{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pacientes_navigation{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.02em;
+  color: $primary--blue;
+}
+
+.actions_inputs{
+  width: 75%;
+  height: 65px;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  color: rgb(111, 28, 28) !important;
+}
+
+.mat-form-field {
+  background-color: #af2626; /* Reemplaza este valor con el color de fondo que desees */
+}
+
+.combo-actions{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border: 1px solid #C0D9FF;
+}
+
+.mat-mdc-header-row .mat-mdc-header-cell{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: $main--blue;
+  border: 2px solid #C0D9FF;
+}
+
+//fixed width of table columns
+table {
+  width: 100%;  
+}
+
+.selector-header-column{
+  width: 5%;
+}
+
+.id-header-column{
+  width: 8%;
+}
+
+.name-header-column{
+  width: 57%;
+}
+
+.signin-header-column{
+  width: 10%;
+}
+
+.debt-header-column{
+  width: 10%;
+}
+
+.nextdate-header-column{
+  width: 10%;
+}
+//fixed width of table columns
+//content column format
+.id-content-column{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: $main--blue;
+}
+
+.name-content-column{
+  cursor: pointer;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #7A7A7A;
+  width: 57%;
+}
+
+.signin-content-column{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: $main--blue;
+}
+
+.debt-content-column{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: $warn--primary;
+  width: 10%;
+  text-align: center;
+}
+
+.nextdate-content-column{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: $main--blue;
+}
+
+.mat-mdc-text-field-wrapper{
+  height: 50px;
+}
+
+.custom-paginator{
+  color: $main--blue;
+  margin-bottom: 35px;
+  background-color: #fff; 
+}
+
+.dashboard_list_container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard_list_actons{
+  display: flex;
+  align-items: center;
+}
+
+.dashboard_logout_icon{
+  width: 20px;
+  height: auto;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.info-table {
+  background-color: #fff;  /* Cambia esto al color que prefieras */
+}

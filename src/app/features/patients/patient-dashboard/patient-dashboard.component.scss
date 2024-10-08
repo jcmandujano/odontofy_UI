@@ -1,0 +1,109 @@
+@use "../../../../vars.scss" as *;
+
+.navigation_row{
+    margin-top: 15px;
+    margin-bottom: 50px;
+}
+
+.pacientes_navigation{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 21px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.02em;
+    color: $primary--blue;
+}
+
+.custom_card_header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dashboard_agenda_icon{
+    width: 50px;
+    height: auto;
+    margin: 0px 20px;
+    fill: #407DDA;
+}
+
+.custom_title{
+    cursor: pointer;
+    text-align: start;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.custom_card_title{
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 30px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.01em;
+    color: #407DDA;
+    margin: 0;
+  }
+  
+  .custom-card-subtitle{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #7A7A7A;
+  }
+
+.menu_row{
+    margin: 25px 15px;
+}
+
+.finanzas_container{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+
+.dashboard_finanzas_table_title{
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: 0.01em;
+    /* main-blue */
+    color: #407DDA; 
+  }
+  
+  .dashboard_finanzas_table_total{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 30px;
+    color: #407DDA;
+  }
+  
+  .dashboard_finanzas_table_ingreso{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 30px;
+    color: #6FCF97;
+  }
+  
+  .dashboard_finanzas_table_adeudo{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 30px;
+    color: #EB5757;
+  }

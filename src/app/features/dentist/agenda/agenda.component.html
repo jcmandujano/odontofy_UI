@@ -1,0 +1,129 @@
+<app-nav-bar></app-nav-bar>
+@if(spinner){
+    <div class="progress-loader">
+        <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
+      </div>
+}
+
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="pacientes_navigation">Inicio > Agenda</span>
+        </div>
+    </div>
+    <div class="row pacientes_header_row">
+        <div class="col-6">
+            <div class="title_container">
+                <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+                <span class="pacientes_title">Agenda</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="createAppointmentDialog()">Agregar Cita</button> </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 agenda-container">
+            <div class="row text-center">
+                <div class="col-md-4">
+                  <div class="btn-group">
+                    <div
+                      class="btn btn-primary"
+                      mwlCalendarPreviousView
+                      [view]="view"
+                      [(viewDate)]="viewDate"
+                    >
+                      Anterior
+                    </div>
+                    <div
+                      class="btn btn-outline-secondary"
+                      mwlCalendarToday
+                      [(viewDate)]="viewDate"
+                    >
+                      Actual
+                    </div>
+                    <div
+                      class="btn btn-primary"
+                      mwlCalendarNextView
+                      [view]="view"
+                      [(viewDate)]="viewDate"
+                    >
+                      Siguiente
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <h3>
+                    {{ viewDate | calendarDate:(view + 'ViewTitle'):locale:weekStartsOn }}
+                  </h3>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn-group">
+                      <div
+                        class="btn btn-primary"
+                        (click)="setView(CalendarView.Month)"
+                        [class.active]="view === CalendarView.Month"
+                      >
+                        Mes
+                      </div>
+                      <div
+                        class="btn btn-primary"
+                        (click)="setView(CalendarView.Week)"
+                        [class.active]="view === CalendarView.Week"
+                      >
+                        Semana
+                      </div>
+                      <div
+                        class="btn btn-primary"
+                        (click)="setView(CalendarView.Day)"
+                        [class.active]="view === CalendarView.Day"
+                      >
+                        Día
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            <div>
+                @switch (view) {
+                    @case ("month") {
+                        <mwl-calendar-month-view
+                            [viewDate]="viewDate"
+                            [events]="events"
+                            [locale]="locale"   
+                            [refresh]="refresh"
+                            [activeDayIsOpen]="activeDayIsOpen"
+                            (eventClicked)="handleEvent('Clicked',$event.event)"
+                            (dayClicked)="dayClicked($event.day)"
+                            (eventTimesChanged)="eventTimesChanged($event)"
+                            >
+                        </mwl-calendar-month-view>
+                    }
+                    @case ("week") {
+                        <mwl-calendar-week-view
+                            [viewDate]="viewDate"
+                            [events]="events"
+                            [locale]="locale"
+                            [refresh]="refresh"
+                            (eventClicked)="handleEvent('Clicked', $event.event)"
+                            (eventTimesChanged)="eventTimesChanged($event)"
+                            >
+                        </mwl-calendar-week-view>
+                    }
+                    @case ("day") {
+                        <mwl-calendar-day-view
+                            [viewDate]="viewDate"
+                            [events]="events"
+                            [locale]="locale"
+                            [refresh]="refresh"
+                            (eventClicked)="handleEvent('Clicked', $event.event)"
+                            (eventTimesChanged)="eventTimesChanged($event)"
+                            >
+                        </mwl-calendar-day-view>
+                    }
+                }
+              </div>
+        </div>
+    </div>
+</div>
+

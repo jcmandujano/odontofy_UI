@@ -1,0 +1,46 @@
+.spacer {
+    flex: 1 1 auto;
+}
+.main-toolbar{
+    padding: 50px 50px;
+    background-color: transparent;
+    color: #6CA6FE;
+}
+
+mat-button:hover {
+    background: #fff;
+  }
+
+button:focus{
+    outline: 0px;
+}
+
+.menu-item{
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 21px;
+    margin: 0 15px;
+}
+
+.menu-item:hover{
+    color: #407DDA;
+    background-color: transparent !important;
+}
+
+.mat-mdc-button {
+    --mat-mdc-button-persistent-ripple-color: none;
+  }
+
+.logout-navbar-button{
+    height: 30px;
+    background-color: #6CA6FE;
+    letter-spacing: 0.02em;
+    box-shadow: none !important;
+}
+
+.mat-mdc-extended-fab>.mat-icon, .mat-mdc-extended-fab>.material-icons {
+    margin-left: calc(15px - 20px);
+    margin-right: 7px;
+}

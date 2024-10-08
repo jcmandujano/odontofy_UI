@@ -1,0 +1,95 @@
+@use "../../../../vars.scss" as *;
+
+
+.logout-navbar-button{
+  height: 30px;
+  background-color: $second--blue;
+  letter-spacing: 0.02em;
+  box-shadow: none !important;
+}
+
+.pacientes_header_row{
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.navigation_row{
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.pacientes_title{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 30px;
+  letter-spacing: 0.01em;
+  color: $primary--blue;
+}
+
+.title_container{
+  display: flex;
+  align-items: center;
+}
+
+.nuevo_paciente_button_container{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pacientes_navigation{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.02em;
+  color: $primary--blue;
+}
+
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  color: rgb(111, 28, 28) !important;
+}
+
+.mat-form-field {
+  background-color: #af2626; /* Reemplaza este valor con el color de fondo que desees */
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border: 1px solid #C0D9FF;
+}
+
+.mat-mdc-header-row .mat-mdc-header-cell{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: $main--blue;
+  border: 2px solid #C0D9FF;
+}
+
+.mat-mdc-text-field-wrapper{
+  height: 50px;
+}
+
+.dashboard_agenda_icon{
+    width: 50px;
+    height: auto;
+    margin-right: 20px;
+  }
+
+.agenda-container{
+    margin-bottom: 50px;
+}
+
+.action-icons a {
+  margin: 0 5px !important;
+}

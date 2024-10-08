@@ -1,0 +1,45 @@
+.content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.content_legal{
+    text-align: center;
+    margin-top: 30px;
+}
+
+.content_actions{
+    margin: 40px 0px;
+}
+
+.legal_text{
+    font-size: 17px;
+    color: white;
+}
+
+.legal_text:hover{
+    cursor: pointer;
+}
+
+.button{
+    --mdc-text-button-label-text-color: white;
+    -webkit-tap-highlight-color:aqua !important;
+    border-radius: 25px;
+    font-size: 17px;
+    width: 160px;
+    height: 40px;
+}
+.mat-mdc-raised-button{
+    color: #407DDA !important;
+  }
+
+:focus {
+    outline:none;
+ }
+
+ :host .mat-button{
+    border-radius: 25px;
+}

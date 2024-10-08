@@ -1,0 +1,320 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
+    // background-color: #2196F3;
+    padding: 0px 40px;
+    min-height: 70vh;
+  }
+  
+  .grid-container > div {
+//    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    padding: 20px 0;
+    font-size: 30px;
+  }
+  
+  .item1 {
+    grid-row: 1 / span 3;
+  }
+
+  .button{
+    margin-bottom: 40px;
+}
+
+.logo-letter{
+  font-style: normal;
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 101px;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: #6CA6FE;
+}
+
+.second-blue{
+  color: #407DDA;
+}
+
+.dashboard-title-name{
+  margin-top: 30px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 42px;
+  letter-spacing: 0.01em;
+  color: #407DDA;
+}
+
+.dashboard-logo{
+  margin-bottom: 10px;
+  width: 250px;
+}
+.dashboard-card{
+  width: auto;
+  height: 100%;
+}
+
+.dashboard-header{
+  padding: 0px 70px;
+  padding-top: 20px;
+}
+
+.dashboard-title{
+  padding: 0 80px;
+}
+
+.dashboard_button{
+  background-color: #6CA6FE;
+  font-weight: 500;
+  border: none;
+  color: white;
+  padding: 4px 21px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 80px;
+  letter-spacing: 0.02em;
+}
+
+.slogan {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: center;
+  letter-spacing: 0.155em;
+  /* gray */
+  color: #7A7A7A;
+  padding-left: 10px;
+}
+
+.welcome-letter{
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #7A7A7A;
+}
+
+.dashboard_settings{
+  display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.dashboard_settings_icon{
+  width: 30px;
+  height: auto
+}
+
+.label_exception{
+  position: relative;
+  top: -2px;
+}
+
+.dashboard_logout_icon{
+  width: 20px;
+  height: auto;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.dashboard_agenda_actions{
+  width: 70px;
+  height: auto;
+  margin: 0px 20px;
+}
+
+//remove example
+.example-card {
+  width: 50vw;
+  height: 100%;
+}
+
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+mat-card-title{
+  text-align: start;
+}
+
+.custom_card_header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.dashboard_agenda_icon{
+  width: 50px;
+  height: auto;
+  margin: 0px 20px;
+}
+
+.dashboard_agenda_dot{
+  width: 15px;
+  height: auto;
+  margin: 0px 10px;
+  position: relative;
+  top: 8px !important;
+}
+
+.custom_title{
+  text-align: start;
+  align-items: center;
+  flex-grow: 1;
+}
+.custom_actions{
+  flex-grow: 1;
+  text-align: end;
+    padding-right: 20px;
+}
+
+.card_button{
+  width: 150px;
+  height: 30px;
+}
+
+.mat-card{
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgba(94, 136, 244, 0.25);
+}
+
+.custom_card_title{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 30px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.01em;
+  color: #407DDA;
+  margin: 0;
+}
+
+.custom-card-subtitle{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #7A7A7A;
+}
+
+mat-list-item{
+  background: rgba(217, 232, 255, 0.4);
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+
+mat-list{
+  padding: 10px 20px;
+}
+
+:host ::ng-deep .mat-list-base .mat-list-item .mat-list-item-content {
+  justify-content: space-between;
+}
+
+.day{
+  color: #407DDA;
+  font-weight: 500;
+}
+
+.hour{
+  color: #6CA6FE;
+  font-weight: 500;
+}
+
+.date_name{
+  color: #7A7A7A;
+  font-weight: 500;
+}
+
+.cita{
+  color: #27AE60;
+  font-style: italic;
+  font-weight: 500;
+  text-decoration-line: underline;
+  cursor: pointer;
+}
+
+.finanzas_container{
+  background: rgba(217, 232, 255, 0.4);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
+
+.finanzas_card_content{
+  height: 60%;
+  margin-top: 20px;
+}
+
+.example-full-width {
+  margin-top: 15px;
+  width: 80%;
+}
+
+.pacientes_container{
+  margin-top: 15px;
+}
+
+
+
+.dashboard_finanzas_table_title{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20.8571px;
+  line-height: 24px;
+  letter-spacing: 0.01em;
+  /* main-blue */
+  color: #407DDA; 
+}
+
+.dashboard_finanzas_table_total{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20.8571px;
+  line-height: 30px;
+  color: #407DDA;
+}
+
+.dashboard_finanzas_table_ingreso{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20.8571px;
+  line-height: 30px;
+  color: #6FCF97;
+}
+
+.dashboard_finanzas_table_adeudo{
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20.8571px;
+  line-height: 30px;
+  color: #EB5757;
+}
+
+.dashboard_list_container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard_list_actons{
+  display: flex;
+  align-items: center;
+}
+
+.pacientes_list_btn{
+  cursor: pointer;
+}

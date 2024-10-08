@@ -1,0 +1,41 @@
+<h2 mat-dialog-title class="dialog-title">Nueva Cita</h2>
+<mat-dialog-content class="custom-content">
+    <form [formGroup]="appointmentForm">
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Paciente</mat-label>
+            <mat-select formControlName="patient">
+                <mat-option [value]="0">Nuevo Paciente</mat-option>
+              @for (patient of patientsList; track patient) {
+                <mat-option [value]="patient.id">{{getFullName(patient)}}</mat-option>
+              }
+            </mat-select>
+        </mat-form-field>
+        <div class="row">
+            <div class="col-6">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="appointmentDate">
+                    <!-- <mat-hint>DD/MM/YYYY</mat-hint> -->
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Hora</mat-label>
+                    <input matInput formControlName="appointmentTime" type="time">
+                </mat-form-field>
+            </div>
+        </div>
+        <quill-editor 
+        formControlName="appointmentNote"
+            [style]="{height: '200px', width: '100%'}" 
+            [modules]="quillConfig"
+            placeholder="Escribe tus notas aquí...">
+        </quill-editor>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()" color="warn">Cancelar</button>
+    <button mat-button (click)="onSave()">Guardar</button> 
+</mat-dialog-actions>
