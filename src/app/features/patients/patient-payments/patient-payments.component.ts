@@ -42,7 +42,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './patient-payments.component.scss'
 })
 export class PatientPaymentsComponent {
-  displayedColumns: string[] = ['id', 'fecha', 'total', 'ingreso', 'adeudo', 'actions'];
+  displayedColumns: string[] = ['fecha', 'total', 'ingreso', 'adeudo', 'actions'];
   dataSource: Payment[] = []
   patient: Patient | null = null;
   conceptList: Concept[] = []

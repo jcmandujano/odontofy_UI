@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="col-6">
-            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="createAppointmentDialog()">Agregar Cita</button> </div>
+            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="newAppointment()">Agregar Cita</button> </div>
         </div>
     </div>
 
@@ -93,9 +93,7 @@
                             [locale]="locale"   
                             [refresh]="refresh"
                             [activeDayIsOpen]="activeDayIsOpen"
-                            (eventClicked)="handleEvent('Clicked',$event.event)"
                             (dayClicked)="dayClicked($event.day)"
-                            (eventTimesChanged)="eventTimesChanged($event)"
                             >
                         </mwl-calendar-month-view>
                     }
@@ -105,8 +103,6 @@
                             [events]="events"
                             [locale]="locale"
                             [refresh]="refresh"
-                            (eventClicked)="handleEvent('Clicked', $event.event)"
-                            (eventTimesChanged)="eventTimesChanged($event)"
                             >
                         </mwl-calendar-week-view>
                     }
@@ -115,10 +111,7 @@
                             [viewDate]="viewDate"
                             [events]="events"
                             [locale]="locale"
-                            [refresh]="refresh"
-                            (eventClicked)="handleEvent('Clicked', $event.event)"
-                            (eventTimesChanged)="eventTimesChanged($event)"
-                            >
+                            [refresh]="refresh">
                         </mwl-calendar-day-view>
                     }
                 }

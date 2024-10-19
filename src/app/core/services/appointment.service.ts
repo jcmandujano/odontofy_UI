@@ -15,7 +15,7 @@ const httpOptions = {
 export class AppointmentService{
     constructor(private http: HttpClient) { }
 
-    createNote(appointment: Appointment){
+    createAppointment(appointment: Appointment){
         return this.http.post(`${PATH_API}/appointments`, appointment , httpOptions);
     }
 

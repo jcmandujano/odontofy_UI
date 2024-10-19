@@ -10,6 +10,7 @@
 
 .logout-navbar-button{
   height: 30px;
+  color: #fff;
   background-color: $second--blue;
   letter-spacing: 0.02em;
   box-shadow: none !important;
@@ -156,7 +157,11 @@ table {
   font-size: 14px;
   line-height: 20px;
   color: #7A7A7A;
-  width: 57%;
+  
+  white-space: nowrap;      /* Evita que el texto se envuelva en varias líneas */
+  overflow: hidden;         /* Oculta el texto que se desborda del contenedor */
+  text-overflow: ellipsis;  /* Muestra los puntos suspensivos (...) al final del contenido */
+  max-width: 200px; 
 }
 
 .signin-content-column{

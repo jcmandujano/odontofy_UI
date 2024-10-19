@@ -10,6 +10,7 @@
 
 .logout-navbar-button{
   height: 30px;
+  color: #fff;
   background-color: $second--blue;
   letter-spacing: 0.02em;
   box-shadow: none !important;
@@ -55,7 +56,7 @@
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: end;
 }
 
 .pacientes_navigation{
@@ -223,4 +224,8 @@ table {
 
 .info-table {
   background-color: #fff;  /* Cambia esto al color que prefieras */
+}
+
+.print-consent-btn{
+  margin: 10px;
 }

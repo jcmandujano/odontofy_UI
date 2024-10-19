@@ -17,23 +17,23 @@
                     <p class="subtitle">Por favor proporcionanos tus datos para<br> poderte brindar una solución a tu medida</p>
                   </div>
                   <div class="login_form_container_form">
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                       <!-- <mat-icon class="prefix_form_color" matPrefix> email</mat-icon> -->
                       <mat-label>Nombre</mat-label>
-                      <input matInput  formControlName="nombre">
+                      <input matInput  formControlName="nombre" appearance="outline">
                     </mat-form-field>
                     <br>
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                       <mat-label>Apellido Paterno</mat-label>
                       <input matInput formControlName="apellido_pat">
                     </mat-form-field>
                     <br>
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                       <mat-label>Apellido Materno</mat-label>
                       <input matInput formControlName="apellido_mat">
                     </mat-form-field>
                     <br>
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                       <mat-label>Fecha de Nacimiento</mat-label>
                       <input matInput [matDatepicker]="picker" formControlName="fechaNac">
                       <mat-hint>DD/MM/YYYY</mat-hint>
@@ -41,20 +41,20 @@
                       <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                     <br>
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                       <mat-icon class="prefix_form_color" matPrefix> call</mat-icon>
                       <mat-label>Escribe tu telefono</mat-label>
                       <span matPrefix>&nbsp;+52&nbsp;</span>
                       <input matInput  mask="(000) 000-0000" formControlName="telefono">
                     </mat-form-field>
                     <br>
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                         <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
                       <mat-label>Escribe tu correo</mat-label>
                       <input matInput formControlName="email">
                     </mat-form-field>
                     <br>
-                    <mat-form-field class="login_form_control">
+                    <mat-form-field class="login_form_control" appearance="outline">
                       <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
                       <mat-label>Escribe tu password</mat-label>
                       <input matInput formControlName="password">

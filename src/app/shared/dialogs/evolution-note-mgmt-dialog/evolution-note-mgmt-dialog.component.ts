@@ -6,6 +6,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-evolution-note-mgmt-dialog',
@@ -16,7 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule,
     FormsModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    QuillModule
   ],
   templateUrl: './evolution-note-mgmt-dialog.component.html',
   styleUrl: './evolution-note-mgmt-dialog.component.scss'
@@ -24,6 +26,21 @@ import { MatButtonModule } from '@angular/material/button';
 export class EvolutionNoteMgmtDialogComponent {
   creationDate: Date
   noteContent: string = ''
+  quillConfig = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],  // Tamaño de encabezado
+      ['bold', 'italic', 'underline', 'strike'],  // Negrita, cursiva, subrayado y tachado
+      [{ 'color': [] }],    // Color de texto y fondo
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }], // Listas ordenadas y desordenadas
+      [{ 'indent': '-1' }, { 'indent': '+1' }],   // Disminuir/aumentar sangría
+      [{ 'align': [] }],                         // Alineación de texto
+      ['blockquote'],              // Cita en bloque y bloque de código
+      ['clean']                                  // Botón para limpiar el formato
+    ],
+    scrollingContainer: 'html',                   // Contenedor con scroll
+    bounds: 'self'                               // Limitar el editor dentro de un área
+    
+  };
   constructor(
     public dialogRef: MatDialogRef<EvolutionNoteMgmtDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EvolutionNote,
