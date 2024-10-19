@@ -1,5 +1,5 @@
 <mat-toolbar class="main-toolbar">
-    <img src="/img/logo.png" alt="" routerLink="/dashboard">
+    <img src="/img/logo.png" alt="" (click)="goToDashboard()">
     
     <span class="spacer"></span>
     <button class="menu-item" cli mat-button (click)="goToDashboard()">
@@ -23,7 +23,7 @@
     <!-- <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="doLogout()">
         <mat-icon>logout</mat-icon>
       </button> -->
-      <button mat-mini-fab class="mat-elevation-z0">
+      <button mat-mini-fab class="logout-navbar-button">
         <mat-icon>logout</mat-icon>
       </button>
   </mat-toolbar>

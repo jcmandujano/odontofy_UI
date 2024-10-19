@@ -21,7 +21,7 @@
             </div>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Nombre</mat-label>
                         <input matInput formControlName="name">
                         @if(crearPacientesForm.controls['name'].invalid){
@@ -30,7 +30,7 @@
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Apellido Paterno</mat-label>
                         <input matInput formControlName="middle_name">
                         @if(crearPacientesForm.controls['middle_name'].invalid){
@@ -39,7 +39,7 @@
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Apellido Materno</mat-label>
                         <input matInput formControlName="last_name">
                         @if(crearPacientesForm.controls['last_name'].invalid){
@@ -50,7 +50,7 @@
             </section>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Fecha de Nacimiento</mat-label>
                         <input matInput [matDatepicker]="picker" formControlName="date_of_birth" (dateInput)="onDateChange($event)" (dateChange)="onDateChange($event)">
                         <mat-hint>DD/MM/YYYY</mat-hint>
@@ -62,13 +62,13 @@
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width" >
+                    <mat-form-field class="full-width" appearance="outline" >
                         <mat-label>Edad</mat-label>
                         <input matInput formControlName="age">
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Sexo</mat-label>
                         <mat-select matNativeControl formControlName="gender">
                           <mat-option value="MALE">Masculino</mat-option>
@@ -80,13 +80,13 @@
             </section>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field  class="full-width" >
+                    <mat-form-field class="full-width" appearance="outline" >
                         <mat-label>Ocupación</mat-label>
                         <input matInput formControlName="occupation">
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Estado Civil</mat-label>
                         <mat-select matNativeControl formControlName="marital_status">
                           <mat-option value="MARRIED">Casadx</mat-option>
@@ -100,7 +100,7 @@
                       </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Teléfono</mat-label>
                         <input matInput formControlName="phone">
                         @if(crearPacientesForm.controls['phone'].invalid){
@@ -112,7 +112,7 @@
             </section>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field  class="full-width" >
+                    <mat-form-field class="full-width" appearance="outline" >
                         <mat-label>Email</mat-label>
                         <input matInput formControlName="email">
                         @if(crearPacientesForm.controls['email'].invalid){
@@ -121,13 +121,13 @@
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width" >
+                    <mat-form-field class="full-width" appearance="outline" >
                         <mat-label>Dirección</mat-label>
                         <input matInput formControlName="address">
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>RFC</mat-label>
                         <input matInput formControlName="rfc">
                     </mat-form-field>
@@ -135,7 +135,7 @@
             </section>
             <section class="row">
                 <div class="col-12">
-                    <mat-form-field  class="full-width" >
+                    <mat-form-field class="full-width" appearance="outline" >
                         <mat-label>Motivo de Consulta</mat-label>
                         <input matInput formControlName="reason_for_consultation">
                     </mat-form-field>
@@ -144,19 +144,19 @@
             <p class="emergency-contact-data">Contacto de emergencia</p>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field  class="full-width" >
+                    <mat-form-field class="full-width" appearance="outline" >
                         <mat-label>Nombre</mat-label>
                         <input matInput formControlName="emergency_contact_name">
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Relación</mat-label>
                         <input matInput formControlName="emergency_contact_relationship">
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field  class="full-width">
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Teléfono</mat-label>
                         <input matInput formControlName="emergency_contact_phone">
                     </mat-form-field>
@@ -173,7 +173,7 @@
                     </mat-expansion-panel-header>
                     <section class="row">
                         <div class="col-12">
-                            <mat-form-field class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label></mat-label>
                                 <textarea formControlName="family_medical_history" matInput placeholder="Diabetes, cardiovasculares, etc..." rows="2"></textarea>
                               </mat-form-field>
@@ -207,7 +207,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -229,7 +229,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -251,7 +251,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -273,7 +273,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -295,7 +295,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -317,7 +317,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -339,7 +339,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -361,7 +361,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -383,7 +383,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -405,7 +405,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -427,7 +427,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -449,7 +449,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -471,7 +471,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -493,7 +493,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -515,7 +515,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -537,7 +537,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>
@@ -559,7 +559,7 @@
                             
                         </div>
                         <div class="col-6">
-                            <mat-form-field  class="full-width">
+                            <mat-form-field class="full-width" appearance="outline">
                                 <mat-label>Observaciones</mat-label>
                                 <input matInput formControlName="comentarios">
                             </mat-form-field>

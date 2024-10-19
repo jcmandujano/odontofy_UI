@@ -45,7 +45,7 @@ import { MatTableModule } from '@angular/material/table';
 })
 export class InformedConsentsComponent {
   // Columnas a mostrar en la tabla de consentimientos
-  displayedColumns: string[] = ['id', 'consent', 'date', 'actions'];
+  displayedColumns: string[] = ['consent', 'date', 'actions'];
   // Indicador para mostrar el spinner de carga
   spinner = false;
   // Fuente de datos para la tabla

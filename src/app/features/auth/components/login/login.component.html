@@ -11,13 +11,13 @@
               <p class="subtitle">Por favor proporciona tus datos de acceso</p>
             </div>
             <div class="login_form_container_form">
-              <mat-form-field class="login_form_control">
+              <mat-form-field class="login_form_control" appearance="outline">
                 <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
                 <mat-label>Escribe tu correo</mat-label>
                 <input type="email" matInput formControlName="username">
               </mat-form-field>
               <br>
-              <mat-form-field class="login_form_control">
+              <mat-form-field class="login_form_control" appearance="outline">
                 <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
                 <mat-label>Escribe tu contraseña</mat-label>
                 <button class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide">

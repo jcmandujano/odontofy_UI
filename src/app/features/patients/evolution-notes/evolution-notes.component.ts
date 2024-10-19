@@ -38,7 +38,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './evolution-notes.component.scss'
 })
 export class EvolutionNotesComponent {
-  displayedColumns: string[] = ['id', 'fecha', 'nota', 'actions'];
+  displayedColumns: string[] = ['fecha', 'nota', 'actions'];
   dataSource: EvolutionNote[] = [];
   spinner= false
   notasList: EvolutionNote[] = []
@@ -77,6 +77,13 @@ export class EvolutionNotesComponent {
   ngOnInit(){
     this.pacienteId = this.route.snapshot.paramMap.get('id');
     this.listarNotas()
+  }
+
+  limpiarHtml(html: string): string {
+    // Crear un elemento temporal para usar el navegador y quitar etiquetas HTML
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
   }
 
   listarNotas(){
@@ -142,7 +149,7 @@ export class EvolutionNotesComponent {
   editarNotaDialog(nota: EvolutionNote){
     const dialogRef = this.dialog.open(EvolutionNoteMgmtDialogComponent, {
       width: '40vw',
-      height: '50vh',
+      height: '80%',
       data: nota
     });
 
@@ -185,7 +192,7 @@ export class EvolutionNotesComponent {
   creaNotaDialog(){
     const dialogRef = this.dialog.open(EvolutionNoteMgmtDialogComponent, {
       width: '40vw',
-      height: '50vh',
+      height: '80%',
       panelClass: 'custom-dialog-container' 
     });
 

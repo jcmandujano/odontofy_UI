@@ -1,10 +1,10 @@
 <h2 mat-dialog-title class="dialog-title">Imprimir Consentimiento</h2>
 <mat-dialog-content>
-    <mat-form-field class="full-width">
+    <mat-form-field class="full-width" appearance="outline">
         <mat-label>Paciente</mat-label>
         <input matInput [formControl]="patientName">
     </mat-form-field>
-    <mat-form-field class="full-width">
+    <mat-form-field class="full-width" appearance="outline">
         <mat-label>Elige el consentimiento</mat-label>
         <mat-select [formControl]="informedConsent" >
             @for(consent of informedConsentList; track consent.name){
@@ -22,7 +22,7 @@
         
     </ngx-dropzone>
 </mat-dialog-content>
-<mat-dialog-actions align="center">
+<mat-dialog-actions>
     <button mat-button (click)="cancel()" color="warn">Cancelar</button>
     <button mat-button (click)="onSave()" color="primary">Guardar</button>
 </mat-dialog-actions>

@@ -27,8 +27,13 @@ button:focus{
 .menu-item:hover{
     color: #407DDA;
     background-color: transparent !important;
+    cursor: pointer;
 }
 
+.menu-item{
+    color: #6CA6FE;
+    /* background-color: transparent !important; */
+}
 .mat-mdc-button {
     --mat-mdc-button-persistent-ripple-color: none;
   }

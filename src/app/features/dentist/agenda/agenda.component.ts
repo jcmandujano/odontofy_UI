@@ -18,6 +18,7 @@ import { PacientesService } from '../../../core/services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Appointment } from '../../../core/models/appointment.model';
 import { AppointmentService } from '../../../core/services/appointment.service';
+import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 
 registerLocaleData(localeEs);
 
@@ -61,7 +62,6 @@ export class AgendaComponent {
   CalendarView = CalendarView;
   refresh = new Subject<void>();
   activeDayIsOpen: boolean = true;
-  actions: CalendarEventAction[]
   events: CalendarEvent[] = []
   patientsList: Patient[] = []
   constructor(
@@ -70,53 +70,16 @@ export class AgendaComponent {
     private snackBar: MatSnackBar,
     private patientService: PacientesService,
     private appointmentService: AppointmentService
-  ){
-    this.actions = [
-      {
-        label: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-        a11yLabel: 'Edit',
-        onClick: ({ event }: { event: CalendarEvent }): void => {
-          this.handleEvent('Edited', event);
-        },
-      },
-      {
-        label: '<i class="fa fa-trash" aria-hidden="true"></i>',
-        a11yLabel: 'Delete',
-        onClick: ({ event }: { event: CalendarEvent }): void => {
-          this.events = this.events.filter((iEvent: CalendarEvent<any>) => iEvent !== event);
-          this.handleEvent('Deleted', event);
-        },
-      },
-    ];
-  
-   /*  this.events = [
-      {
-        start: startOfDay(new Date()),
-        title: 'Cita con paciente',
-        color: { ...colors['blue'] },
-        actions: this.actions,
-        cssClass: 'action-icons'
-      },
-      {
-        start: setHours(setMinutes(new Date(2024, 9, 15), 0), 13),  // 15 de octubre, 1:00 PM
-        end: setHours(setMinutes(new Date(2024, 9, 15), 0), 14),    // 15 de octubre, 2:00 PM
-        title: 'Event at 1 PM',
-        color: { ...colors['blue'] },
-        actions: this.actions
-      },
-      {
-        start: setHours(setMinutes(new Date(2024, 9, 15), 0), 15),  // 15 de octubre, 3:00 PM
-        end: setHours(setMinutes(new Date(2024, 9, 15), 0), 16),    // 15 de octubre, 4:00 PM
-        title: 'Event at 3 PM',
-        color: { ...colors['blue'] },
-        actions: this.actions
-      },
-    ]; */
-  }
+  ){ }
 
   ngOnInit(): void {
     this.retrievePatients()
     this.retrieveAppointments()
+  }
+
+  ngAfterViewInit() {
+    this.elementRef.nativeElement.ownerDocument
+        .body.style.backgroundColor = '#ffffff';
   }
 
   retrievePatients(){
@@ -134,8 +97,9 @@ export class AgendaComponent {
   retrieveAppointments(){
     this.spinner = true
     this.appointmentService.listAppointments().subscribe(data=>{
-      console.log('DATA', data.appointments)
+      console.log('APPOINTMENTS', data.appointments)
       this.events = this.transformAppointmentsToEvents(data.appointments);
+      console.log('APPOINTMENTS', this.events)
       this.spinner = false
     },(error)=>{
       this.spinner = false
@@ -144,60 +108,170 @@ export class AgendaComponent {
     })
   }
 
-  ngAfterViewInit() {
-    this.elementRef.nativeElement.ownerDocument
-        .body.style.backgroundColor = '#ffffff';
+  newAppointment() { 
+    this.launchAppointmentDialog(undefined)
   }
 
-  createAppointmentDialog() { 
+  updateAppointmentStatus(appointment: CalendarEvent): void {
+    this.launchAppointmentDialog(appointment)
+  }
+
+  buildAppointmentData(appointmentData: any): Appointment { 
+    // Convertir appointmentDate a 'YYYY-MM-DD'
+    const appointmentDate = new Date(appointmentData.appointmentDate).toISOString().split('T')[0];
+
+    // Asegurarse de que appointmentTime esté en formato 'HH:MM:SS'
+    const appointmentTime = appointmentData.appointmentTime.length === 5 
+      ? `${appointmentData.appointmentTime}:00`  // Agregar segundos si solo tiene horas y minutos  
+      : appointmentData.appointmentTime;
+
+    // Crear instancia de la clase Appointment
+    return new Appointment(
+      appointmentData.id,
+      appointmentData.patient,
+      appointmentDate, // Fecha en formato 'YYYY-MM-DD'
+      appointmentTime, // Tiempo en formato 'HH:MM:SS'
+      appointmentData.appointmentNote,
+      'pendiente' // Estado por defecto
+    );
+  }
+
+  transformAppointmentsToEvents(appointments: Appointment[]): CalendarEvent[] {
+    return appointments.map(appointment => {
+        // Combinar fecha y hora en formato ISO (YYYY-MM-DDTHH:mm:ss)
+        const appointmentDateTime = `${appointment.appointment_date}T${appointment.appointment_time}`;
+        const appointmentDate = new Date(appointmentDateTime);
+
+        return {
+            id: appointment.id,
+            meta: { appointment },
+            start: appointmentDate, 
+            end: appointmentDate, 
+            title: `Cita con paciente: ${this.findPatientNameById(appointment.patient_id)}`,
+            color: { ...colors['blue'] },
+            actions: this.buildEventActions(appointment.patient_id),
+            cssClass: 'action-icons'
+        } as CalendarEvent;
+    });
+}
+
+  launchAppointmentDialog(appointmentEvent?: CalendarEvent ): void {
     const dialogRef = this.dialog.open(AppointmentMgmtDialogComponent, {
       width: '40vw',
       height: '80vh',
       data: {
-        patients: this.patientsList
+        patients: this.patientsList,
+        appointment: appointmentEvent
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Convertir appointmentDate a 'YYYY-MM-DD'
-        const appointmentDate = new Date(result.appointmentDate).toISOString().split('T')[0];
-  
-        // Asegurarse de que appointmentTime esté en formato 'HH:MM:SS'
-        const appointmentTime = result.appointmentTime.length === 5 
-          ? `${result.appointmentTime}:00`  // Agregar segundos si solo tiene horas y minutos
-          : result.appointmentTime;
-  
-        // Crear instancia de la clase Appointment
-        const appointment = new Appointment(
-          result.patient,
-          appointmentDate, // Fecha en formato 'YYYY-MM-DD'
-          appointmentTime, // Tiempo en formato 'HH:MM:SS'
-          result.appointmentNote,
-          'pendiente' // Estado por defecto
-        );
-  
-        console.log('The dialog was closed', appointment);
+        const appointment = this.buildAppointmentData(result);
+        //si viene informacion de appointmentEvent, quiere decir que es una edicion
+        if(appointmentEvent){
+          if (appointmentEvent?.id !== undefined) {
+            this.updateAppointment(Number(appointmentEvent.id), appointment);
+          }
+        }else{
+          //si no viene informacion de appointmentEvent, quiere decir que es una creacion
+          this.createAppointment(appointment);
+        }
       }
     });
   }
 
-  transformAppointmentsToEvents(appointments: Appointment[]): CalendarEvent[] {
-    return appointments.map(appointment => {
-      const appointmentDate = new Date(appointment.appointment_date);
-      const [hours, minutes] = appointment.appointment_time.split(':').map(Number);
-  
-      return {
-        start: setHours(setMinutes(appointmentDate, minutes), hours),  // Fecha y hora de inicio
-        end: setHours(setMinutes(appointmentDate, minutes + 30), hours),  // Fecha y hora de fin (asumiendo 30 minutos)
-        title: `Cita con paciente ${appointment.patient_id}`,  // Título del evento
-        color: { ...colors['blue'] },  // Color del evento (ajusta según tu preferencia)
-        actions: this.actions,  // Acciones disponibles en el evento
-        cssClass: 'action-icons'
-      } as CalendarEvent;  // Cast como CalendarEvent para asegurarse del tipo
+  buildEventActions(patientId: number): CalendarEventAction[] {
+    const eventActions = [
+      {
+        id: patientId,
+        label: '<i class="fa fa-pencil" aria-hidden="true"></i>',
+        a11yLabel: 'Edit',
+        onClick: ({ event }: { event: CalendarEvent }): void => {
+          this.handleEditEvent(event);
+        },
+      },
+      {
+        id:patientId,
+        label: '<i class="fa fa-trash" aria-hidden="true"></i>',
+        a11yLabel: 'Delete',
+        onClick: ({ event }: { event: CalendarEvent }): void => {
+          this.handleDeleteEvent(event);
+        },
+      },
+    ];
+    return eventActions;
+  }
+
+  handleEditEvent(event: CalendarEvent): void {
+    this.updateAppointmentStatus(event)
+  }
+
+  handleDeleteEvent(event: CalendarEvent): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Eliminar Cita',
+        message: '¿Seguro que quieres eliminar esta cita?',
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        if(event.id){
+          this.deleteAppointment(Number(event.id))
+        }
+      }
     });
   }
 
+  createAppointment(appointment: Appointment){
+    this.spinner = true
+    this.appointmentService.createAppointment(appointment).subscribe(data=>{
+      this.retrieveAppointments()
+      this.openSnackbar('Cita creada exitosamente', 'Ok')
+    },(error)=>{
+      this.spinner = false
+      console.log('ERROR', error.error.error.message)
+      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+    })
+  }
+
+  deleteAppointment(appointment_id: number){
+    this.spinner = true
+    this.appointmentService.deleteAppointment(appointment_id).subscribe(data=>{
+      this.retrieveAppointments()
+      this.openSnackbar('Cita eliminada exitosamente', 'Ok')
+    },(error)=>{
+      this.spinner = false
+      console.log('ERROR', error.error.error.message)
+      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+    })
+  }
+
+  updateAppointment(appointment_id: number, appointment: Appointment){
+    this.spinner = true
+    this.appointmentService.updateAppointment(appointment_id, appointment).subscribe(data=>{
+      this.retrieveAppointments()
+      this.openSnackbar('Cita actualizada exitosamente', 'Ok')
+    },(error)=>{
+      this.spinner = false
+      console.log('ERROR', error.error.error.message)
+      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+    })
+  }
+
+  findPatientNameById(patientId: number): string {
+    const patient = this.patientsList.find(patient => patient.id === patientId);
+    return patient ? `${patient.name} ${patient.middle_name} ${patient.last_name}` : '';
+  }
+
+  openSnackbar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000
+    });
+  }
+  
   setView(view: CalendarView) {
     this.view = view;
   }
@@ -213,35 +287,6 @@ export class AgendaComponent {
         this.activeDayIsOpen = true;
       }
       this.viewDate = date;
-    }
-  }
-
-  handleEvent(action: string, event: CalendarEvent): void {
-    /* this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' }); */
-  }
-
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
-    this.events = this.events.map((iEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd,
-        };
-      }
-      return iEvent;
-    });
-    this.handleEvent('Dropped or resized', event);
-  }
-
-  openSnackbar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 3000
-    });
+    } 
   }
 }

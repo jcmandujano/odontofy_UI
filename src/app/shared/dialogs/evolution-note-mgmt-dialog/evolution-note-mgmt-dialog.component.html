@@ -1,16 +1,21 @@
-<h2 mat-dialog-title>Nueva Nota</h2>
+<h2 mat-dialog-title class="dialog-title">Nueva Nota</h2>
 <mat-dialog-content>
-    <mat-form-field class="full-width">
-        <mat-label>Fecha de la nota</mat-label>
-        <input matInput [matDatepicker]="picker"  [(ngModel)]="creationDate">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field class="full-width custom-textarea" appearance="outline">
-        <mat-label>Contenido de la nota</mat-label>
-        <textarea matInput placeholder=""  [(ngModel)]="noteContent"></textarea>
-      </mat-form-field>
+  <div class="custom-content">
+    <mat-form-field class="full-width" appearance="outline">
+      <mat-label>Fecha de la nota</mat-label>
+      <input matInput [matDatepicker]="picker"  [(ngModel)]="creationDate">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <quill-editor 
+      [(ngModel)]="noteContent"
+      [style]="{height: '70%', width: '100%'}" 
+      [modules]="quillConfig"
+      placeholder="Escribe tus notas aquí...">
+    </quill-editor>
+  </div>
+    
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button (click)="cancel()" color="warn">Cancelar</button>

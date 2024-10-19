@@ -15,6 +15,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-patient-list',
@@ -28,13 +29,14 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatPaginatorModule,
     MatTableModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButtonModule
   ],
   templateUrl: './patient-list.component.html',
   styleUrl: './patient-list.component.scss'
 })
 export class PatientListComponent {
-  displayedColumns: string[] = ['id', 'nombre', 'ingreso', 'adeudo', 'prox_cita', 'actions'];
+  displayedColumns: string[] = ['nombre', 'ingreso', 'adeudo', 'prox_cita', 'actions'];
   dataSource = new MatTableDataSource<Patient>();
   spinner= false
   pacientesList: Patient[] = []
@@ -91,11 +93,11 @@ export class PatientListComponent {
 
   //send to create new patient
   crearPaciente(){
-    this.router.navigate(['/crea-pacientes'])
+    this.router.navigate(['/patient-file'])
   }
 
   editarPaciente(pacienteId: any){
-    this.router.navigate(['/crea-pacientes', { id: pacienteId  }])
+    this.router.navigate(['/patient-file', { id: pacienteId  }])
   }
 
   goToExpediente(pacienteId: any){

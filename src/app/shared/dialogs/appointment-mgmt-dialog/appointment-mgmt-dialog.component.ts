@@ -40,7 +40,7 @@ export class AppointmentMgmtDialogComponent {
   patientsList: Patient[] = []
   selectedTime: string = '12:00';
   appointmentForm: FormGroup = new FormGroup({});
-  
+  selectedPatient: number = 0;
   // Configuración básica del editor Quill
   quillConfig = {
     toolbar: [
@@ -62,18 +62,31 @@ export class AppointmentMgmtDialogComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    if(data.patients){
-      this.patientsList = data.patients
-    }
-  } 
-
-  ngOnInit(): void {
     this.appointmentForm = this.fb.group({
       patient: [null, Validators.required],
       appointmentDate: [null, Validators.required],
       appointmentTime: [this.selectedTime, Validators.required],
       appointmentNote: ['']
     });
+
+    if(data.patients){
+      this.patientsList = data.patients
+    }
+    
+    if(data.appointment){
+      const appointment = data.appointment.meta.appointment
+      //patcheamos los valores del formulario con la informacion del appointment
+      this.appointmentForm.patchValue({
+        patient: appointment.patient_id,
+        appointmentDate: new Date(appointment.appointment_date),
+        appointmentTime: appointment.appointment_time,
+        appointmentNote: appointment.note
+      })
+    }
+  } 
+
+  ngOnInit(): void {
+    
   }
 
   getFullName(patient: Patient): string {
@@ -87,7 +100,6 @@ export class AppointmentMgmtDialogComponent {
   onSave(): void {
     if (this.appointmentForm.valid) {
       const appointmentData = this.appointmentForm.value;
-      console.log('Datos de la cita:', appointmentData);
       //enviamos al padre la informacion generada en el dialogo
       this.dialogRef.close(appointmentData);
     }
