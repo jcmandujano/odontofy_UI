@@ -13,6 +13,7 @@ import { PatientPaymentsComponent } from './features/patients/patient-payments/p
 import { InformedConsentsComponent } from './features/patients/informed-consents/informed-consents.component';
 import { OdontogramComponent } from './features/patients/odontogram/odontogram.component';
 import { AgendaComponent } from './features/dentist/agenda/agenda.component';
+import { SettingsComponent } from './features/settings/components/settings/settings.component';
 
 export const routes: Routes = [
     { path: '', component: LandingPageComponent },
@@ -29,7 +30,7 @@ export const routes: Routes = [
     { path: 'informed-consents', component: InformedConsentsComponent },
     { path: 'odontogram', component: OdontogramComponent },
     { path: 'schedule', component: AgendaComponent },
-
+    { path: 'settings', component: SettingsComponent }
 
 ];
 
