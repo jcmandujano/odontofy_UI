@@ -46,7 +46,7 @@ export class NavBarComponent implements OnInit {
   }
 
   goToConfig(){
-    console.log("not implemented yet")
+    this.router.navigate(['settings'])
   }
 
   doLogout(){

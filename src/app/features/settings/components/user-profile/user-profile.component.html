@@ -1,0 +1,77 @@
+<form [formGroup]="userProfileForm">
+    <section class="row header_row">
+        <div class="col-9">
+            <div class="title_container">
+                <span class="section_title">Editar Perfil</span>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="avatar"> {{getInitials(currentUser?.name, currentUser?.middle_name)}}</div>
+        </div>
+    </section>
+    <section class="user-profile row">
+        <div class="col-6">
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="name">
+                @if(userProfileForm.controls['name'].invalid){
+                    <mat-error>Debes ingresar el numbre</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Apellido Paterno</mat-label>
+                <input matInput formControlName="middle_name">
+                @if(userProfileForm.controls['middle_name'].invalid){
+                    <mat-error>Debes ingresar el apellido paterno</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Apellido Materno</mat-label>
+                <input matInput formControlName="last_name">
+                @if(userProfileForm.controls['last_name'].invalid){
+                    <mat-error>Debes ingresar el apellido materno</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Fecha de Nacimiento</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date_of_birth" (dateInput)="onDateChange($event)" (dateChange)="onDateChange($event)">
+                <mat-hint>DD/MM/YYYY</mat-hint>
+                @if(userProfileForm.controls['date_of_birth'].invalid){
+                    <mat-error>Debes ingresar la fecha de nacimiento</mat-error>
+                }
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Teléfono</mat-label>
+                <input matInput formControlName="phone">
+                @if(userProfileForm.controls['phone'].invalid){
+                    <mat-error>{{getPhoneErrorMessage()}}</mat-error>
+                }
+               
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="full-width" appearance="outline" disabled>
+                <mat-label>Email</mat-label>
+                <input matInput [readonly]="isEmailDisabled" formControlName="email">
+            </mat-form-field>
+        </div>
+        <div class="col-12">
+            <div class="d-flex justify-content-end mb-4 mt-4">
+                <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3" (click)="updateProfile()">
+                    Guardar
+                </button>
+            </div>
+           
+        </div>
+    </section>
+</form>

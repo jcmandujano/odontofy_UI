@@ -1,0 +1,29 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="navigation">Inicio > Configuraciones</span>
+        </div>
+    </div>
+    <div class="row header_row">
+        <div class="col-12">
+            <div class="title_container">
+                <mat-icon svgIcon="settings" class="dashboard_agenda_icon"></mat-icon>
+                <span class="section_title">Configuraciones</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <mat-tab-group dynamicHeight>
+                <mat-tab label="Perfil"> 
+                    <app-user-profile></app-user-profile>
+                </mat-tab>
+                <mat-tab label="Conceptos"> Content 2 </mat-tab>
+                <mat-tab label="Concentimientos Informados"> Content 3 </mat-tab>
+              </mat-tab-group>            
+        </div>
+    </div>
+</div>
+
