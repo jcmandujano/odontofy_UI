@@ -22,6 +22,11 @@ export class PaymentService{
         );
     }
 
+    getPaymentBalance(){
+        return this.http.get(`${PATH_API}/patients/payment/payment-balance `, httpOptions);
+    }
+                
+
     createPayment(patientId: number, newPayment: Payment){
         return this.http.post(`${PATH_API}/patients/${patientId}/payment `,  newPayment , httpOptions);
     }

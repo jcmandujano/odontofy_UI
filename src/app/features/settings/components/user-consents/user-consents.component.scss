@@ -1,0 +1,78 @@
+@use "../../../../../vars.scss" as *;
+
+table {
+    width: 100%;
+  }
+
+.info-table {
+  background-color: #fff;  /* Cambia esto al color que prefieras */
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border: 1px solid #C0D9FF;
+}
+
+.mat-mdc-header-row .mat-mdc-header-cell{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: $main--blue;
+  border: 2px solid #C0D9FF;
+}
+
+.title_container{
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.section_title{
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 30px;
+  letter-spacing: 0.01em;
+  color: $primary--blue;
+  margin: 30px 0;
+}
+
+.dashboard_logout_icon{
+  width: 20px;
+  height: auto;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.logout-navbar-button{
+  height: 30px;
+  color: #fff;
+  background-color: $second--blue;
+  letter-spacing: 0.02em;
+  box-shadow: none !important;
+}
+
+.nuevo_paciente_button_container{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.empty-records{
+  height: 300px;
+  padding: 0 150px;
+}
+
+.large-icon {
+  width: 35%;
+  height: auto;
+  font-size: 100px; /* Cambia el tamaño del icono */
+}
+
+.main-container{
+  margin-bottom: 50px;
+}

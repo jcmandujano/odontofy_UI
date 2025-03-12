@@ -82,7 +82,6 @@ export class SignupComponent implements OnInit {
       this.authService.register(this.buildSignupData(this.signupForm.value)).subscribe(data=>{
         this.userdata = data;
         const pass = this.signupForm.value.password || ''
-        console.log('DATA', data)
         this.doLogin(data.user.email, pass)
         this.spinner = false
       })
@@ -94,7 +93,6 @@ export class SignupComponent implements OnInit {
   doLogin(username: string, password: string){
     this.authService.login(username, password).subscribe(data=>{
       this.userdata = data.user;
-      console.log('USERDATA', data.user)
       this.storeSession(data)
       this.router.navigate(['/dashboard'])
     },(error)=>{
@@ -104,7 +102,7 @@ export class SignupComponent implements OnInit {
   }
 
   storeSession(userData:any){
-    this.sessionService.saveToken(userData.jwt)
+    this.sessionService.saveToken(userData.token)
     this.sessionService.saveUser(userData.user)
   }
 

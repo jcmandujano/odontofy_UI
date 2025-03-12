@@ -8,7 +8,7 @@
         <mat-label>Elige el consentimiento</mat-label>
         <mat-select [formControl]="informedConsent" >
             @for(consent of informedConsentList; track consent.name){
-                <mat-option [value]="consent.name">{{consent.name}}</mat-option>
+                <mat-option [value]="consent.id">{{consent.name}}</mat-option>
             }
         </mat-select>
     </mat-form-field>

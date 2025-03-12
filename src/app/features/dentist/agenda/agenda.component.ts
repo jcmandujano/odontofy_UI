@@ -97,13 +97,11 @@ export class AgendaComponent {
   retrieveAppointments(){
     this.spinner = true
     this.appointmentService.listAppointments().subscribe(data=>{
-      console.log('APPOINTMENTS', data.appointments)
       this.events = this.transformAppointmentsToEvents(data.appointments);
-      console.log('APPOINTMENTS', this.events)
       this.spinner = false
     },(error)=>{
       this.spinner = false
-      console.log('ERROR', error.error.error.message)
+      console.log('ERROR', error)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }

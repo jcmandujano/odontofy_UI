@@ -1,0 +1,21 @@
+
+<h2 mat-dialog-title class="dialog-title">Nuevo Concepto</h2>
+<mat-dialog-content>
+    <form [formGroup]="userConceptForm">
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Concepto</mat-label>
+            <input matInput formControlName="description">
+        </mat-form-field>
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Costo unitario</mat-label>
+            <input matInput formControlName="unit_price"
+                [value]="unitPriceFormatted"
+                (focus)="onUnitPriceFocus($event)"
+                (blur)="onUnitPriceBlur($event)">
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close color="warn">Cancelar</button>
+    <button mat-button (click)="save()" color="primary">Guardar</button>
+</mat-dialog-actions>

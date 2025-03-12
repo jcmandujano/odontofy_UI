@@ -37,8 +37,6 @@ export class UserProfileComponent {
 
   ngOnInit(){
     this.currentUser = this.sessionService.getUser();
-    console.log('currentUser', this.currentUser)  
-
     // Patch values to the form
     this.userProfileForm.patchValue({
       name: this.currentUser.name || '',
@@ -66,11 +64,9 @@ export class UserProfileComponent {
   updateProfile(){
     if(this.userProfileForm.valid){
       this.spinner = true
-      console.log('updateProfile', this.userProfileForm.value)
       const updatedUser = this.userProfileForm.value
       delete updatedUser.email
       this.userService.updateUser(this.currentUser.id, this.userProfileForm.value).subscribe(data=>{
-        console.log('data', data) 
         this.sessionService.saveUser(data)
         this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
         this.spinner = false

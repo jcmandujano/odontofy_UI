@@ -2,15 +2,14 @@
     display: grid;
     grid-template-columns: auto auto;
     grid-gap: 10px;
-    // background-color: #2196F3;
     padding: 0px 40px;
     min-height: 70vh;
+    margin-bottom: 30px;
   }
   
   .grid-container > div {
-//    background-color: rgba(255, 255, 255, 0.8);
     text-align: center;
-    padding: 20px 0;
+    padding: 5px 0;
     font-size: 30px;
   }
   
@@ -146,6 +145,14 @@ mat-card-title{
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-grow: 4;
+}
+
+.custom_card_flex_container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 4;
 }
 
 .dashboard_agenda_icon{
@@ -260,8 +267,14 @@ mat-list{
   width: 80%;
 }
 
-.pacientes_container{
-  margin-top: 15px;
+.dashboard_container{
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.full-heigth{
+  height: 100%;
 }
 
 
@@ -317,4 +330,13 @@ mat-list{
 
 .pacientes_list_btn{
   cursor: pointer;
+}
+
+.full-heigth{
+  height: 100%;
+}
+
+.no-data-found{
+  background-color: aliceblue;
+  height: 100%;
 }

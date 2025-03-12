@@ -2,10 +2,8 @@ import { Component, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { InformedConsent } from '../../../core/models/informed-consent.model';
 import { SignedConsent } from '../../../core/models/signed-consent.model';
 import { User } from '../../../core/models/user.model';
-import { InformedConsentService } from '../../../core/services/informed-consent.service';
 import { PacientesService } from '../../../core/services/patient.service';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { SignedConsentService } from '../../../core/services/signed-consent.service';
@@ -23,6 +21,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { UserConsentService } from '../../../core/services/user-consents.service';
+import { UserInformedConsent } from '../../../core/models/user-consent.model';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-informed-consents',
@@ -38,7 +39,8 @@ import { MatTableModule } from '@angular/material/table';
     MatTableModule,
     CommonModule,
     MatPaginatorModule,
-    MatButtonModule
+    MatButtonModule,
+    NoDataFoundComponent
   ],
   templateUrl: './informed-consents.component.html',
   styleUrl: './informed-consents.component.scss'
@@ -53,7 +55,7 @@ export class InformedConsentsComponent {
   // Usuario actualmente autenticado
   currentUser: User;
   // Listas de consentimientos informados y firmados
-  informedConsentList: InformedConsent[] = [];
+  informedConsentList: UserInformedConsent[] = [];
   signedConsentList: SignedConsent[] = [];
   // ID del paciente seleccionado
   selectedPatientId: string | null = null;
@@ -73,7 +75,7 @@ export class InformedConsentsComponent {
   constructor(
     private sessionService: SessionStorageService,
     private pacientesService: PacientesService,
-    private informedConsentService: InformedConsentService,
+    public userConsentService: UserConsentService,
     private signedConsentService: SignedConsentService,
     private elementRef: ElementRef,
     private route: ActivatedRoute,
@@ -120,9 +122,9 @@ export class InformedConsentsComponent {
    * Carga la lista de consentimientos informados desde el servicio y la asigna al componente.
    */
   private loadInformedConsents(): void {
-    this.informedConsentService.listInformedConsents().subscribe({
+    this.userConsentService.listUserConsent().subscribe({
       next: data => {
-        this.informedConsentList = data.data; // Asignar lista de consentimientos informados
+        this.informedConsentList = data; // Asignar lista de consentimientos informados
         this.spinner = false;
       },
       error: err => this.handleError(err) // Manejo de errores
@@ -214,6 +216,7 @@ export class InformedConsentsComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const newSignedConsentPayload = { ...result, doctor_id: this.currentUser.id };
+        console.log('newSignedConsentPayload',newSignedConsentPayload)
         this.createSignedConsent(newSignedConsentPayload)
       }
     });
