@@ -1,0 +1,67 @@
+.full-width {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .custom-container{
+    /* add your styles */
+    padding: 15px;
+}
+
+//JCMV to style inputs as design required DO NOT REMOE
+.mat-mdc-text-field-wrapper {
+  background-color: #fff !important;
+}
+
+.mdc-text-field {
+  background-color: #fff !important;
+}
+
+.mdc-text-field--filled {
+  background-color: #fff !important;
+}
+
+.mdc-text-field--focused {
+  background-color: #fff !important;
+}
+//JCMV to style inputs as design required DO NOT REMOE
+
+.dialog-title {
+  color: #407DDA;
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: #C0D9FF !important;
+}
+
+.custom-dropzone {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+  border: 2px dashed #ccc;
+  position: relative;
+  overflow: hidden;
+}
+
+ngx-dropzone-preview {
+  min-width: 98%;
+}
+
+ngx-dropzone-image-preview img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+ngx-dropzone-remove-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+}

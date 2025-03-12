@@ -8,6 +8,9 @@
   color: $primary--blue;
 }
 
+.payment-dialog-content{
+  padding-top: 10px !important;
+}
 
 .mat-mdc-header-row .mat-mdc-header-cell{
   font-family: 'Roboto Condensed';
@@ -22,14 +25,12 @@
 
 table {
     width: 100%;
+    table-layout: fixed;
+    margin-bottom: 20px;
 }
 
 .payment-dialog-resume-controls{
     width: 40%;
-}
-
-.quality-header-column{
-  width: 8%;
 }
 
 
@@ -46,6 +47,27 @@ table {
   height: auto;
   margin: 10px;
   cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
+
+//anchos custon para las columnas de la tabla
+.mat-column-quantity {
+  width: 8%;
+}
+
+.mat-column-concept {
+  width: 30%;
+}
+
+.mat-column-paymentMethod {
+  width: 20%;
+}
+
+.mat-column-actions {
+  width: 5%;
 }
 
 //JCMV to style inputs as design required DO NOT REMOE
@@ -73,4 +95,3 @@ table {
     border-bottom-color: #6CA6FE;
   }
   //JCMV to style inputs as design required DO NOT REMOE
-  

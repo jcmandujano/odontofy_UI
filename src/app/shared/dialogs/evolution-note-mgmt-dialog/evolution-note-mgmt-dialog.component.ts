@@ -28,17 +28,17 @@ export class EvolutionNoteMgmtDialogComponent {
   noteContent: string = ''
   quillConfig = {
     toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],  // Tamaño de encabezado
-      ['bold', 'italic', 'underline', 'strike'],  // Negrita, cursiva, subrayado y tachado
-      [{ 'color': [] }],    // Color de texto y fondo
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }], // Listas ordenadas y desordenadas
-      [{ 'indent': '-1' }, { 'indent': '+1' }],   // Disminuir/aumentar sangría
-      [{ 'align': [] }],                         // Alineación de texto
-      ['blockquote'],              // Cita en bloque y bloque de código
-      ['clean']                                  // Botón para limpiar el formato
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],// Tamaño de encabezado
+      ['bold', 'italic', 'underline', 'strike'],// Negrita, cursiva, subrayado y tachado
+      [{ 'color': [] }],//Color de texto y fondo
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],//Listas ordenadas y desordenadas
+      [{ 'indent': '-1' }, { 'indent': '+1' }],//Disminuir/aumentar sangría
+      [{ 'align': [] }],// Alineación de texto
+      ['blockquote'],// Cita en bloque y bloque de código
+      ['clean']// Botón para limpiar el formato
     ],
-    scrollingContainer: 'html',                   // Contenedor con scroll
-    bounds: 'self'                               // Limitar el editor dentro de un área
+    scrollingContainer: 'html',// Contenedor con scroll
+    bounds: 'self'// Limitar el editor dentro de un área
     
   };
   constructor(

@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
         this.storeSession(data)
         this.router.navigate(['/dashboard'])
       },(error: { error: { error: { message: any; }; }; })=>{
-        console.log('ERRORRRRR', error.error.error.message)
+        console.log('ERRO', error.error.error.message)
         this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
       })
     }else{

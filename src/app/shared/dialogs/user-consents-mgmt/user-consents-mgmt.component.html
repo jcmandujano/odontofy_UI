@@ -1,0 +1,27 @@
+<h2 mat-dialog-title class="dialog-title">Agregar Consentimiento Informado</h2>
+<mat-dialog-content>
+    <form [formGroup]="userConsentsForm">
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name">
+        </mat-form-field>
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Descripcion</mat-label>
+            <input matInput formControlName="description">
+        </mat-form-field>
+        <ngx-dropzone [multiple]="false" (change)="onSelect($event)" class="custom-dropzone">
+            <ngx-dropzone-label>Arrastra y suelta tu archivo</ngx-dropzone-label>
+            @for(f of files; track f.name){
+                <ngx-dropzone-preview [removable]="true" (removed)="onRemove(f)">
+                    <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            }
+            
+        </ngx-dropzone>
+    </form>
+    
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close color="warn">Cancelar</button>
+    <button mat-button (click)="onSave()" color="primary">Guardar</button>
+</mat-dialog-actions>

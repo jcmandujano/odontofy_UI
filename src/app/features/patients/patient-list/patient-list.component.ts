@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-patient-list',
@@ -30,7 +31,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatTableModule,
     CommonModule,
     ReactiveFormsModule,
-    MatButtonModule
+    MatButtonModule,
+    NoDataFoundComponent
   ],
   templateUrl: './patient-list.component.html',
   styleUrl: './patient-list.component.scss'

@@ -3,9 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { Concept } from '../../../core/models/concept.model';
 import { Payment } from '../../../core/models/payment.model';
-import { ConceptsService } from '../../../core/services/concepts.service';
 import { PacientesService } from '../../../core/services/patient.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
@@ -21,6 +19,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { UserConcept } from '../../../core/models/user-concept.model';
+import { UserConceptsService } from '../../../core/services/user-concepts.service';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-patient-payments',
@@ -36,23 +37,25 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule,
     MatFormFieldModule, //FORM MODULES
     ReactiveFormsModule, //FORM MODULES
-    MatInputModule //FORM MODULES
+    MatInputModule, //FORM MODULES
+    NoDataFoundComponent
   ],
   templateUrl: './patient-payments.component.html',
   styleUrl: './patient-payments.component.scss'
 })
 export class PatientPaymentsComponent {
-  displayedColumns: string[] = ['fecha', 'total', 'ingreso', 'adeudo', 'actions'];
+  displayedColumns: string[] = ['conceptos', 'fecha', 'total', 'ingreso', 'adeudo', 'actions'];
   dataSource: Payment[] = []
   patient: Patient | null = null;
-  conceptList: Concept[] = []
+  conceptList: UserConcept[] = []
+  displayJointConcepts = ''
   spinner= false
   selectedPatientId: number = 0
   constructor(private elementRef: ElementRef,
     public dialog: MatDialog,
     private route: ActivatedRoute,
     private pacientesService: PacientesService,
-    private conceptsService: ConceptsService,
+    private userConceptsService: UserConceptsService,
     private snackBar: MatSnackBar,
     private paymentService: PaymentService
   ){}
@@ -63,13 +66,13 @@ export class PatientPaymentsComponent {
       this.spinner = true
       forkJoin([
         this.pacientesService.findPatient(this.selectedPatientId),
-        this.conceptsService.listConcepts(),
+        this.userConceptsService.listUserConcepts(),
         this.paymentService.listPayments(this.selectedPatientId)
       ]).subscribe(
         ([pacienteData, conceptsData, paymentData]) => {
           this.patient = pacienteData.patient;
           this.conceptList = conceptsData
-          this.dataSource = paymentData
+          this.dataSource = paymentData.map((payment: Partial<Payment> | undefined) => new Payment(payment));
           this.spinner = false;
         },
         error => {
@@ -93,7 +96,7 @@ export class PatientPaymentsComponent {
 
   openPaymentDialog(payment?: Payment){
     const dialogRef = this.dialog.open(PaymentMgmtDialogComponent,{
-      width: '70vw',
+      minWidth: '70vw',
       data: {
         patientData: this.patient,
         conceptsData: this.conceptList,
@@ -103,17 +106,12 @@ export class PatientPaymentsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
-        console.log('QUE PASO???', result)
         const paymentData = result
         if(payment){
           //si la informacion de payment existe, quiere decir que es un actualizar
-          console.log("vamos a actualizar")
-          console.log('DATA PAYMENT', payment)
-          console.log('DATA EDITED', result)
           this.updatePayment(payment.id, paymentData)
         }else{
           //si la informacion de payment no existe, quiere decir que es un crear
-          console.log("vamos a crear")
           this.createNewPayment(paymentData)
         }
        
@@ -129,13 +127,12 @@ export class PatientPaymentsComponent {
       total: paymentData.total,
       concepts: paymentData.concepts.map((concept: any) => ({
         conceptId: concept.paymentConcept,
-        payment_method: concept.paymentMethod,
+        paymentMethod: concept.paymentMethod,
         quantity: concept.quantity
       }))
     });
     this.spinner = true
     this.paymentService.createPayment(this.selectedPatientId, paymentInstance).subscribe(response=>{
-      console.log("respyesta", response)
       this.reloadPaymentsData()
       this.spinner = false
     },(error)=>{
@@ -146,7 +143,6 @@ export class PatientPaymentsComponent {
   }
 
   updatePayment(paymentId: number, paymentData: any){
-    console.log("vamos a actualizar")
     const paymentInstance = new Payment({
       payment_date: new Date(paymentData.paymentDate),
       income: paymentData.income,
@@ -155,13 +151,12 @@ export class PatientPaymentsComponent {
       concepts: paymentData.concepts.map((concept: any) => ({
         id: concept.id,
         conceptId: concept.paymentConcept,
-        payment_method: concept.paymentMethod,
+        paymentMethod: concept.paymentMethod,
         quantity: concept.quantity
       }))
     });
     this.spinner = true
     this.paymentService.updatePayment(paymentId, this.selectedPatientId, paymentInstance).subscribe(response=>{
-      console.log("respyesta", response)
       this.reloadPaymentsData()
       this.spinner = false
     },(error)=>{
@@ -172,7 +167,6 @@ export class PatientPaymentsComponent {
   }
 
   deletePayment(paymentId: number){
-    console.log('Vamos a eliminar el pago con el id', paymentId)
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Eliminar Pago',
@@ -184,7 +178,6 @@ export class PatientPaymentsComponent {
       if(result){
         this.spinner = true
         this.paymentService.deletePayment(this.selectedPatientId, paymentId).subscribe(response=>{
-          console.log("respyesta", response)
           this.spinner = false
           this.openSnackbar(response.msg, 'Ok')
           this.reloadPaymentsData()
@@ -202,7 +195,6 @@ export class PatientPaymentsComponent {
   reloadPaymentsData(){
     this.spinner = true
     this.paymentService.listPayments(this.selectedPatientId).subscribe(response=>{
-      console.log("respyesta", response)
       this.spinner = false
       this.dataSource = response
     },(error)=>{

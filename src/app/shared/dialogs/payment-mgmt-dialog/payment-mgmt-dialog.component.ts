@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Validators, FormBuilder, FormGroup, FormArray, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -12,25 +12,26 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { UserConcept } from '../../../core/models/user-concept.model';
 
 export interface ConceptModel {
   id: number;
   paymentConcept: string;
-  unitPrize: number;
-  payment_method: string;
+  unitPrize: string;
+  paymentMethod: string;
   quantity: number;
-  subtotal: number;
+  subtotal: string;
 }
 
 const ELEMENT_DATA: ConceptModel[] = [
-  { id: 1, paymentConcept: '', unitPrize: 0.00, payment_method: '',quantity: 1, subtotal: 0 }
+  { id: 1, paymentConcept: '', unitPrize: "0.00", paymentMethod: '',quantity: 1, subtotal: "0" }
 ];
 
 const PAYMENT_METHOD_LIST = [
   {id:'CASH', description:"Efectivo"},
   {id:'CREDIT', description:"Tarjeta de Crédito"},
   {id:'DEBIT', description:"Tarjeta de Débito"},
-  {id:'TRANSFER', description:"Transferencia Electronica"}
+  {id:'TRANSFERENCE', description:"Transferencia Electronica"}
 
 ]
 
@@ -48,15 +49,16 @@ const PAYMENT_METHOD_LIST = [
     ReactiveFormsModule, //FORM MODULES
     MatInputModule //FORM MODULES
   ],
-  providers: [DatePipe],
+  providers: [DatePipe, CurrencyPipe],
   templateUrl: './payment-mgmt-dialog.component.html',
-  styleUrl: './payment-mgmt-dialog.component.scss'
+  styleUrl: './payment-mgmt-dialog.component.scss',
+  
 })
 export class PaymentMgmtDialogComponent {
   @ViewChild(MatTable)
   table!: MatTable<ConceptModel>;
   paymentFormGroup: FormGroup;
-  conceptList: Concept[]
+  conceptList: UserConcept[]
   conceptData = ELEMENT_DATA;
   selectedPatient: Patient
   income = 0;
@@ -66,18 +68,19 @@ export class PaymentMgmtDialogComponent {
   displayedColumns: string[] = ['concept', 'unitPrize', 'paymentMethod', 'quantity', 'subtotal', 'actions'];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public dialogData: {patientData: Patient, conceptsData: Concept[], paymentData: Payment},
+    @Inject(MAT_DIALOG_DATA) public dialogData: {patientData: Patient, conceptsData: UserConcept[], paymentData: Payment},
     public dialogRef: MatDialogRef<PaymentMgmtDialogComponent>,
     private fb: FormBuilder,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
+    private currencyPipe: CurrencyPipe,
     private datePipe: DatePipe) {
 
       this.paymentFormGroup = this.fb.group({
         paymentDate: [new Date(), Validators.required], 
-        income: [0, Validators.required],
-        debt: [0, Validators.required],
-        total: [0, Validators.required],
+        income: ['MX$0.00', Validators.required],
+        debt: ['MX$0.00', Validators.required],
+        total: ['MX$0.00', Validators.required],
         concepts: this.fb.array([]) // Initialize an empty FormArray
       });
 
@@ -103,7 +106,7 @@ export class PaymentMgmtDialogComponent {
           new FormGroup({
             paymentConcept: this.fb.control(item['paymentConcept'], [Validators.required]),
             unitPrize: this.fb.control(item['unitPrize'], [Validators.required]),
-            payment_method: this.fb.control(item['payment_method'], [Validators.required]),
+            paymentMethod: this.fb.control(item['paymentMethod'], [Validators.required]),
             subtotal: this.fb.control(item['subtotal'], [Validators.required]),
             quantity: this.fb.control(item['quantity'], [Validators.required]),
           })
@@ -118,10 +121,10 @@ export class PaymentMgmtDialogComponent {
     const newItem: ConceptModel = {
       id: this.conceptData.length + 1, // Generar un nuevo ID único
       paymentConcept: '',
-      unitPrize: 0.00,
-      payment_method: '',
+      unitPrize: "MX$0.00",
+      paymentMethod: '',
       quantity: 1,
-      subtotal: 0,
+      subtotal: "MX$0.00",
     };
 
     // Agregar el nuevo item a conceptData
@@ -131,7 +134,7 @@ export class PaymentMgmtDialogComponent {
     const newItemFormGroup = this.fb.group({
       paymentConcept: [newItem.paymentConcept, Validators.required],
       unitPrize: [newItem.unitPrize, Validators.required],
-      payment_method: [newItem.payment_method, Validators.required],
+      paymentMethod: [newItem.paymentMethod, Validators.required],
       quantity: [newItem.quantity, Validators.required],
       subtotal: [newItem.subtotal, Validators.required],
     });
@@ -145,6 +148,12 @@ export class PaymentMgmtDialogComponent {
     this.conceptData.splice(index,1)
     this.concepts.removeAt(index)
     this.table.renderRows();
+
+    //calculamos el total para el resumen del pago
+    this.calculateTotal()
+    
+    //calculamos el adeudo
+    this.calculateDebt(0)
   }
   
   // Helper method to get the 'items' FormArray
@@ -158,6 +167,8 @@ export class PaymentMgmtDialogComponent {
       return;
     }
     if(this.paymentFormGroup.valid){
+      const fieldsToFormat = ['income', 'debt', 'total', 'unitPrize', 'subtotal'];
+      this.removeCurrencyFormatFromFields(this.paymentFormGroup, fieldsToFormat);
       this.dialogRef.close(this.paymentFormGroup.value)
     }
   }
@@ -165,20 +176,22 @@ export class PaymentMgmtDialogComponent {
   patchValuesToEdit(payment: Payment){
     this.paymentFormGroup.patchValue({
       paymentDate: payment.payment_date,
-      income: payment.income,
-      debt: payment.debt,
-      total: payment.total,
+      income: this.currencyPipe.transform(payment.income, 'MXN', 'symbol') ?? '',
+      debt: this.currencyPipe.transform(payment.debt, 'MXN', 'symbol') ?? '',
+      total: this.currencyPipe.transform(payment.total, 'MXN', 'symbol') ?? '',
     });
     payment.concepts.forEach((item, index) => {
       const unitPrizeRow = this.getConceptPriceById(item.conceptId)
+      const formattedUnitPrizeRow = this.currencyPipe.transform(unitPrizeRow, 'MXN', 'symbol') ?? ''
       const subtotalRow = unitPrizeRow * item.quantity
+      const formattedSubtotal = this.currencyPipe.transform(subtotalRow, 'MXN', 'symbol') ?? ''
       this.concepts.push(
         new FormGroup({
           paymentConcept: this.fb.control(item.conceptId, [Validators.required]),
           id: this.fb.control(item.id, [Validators.required]),
-          unitPrize: this.fb.control(this.getConceptPriceById(item.conceptId), [Validators.required]),
-          payment_method: this.fb.control(item.payment_method, [Validators.required]),
-          subtotal: this.fb.control(subtotalRow, [Validators.required]),
+          unitPrize: this.fb.control(formattedUnitPrizeRow, [Validators.required]),
+          paymentMethod: this.fb.control(item.paymentMethod, [Validators.required]),
+          subtotal: this.fb.control(formattedSubtotal, [Validators.required]),
           quantity: this.fb.control(item.quantity, [Validators.required]),
         })
       );
@@ -186,14 +199,16 @@ export class PaymentMgmtDialogComponent {
 
     this.conceptData = this.paymentData.concepts.map((element) => {
       const unitPrizeRow = this.getConceptPriceById(element.conceptId)
+      const formattedUnitPrizeRow = this.currencyPipe.transform(unitPrizeRow, 'MXN', 'symbol') ?? ''
       const subtotalRow = unitPrizeRow * element.quantity
+       const formattedSubtotal = this.currencyPipe.transform(subtotalRow, 'MXN', 'symbol') ?? ''
       return { 
         id: element.id, 
         paymentConcept: element.conceptId.toString(), 
-        unitPrize: unitPrizeRow, 
-        payment_method: element.payment_method,
+        unitPrize: formattedUnitPrizeRow, 
+        paymentMethod: element.paymentMethod,
         quantity: element.quantity, 
-        subtotal: subtotalRow
+        subtotal: formattedSubtotal
       };
     });
   }
@@ -217,17 +232,26 @@ export class PaymentMgmtDialogComponent {
   }
 
   //used to calculate price, subtotal and debt on concept changes
-  calculatePricesRow(selectedConceptIndex: number, formIndex: number, element: any){
-    const selectedConcept = this.conceptList[selectedConceptIndex - 1]; // Obtener el concepto seleccionado
+  calculatePricesRow(conceptId: number, formIndex: number, element: any){
+    // Obtener el concepto seleccionado por medio del id
+    const selectedConcept = this.conceptList.find((element) => element.id == conceptId)
+    
     // Actualizar el precio unitario (unitPrize) en el formulario
-    this.paymentFormGroup.get(['concepts', formIndex, 'unitPrize'])?.patchValue(selectedConcept.unit_price);
+    const unitPrice = selectedConcept?.unit_price;
+    const unitPriceFormatted = this.currencyPipe.transform(unitPrice, 'MXN', 'symbol') ?? '';
+    this.paymentFormGroup.get(['concepts', formIndex, 'unitPrize'])?.patchValue(unitPriceFormatted);
+    
     // Calcular el subtotal basado en el precio unitario y la cantidad
     const quantity = this.paymentFormGroup.get(['concepts', formIndex, 'quantity'])?.value || 0;
-    const subtotal = selectedConcept.unit_price * quantity;
+    const subtotal = selectedConcept?.unit_price ? selectedConcept?.unit_price : 0 * quantity;
+    const subtotalFormatted = this.currencyPipe.transform(subtotal, 'MXN', 'symbol') ?? '';
+    
     // Actualizar el valor del subtotal en el formulario
-    this.paymentFormGroup.get(['concepts', formIndex, 'subtotal'])?.patchValue(subtotal);
+    this.paymentFormGroup.get(['concepts', formIndex, 'subtotal'])?.patchValue(subtotalFormatted);
+    
     //calculamos el total para el resumen del pago
     this.calculateTotal()
+    
     //calculamos el adeudo
     this.calculateDebt(0)
   }
@@ -236,16 +260,20 @@ export class PaymentMgmtDialogComponent {
   calculateSubtotal(formIndex: number) {
     const conceptFormGroup = this.concepts.at(formIndex);
 
-    const unitPrice = conceptFormGroup.get('unitPrize')?.value || 0;
-    const quantity = conceptFormGroup.get('quantity')?.value || 0;
+    const formattedUnitPrice = conceptFormGroup.get('unitPrize')?.value
+    const unitPrice = parseFloat(formattedUnitPrice.replace(/[^0-9.-]+/g, ""))
+
+    const formattedQuantity = conceptFormGroup.get('quantity')?.value || 0;
+    const quantity = parseFloat(formattedQuantity.replace(/[^0-9.-]+/g, ""))
     
     const subtotal = unitPrice * quantity;
   
-    conceptFormGroup.get('subtotal')?.patchValue(subtotal);
+    const formattedSubtotal = this.currencyPipe.transform(subtotal, 'MXN', 'symbol') ?? '';
+    conceptFormGroup.get('subtotal')?.patchValue(formattedSubtotal);
     this.calculateTotal()
     const currentIncome = this.paymentFormGroup.get('income')?.value
-    console.log('currentIncome', currentIncome)
-    this.calculateDebt(currentIncome)
+    const numericIncome = parseFloat(currentIncome.replace(/[^0-9.-]+/g, ""));
+    this.calculateDebt(numericIncome)
   }
 
   //used to calculate total by row
@@ -254,11 +282,15 @@ export class PaymentMgmtDialogComponent {
     // Iterar sobre los controles del FormArray
     this.concepts.controls.forEach((control: AbstractControl<any>, index: number) => {
       if (control instanceof FormGroup) {
-        const subtotal = control.get('subtotal')?.value || 0;
+
+        const formattedSubtotal = control.get('subtotal')?.value
+        const subtotal = parseFloat(formattedSubtotal.replace(/[^0-9.-]+/g, ""))
+
         total += subtotal;
       }
     });
-    this.paymentFormGroup.get('total')?.patchValue(total)
+    const formattedTotal = this.currencyPipe.transform(total, 'MXN', 'symbol') ?? '';
+    this.paymentFormGroup.get('total')?.patchValue(formattedTotal)
     //return total;
   }
 
@@ -277,14 +309,51 @@ export class PaymentMgmtDialogComponent {
     return total;
   }
 
+   //este metodo se ejecuta al enfocar el input de unit_price
+  //con el objetivo de pasarlo del formato de moneda a un valor numerico
+  onIncomeFocus(event: Event): void {
+    //Obtiene el valor actual del input (lo que escribió el usuario).
+    const inputElement = event.target as HTMLInputElement;
+    let value = inputElement.value;
+
+    // Eliminar cualquier carácter no numérico (excepto el punto y el signo negativo)
+    const numericValue = parseFloat(value.replace(/[^0-9.-]+/g, ""));
+
+    // Actualiza el valor en el formulario
+    this.paymentFormGroup.controls['income'].setValue(numericValue);
+  }
+
+   //este metodo se ejecuta al desenfocar el input de unit_price
+  //con el objetivo de pasar el valor numerico a un formato de moneda
+  onIncomeBlur(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let value = inputElement.value;
+
+    // Eliminar cualquier carácter no numérico (excepto el punto y el signo negativo)
+    const numericValue = parseFloat(value.replace(/[^0-9.-]+/g, ""));
+    
+    this.calculateDebt(numericValue)
+    
+    // Formatea el valor numérico a moneda
+    const incomeFormatted = this.currencyPipe.transform(numericValue, 'MXN', 'symbol') ?? '';
+
+    // Actualiza el valor en el formulario con el formato de mon
+    this.paymentFormGroup.controls['income'].setValue(incomeFormatted);
+  }
+
   //display payment grand debt
   calculateDebt(income: number | null | undefined ){
     let debt = 0  
-    let total = this.paymentFormGroup.get('total')?.value
+    const formattedTotal = this.paymentFormGroup.get('total')?.value
+    const total = parseFloat(formattedTotal.replace(/[^0-9.-]+/g, ""))
+    
     if((total !== null && total !== undefined) && (income !== null && income !== undefined) ){
       debt = total - income 
     }
-    this.paymentFormGroup.get('debt')?.patchValue(debt)
+
+    const formattedDebt = this.currencyPipe.transform(debt, 'MXN', 'symbol') ?? '';
+
+    this.paymentFormGroup.get('debt')?.patchValue(formattedDebt)
   }
 
   //this method is used to mark as toucched all form groups after to save
@@ -297,4 +366,26 @@ export class PaymentMgmtDialogComponent {
       }
     });
   }
+
+  private removeCurrencyFormatFromFields(formGroup: FormGroup, fieldsToFormat: string[]) {
+    const cleanValue = (value: any, fieldName: string) => {
+      if (fieldsToFormat.includes(fieldName) && typeof value === 'string') {
+        return parseFloat(value.replace(/[^0-9.-]+/g, "")) || 0;
+      }
+      return value;
+    };
+  
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+  
+      if (control instanceof FormGroup) {
+        this.removeCurrencyFormatFromFields(control, fieldsToFormat);
+      } else if (control instanceof FormArray) {
+        control.controls.forEach((group) => this.removeCurrencyFormatFromFields(group as FormGroup, fieldsToFormat));
+      } else {
+        control?.setValue(cleanValue(control.value, key), { emitEvent: false });
+      }
+    });
+  }
+  
 }

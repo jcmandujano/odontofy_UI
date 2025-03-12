@@ -1,6 +1,7 @@
 export class Appointment {
     id: number;
     patient_id: number;
+    patientFullName!: string;
     appointment_date: string;
     appointment_time: string;
     note: string;
