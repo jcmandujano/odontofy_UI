@@ -3,14 +3,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-landing-page',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    RouterModule
-  ],
-  templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.scss'
+    selector: 'app-landing-page',
+    imports: [
+        MatButtonModule,
+        RouterModule
+    ],
+    templateUrl: './landing-page.component.html',
+    styleUrl: './landing-page.component.scss'
 })
 export class LandingPageComponent {
   constructor(private elementRef: ElementRef) { }

@@ -7,19 +7,17 @@ import { UserConceptsComponent } from '../user-concepts/user-concepts.component'
 import { UserConsentsComponent } from '../user-consents/user-consents.component';
 
 @Component({
-  selector: 'app-settings',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatTabsModule,
-    MatIconModule,
-    UserProfileComponent,
-    UserConceptsComponent,
-    UserConsentsComponent
-    
-  ],
-  templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss'
+    selector: 'app-settings',
+    imports: [
+        NavBarComponent,
+        MatTabsModule,
+        MatIconModule,
+        UserProfileComponent,
+        UserConceptsComponent,
+        UserConsentsComponent
+    ],
+    templateUrl: './settings.component.html',
+    styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
 

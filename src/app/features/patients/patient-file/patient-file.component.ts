@@ -29,22 +29,21 @@ export const MY_DATE_FORMATS = {
 };
 
 @Component({
-  selector: 'app-patient-file',
-  standalone: true,
-  imports: [
-    MatSelectModule,
-    MatRadioModule,
-    MatExpansionModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatProgressSpinnerModule,
-    NavBarComponent,
-    MatInputModule,
-    MatButtonModule
-  ],
-  templateUrl: './patient-file.component.html',
-  styleUrl: './patient-file.component.scss'
+    selector: 'app-patient-file',
+    imports: [
+        MatSelectModule,
+        MatRadioModule,
+        MatExpansionModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatProgressSpinnerModule,
+        NavBarComponent,
+        MatInputModule,
+        MatButtonModule
+    ],
+    templateUrl: './patient-file.component.html',
+    styleUrl: './patient-file.component.scss'
 })
 export class PatientFileComponent {
   crearPacientesForm: FormGroup

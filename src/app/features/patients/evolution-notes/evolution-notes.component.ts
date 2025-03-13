@@ -19,23 +19,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-evolution-notes',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    FormsModule,
-    MatTableModule,
-    CommonModule,
-    MatPaginatorModule,
-    MatButtonModule
-  ],
-  templateUrl: './evolution-notes.component.html',
-  styleUrl: './evolution-notes.component.scss'
+    selector: 'app-evolution-notes',
+    imports: [
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        FormsModule,
+        MatTableModule,
+        CommonModule,
+        MatPaginatorModule,
+        MatButtonModule
+    ],
+    templateUrl: './evolution-notes.component.html',
+    styleUrl: './evolution-notes.component.scss'
 })
 export class EvolutionNotesComponent {
   displayedColumns: string[] = ['fecha', 'nota', 'actions'];

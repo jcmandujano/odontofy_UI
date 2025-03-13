@@ -14,19 +14,18 @@ import { NoDataFoundComponent } from '../../../../shared/components/no-data-foun
 
 
 @Component({
-  selector: 'app-user-concepts',
-  standalone: true,
-  imports: [
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDialogModule,
-    CommonModule,
-    MatCardModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './user-concepts.component.html',
-  styleUrl: './user-concepts.component.scss'
+    selector: 'app-user-concepts',
+    imports: [
+        MatTableModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDialogModule,
+        CommonModule,
+        MatCardModule,
+        NoDataFoundComponent
+    ],
+    templateUrl: './user-concepts.component.html',
+    styleUrl: './user-concepts.component.scss'
 })
 export class UserConceptsComponent {
   displayedColumns: string[] = ['description', 'unit_cost', 'actions'];

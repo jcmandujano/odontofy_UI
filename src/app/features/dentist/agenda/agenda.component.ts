@@ -30,28 +30,27 @@ const colors: Record<string, EventColor> = {
 };
 
 @Component({
-  selector: 'app-agenda',
-  standalone: true,
-  imports: [
-    CalendarModule,
-    MatProgressSpinnerModule,
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatButtonModule
-  ],
-  templateUrl: './agenda.component.html',
-  styleUrls: ['./agenda.component.scss'],
-  providers: [
-    {
-      provide: DateAdapter,
-      useFactory: adapterFactory
-    },
-    CalendarUtils,
-    CalendarA11y,
-    CalendarDateFormatter,
-    CalendarEventTitleFormatter
-  ]
+    selector: 'app-agenda',
+    imports: [
+        CalendarModule,
+        MatProgressSpinnerModule,
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatButtonModule
+    ],
+    templateUrl: './agenda.component.html',
+    styleUrls: ['./agenda.component.scss'],
+    providers: [
+        {
+            provide: DateAdapter,
+            useFactory: adapterFactory
+        },
+        CalendarUtils,
+        CalendarA11y,
+        CalendarDateFormatter,
+        CalendarEventTitleFormatter
+    ]
 })
 export class AgendaComponent {
   viewDate: Date = new Date(); // Asegúrate de que sea el mes actual

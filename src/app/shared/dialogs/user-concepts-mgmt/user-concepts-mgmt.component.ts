@@ -8,21 +8,20 @@ import { CurrencyPipe } from '@angular/common';
 
 
 @Component({
-  selector: 'app-user-concepts-mgmt',
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    MatDialogActions,
-    MatDialogClose,
-    MatInputModule,
-    MatDialogContent,
-    MatButtonModule,
-    MatFormFieldModule,
-    ReactiveFormsModule
-  ],
-  templateUrl: './user-concepts-mgmt.component.html',
-  styleUrl: './user-concepts-mgmt.component.scss',
-  providers: [CurrencyPipe]
+    selector: 'app-user-concepts-mgmt',
+    imports: [
+        MatDialogTitle,
+        MatDialogActions,
+        MatDialogClose,
+        MatInputModule,
+        MatDialogContent,
+        MatButtonModule,
+        MatFormFieldModule,
+        ReactiveFormsModule
+    ],
+    templateUrl: './user-concepts-mgmt.component.html',
+    styleUrl: './user-concepts-mgmt.component.scss',
+    providers: [CurrencyPipe]
 })
 export class UserConceptsMgmtComponent {
   userConceptForm: FormGroup;

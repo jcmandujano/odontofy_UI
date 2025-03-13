@@ -11,17 +11,16 @@ import { SessionStorageService } from '../../../../core/services/session-storage
 import { User } from '../../../../core/models/user.model';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    RouterModule,
-  ],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'app-login',
+    imports: [
+        MatIconModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        RouterModule,
+    ],
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
   hide = true

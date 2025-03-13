@@ -13,26 +13,25 @@ import { QuillModule } from 'ngx-quill';
 import 'moment/locale/es';
 
 @Component({
-  selector: 'app-appointment-mgmt-dialog',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatInputModule,
-    FormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSelectModule,
-    QuillModule,
-    MatFormFieldModule,
-    ReactiveFormsModule
-  ],
-  providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
-    provideMomentDateAdapter(),
-  ],
-  templateUrl: './appointment-mgmt-dialog.component.html',
-  styleUrl: './appointment-mgmt-dialog.component.scss'
+    selector: 'app-appointment-mgmt-dialog',
+    imports: [
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatInputModule,
+        FormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatSelectModule,
+        QuillModule,
+        MatFormFieldModule,
+        ReactiveFormsModule
+    ],
+    providers: [
+        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+        provideMomentDateAdapter(),
+    ],
+    templateUrl: './appointment-mgmt-dialog.component.html',
+    styleUrl: './appointment-mgmt-dialog.component.scss'
 })
 export class AppointmentMgmtDialogComponent {
   appointmentDate: Date = new Date();

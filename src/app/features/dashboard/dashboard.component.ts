@@ -26,19 +26,18 @@ import { PaymentBalance } from '../../core/models/payment-balance.model';
 import { NoDataFoundComponent } from '../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatListModule,
-    CommonModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+    selector: 'app-dashboard',
+    imports: [
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCardModule,
+        MatListModule,
+        CommonModule,
+        NoDataFoundComponent
+    ],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
   currentUser: User = new User;

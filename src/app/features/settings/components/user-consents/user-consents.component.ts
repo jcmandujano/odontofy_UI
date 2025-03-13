@@ -13,16 +13,15 @@ import { NoDataFoundComponent } from '../../../../shared/components/no-data-foun
 
 
 @Component({
-  selector: 'app-user-consents',
-  standalone: true,
-  imports: [    
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './user-consents.component.html',
-  styleUrl: './user-consents.component.scss'
+    selector: 'app-user-consents',
+    imports: [
+        MatTableModule,
+        MatButtonModule,
+        MatIconModule,
+        NoDataFoundComponent
+    ],
+    templateUrl: './user-consents.component.html',
+    styleUrl: './user-consents.component.scss'
 })
 export class UserConsentsComponent {
   displayedColumns: string[] = ['name', 'description', 'actions'];

@@ -19,23 +19,22 @@ import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
-  selector: 'app-patient-list',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatTableModule,
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './patient-list.component.html',
-  styleUrl: './patient-list.component.scss'
+    selector: 'app-patient-list',
+    imports: [
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatPaginatorModule,
+        MatTableModule,
+        CommonModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        NoDataFoundComponent
+    ],
+    templateUrl: './patient-list.component.html',
+    styleUrl: './patient-list.component.scss'
 })
 export class PatientListComponent {
   displayedColumns: string[] = ['nombre', 'ingreso', 'adeudo', 'prox_cita', 'actions'];
