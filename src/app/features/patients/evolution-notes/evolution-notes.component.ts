@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
     selector: 'app-evolution-notes',
@@ -31,7 +32,8 @@ import { MatButtonModule } from '@angular/material/button';
         MatTableModule,
         CommonModule,
         MatPaginatorModule,
-        MatButtonModule
+        MatButtonModule,
+        NoDataFoundComponent
     ],
     templateUrl: './evolution-notes.component.html',
     styleUrl: './evolution-notes.component.scss'
@@ -147,8 +149,8 @@ export class EvolutionNotesComponent {
 
   editarNotaDialog(nota: EvolutionNote){
     const dialogRef = this.dialog.open(EvolutionNoteMgmtDialogComponent, {
-      width: '40vw',
-      height: '80%',
+      minWidth: '40vw',
+      height: '70vh',
       data: nota
     });
 
@@ -190,8 +192,8 @@ export class EvolutionNotesComponent {
 
   creaNotaDialog(){
     const dialogRef = this.dialog.open(EvolutionNoteMgmtDialogComponent, {
-      width: '40vw',
-      height: '80%',
+      minWidth: '40vw',
+      height: '70vh',
       panelClass: 'custom-dialog-container' 
     });
 

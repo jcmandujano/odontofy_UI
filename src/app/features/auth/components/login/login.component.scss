@@ -4,18 +4,16 @@
     
 /* Create two equal columns that sits next to each other */
 .login_form_column {
-    flex: 60%;
+    flex: 65%;
     // padding: 10px;
-    height: 100vh; /* Should be removed. Only for demonstration */
     background-color: white;
 }
 
 .extra_info_column {
-    flex: 40%;
+    flex: 35%;
     background-image: url('/img/dummy.jpg.png');
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100vh; 
 }
 
 h1{
@@ -82,18 +80,18 @@ mat-label {
 }
 
 .login_form_container_welcome{
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .login_form_container_form{
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .button{
     margin-bottom: 40px;
 }
 .login_form_containe_legal{
-    margin-top: 60px;
+    margin-top: 55px;
 }
 
 .subtitle{

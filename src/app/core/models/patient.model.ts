@@ -19,6 +19,7 @@ export class Patient {
     public personal_medical_history!: {}
     public email!: string
     public status!: boolean
+    public debt!: number
 
     constructor(){
         this.name = ''
@@ -39,5 +40,18 @@ export class Patient {
         this.personal_medical_history = {}
         this.email = ''
         this.status = false
+        this.debt = 0
+    }
+
+    static fromJson(data: any): Patient {
+        const p = new Patient();
+        Object.assign(p, data);
+    
+        // Transformaciones específicas
+        p.debt = Number(data.debt ?? 0);
+        p.date_of_birth = data.date_of_birth ? new Date(data.date_of_birth) : new Date();
+        p.status = Boolean(data.status);
+    
+        return p;
     }
 }

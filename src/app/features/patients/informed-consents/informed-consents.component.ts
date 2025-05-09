@@ -204,7 +204,6 @@ export class InformedConsentsComponent {
   launchAddSignedConsentDialog(): void {
     const dialogRef = this.dialog.open(SignedConsentMgmtDialogComponent, {
       width: '40vw',
-      height: '480px',
       data: {
         informedConsentList: this.informedConsentList,
         patient: this.currentPatient

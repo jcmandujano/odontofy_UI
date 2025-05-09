@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 import { AuthService } from '../../../../core/services/auth.service';
 import { SessionStorageService } from '../../../../core/services/session-storage.service';
 import { User } from '../../../../core/models/user.model';
@@ -18,6 +18,7 @@ import { User } from '../../../../core/models/user.model';
         ReactiveFormsModule,
         MatInputModule,
         RouterModule,
+        NgxSpinnerModule
     ],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
@@ -33,6 +34,7 @@ export class LoginComponent implements OnInit {
   constructor( private router: Router,
     public authService: AuthService, 
     private snackBar: MatSnackBar,
+    private spinner: NgxSpinnerService,
     private sessionService : SessionStorageService) { }
 
   ngOnInit(): void {
@@ -47,15 +49,18 @@ export class LoginComponent implements OnInit {
   }
 
   doLogin(){
+    this.spinner.show();
     this.loginForm.markAllAsTouched()
     if(this.loginForm.valid){
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe((data: { user: any; })=>{
+        this.spinner.hide();
         this.userdata = data.user;
         this.storeSession(data)
         this.router.navigate(['/dashboard'])
-      },(error: { error: { error: { message: any; }; }; })=>{
-        console.log('ERRO', error.error.error.message)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      },(error:any)=>{
+        this.spinner.hide();
+        console.log('ERRO', error.error.msg)
+        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
       })
     }else{
       this.validateForm()

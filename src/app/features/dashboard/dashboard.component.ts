@@ -1,14 +1,14 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
+import { forkJoin, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
-
 import { User } from '../../core/models/user.model';
 import { SessionStorageService } from '../../core/services/session-storage.service';
 import { PrintConsentDialogComponent } from '../../shared/dialogs/print-consent-dialog/print-consent-dialog.component';
@@ -24,6 +24,11 @@ import { Patient } from '../../core/models/patient.model';
 import { PaymentService } from '../../core/services/payment.service';
 import { PaymentBalance } from '../../core/models/payment-balance.model';
 import { NoDataFoundComponent } from '../../shared/components/no-data-found/no-data-found.component';
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
+import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.component';
+import { UserService } from '../../core/services/user.service';
+import { ConfirmWithPasswordDialogComponent } from '../../shared/dialogs/confirm-with-password-dialog/confirm-with-password-dialog.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -34,20 +39,21 @@ import { NoDataFoundComponent } from '../../shared/components/no-data-found/no-d
         MatCardModule,
         MatListModule,
         CommonModule,
-        NoDataFoundComponent
+        NoDataFoundComponent,
+        NgxSpinnerModule,
+        NavBarComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   currentUser: User = new User;
   informedConsentList: UserInformedConsent[] = [];
-  // Indicador para mostrar el spinner de carga
-  spinner = false;
   events: CalendarEvent[] = []
   patientsList: Patient[] = []
   appointmentList: Appointment[] = []
   paymentBalance: PaymentBalance = new PaymentBalance();
+  showFinanceData: boolean = true;
   constructor(private sessionService : SessionStorageService,
   private router: Router, 
   private elementRef: ElementRef,
@@ -58,7 +64,10 @@ export class DashboardComponent {
   private appointmentService: AppointmentService,
   private patientService: PacientesService,
   private paymentService: PaymentService,
-  private domSanitizer: DomSanitizer) {
+  private spinner: NgxSpinnerService,
+  private domSanitizer: DomSanitizer,
+  public authService: AuthService,
+  private userService: UserService) {
     this.matIconRegistry.addSvgIcon(
       "agenda",
       this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_agenda.svg")
@@ -115,16 +124,33 @@ export class DashboardComponent {
    }
 
 
-  ngOnInit(): void {
+   ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();
-    this.loadInformedConsents();
-    this.retrievePatients();
-    this.retrieveAppointments();
-    this.retrievePaymentBalance();
+    this.showFinanceData = this.currentUser.show_finance_stats ?? false;
+    this.spinner.show();
+  
+    const metodos$ = [
+      this.loadInformedConsents(),
+      this.retrievePatients(),
+      this.retrieveAppointments(),
+      this.retrievePaymentBalance()
+    ].filter(m => m);
+  
+    forkJoin(metodos$).subscribe({
+      next: () => {
+        console.log('Todos los métodos ejecutados');
+        this.spinner.hide();
+      },
+      error: (err: any) => {
+        console.error('Error ejecutando métodos:', err);
+        this.spinner.hide();
+      },
+      complete: () => this.spinner.hide()
+    });
   }
 
   ngAfterViewInit(){
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#f6f9fd';
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#fff';
   }
 
   doLogout(){
@@ -145,7 +171,6 @@ export class DashboardComponent {
   }
 
   retrieveAppointments(){
-    this.spinner = true
     this.appointmentService.listAppointments().subscribe(data=>{
 
       // Asignar el nombre completo del paciente a cada cita
@@ -153,35 +178,43 @@ export class DashboardComponent {
         ...appointment,
         patientFullName: this.findPatientNameById(appointment.patient_id)
       }));
-  
-      this.spinner = false
+
     },(error)=>{
-      this.spinner = false
       console.log('ERROR', error)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
   retrievePatients(){
-    this.spinner = true
     this.patientService.listPatients().subscribe(data=>{
       this.patientsList = data.patients
-      this.spinner = false
     },(error)=>{
-      this.spinner = false
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
+  saveFinanceOptions(showFinanceData: boolean){
+    const financeOptions = {
+      show_finance_stats: showFinanceData
+    } as unknown as User
+    this.spinner.show()
+    this.userService.updateUser(this.currentUser.id, financeOptions).subscribe(data=>{
+      this.spinner.hide()
+      this.sessionService.saveUser(data)
+      console.log('Se guardaron las opciones de finanzas', data)
+    },(error)=>{
+      this.spinner.hide()
+      console.log('ERROR', error.error.error.message)
+      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+    })
+  }
+
+
   retrievePaymentBalance(){
-    this.spinner = true
     this.paymentService.getPaymentBalance().subscribe(data=>{
       this.paymentBalance = data as PaymentBalance;
-      console.log('BALANCE', this.paymentBalance)
-      this.spinner = false
     },(error)=>{
-      this.spinner = false
       console.log('ERROR', error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
     })
@@ -198,18 +231,43 @@ export class DashboardComponent {
     });
   }
 
+  visibilityFinanceHandler(visibility: boolean){
+    if(visibility) {
+      const dialogRef = this.dialog.open(ConfirmWithPasswordDialogComponent, {
+        width: '40vw',
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          const confirmPassword = result
+          this.spinner.show()
+          this.authService.verifyPassword(confirmPassword).subscribe(data=>{
+            this.saveFinanceOptions(visibility)
+            this.showFinanceData = visibility;
+            this.spinner.hide()
+            console.log('Se confirma operacion')
+          },(error)=>{
+            this.spinner.hide()
+            console.log('ERROR', error.error.msg)
+            this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
+          })
+        }
+      });
+    }else{
+      this.saveFinanceOptions(visibility)
+      this.showFinanceData = visibility;
+    }
+  }
+
   /**
    * Carga la lista de consentimientos informados desde el servicio y la asigna al componente.
    */
-  private loadInformedConsents(): void {
-    this.userConsentService.listUserConsent().subscribe({
-      next: data => {
-        this.informedConsentList = data; // Asignar lista de consentimientos informados
-        this.spinner = false;
-      },
-      error: err => this.handleError(err) // Manejo de errores
-    });
+  private loadInformedConsents(): Observable<UserInformedConsent[]> {
+    return this.userConsentService.listUserConsent().pipe(
+      tap(data => this.informedConsentList = data) // Asignar datos al recibir respuesta
+    );
   }
+  
 
   /**
    * Abre un diálogo para crear un nuevo consentimiento informado.
@@ -218,7 +276,6 @@ export class DashboardComponent {
   launchPrintConsentDialog(): void {
     const dialogRef = this.dialog.open(PrintConsentDialogComponent, {
       width: '40vw',
-      height: '280px',
       data: this.informedConsentList,
       panelClass: 'custom-dialog-container'
     });
@@ -247,10 +304,10 @@ export class DashboardComponent {
    * @param error Error capturado de la respuesta HTTP.
    */
   private handleError(error: any): void {
-    this.spinner = false;
     console.error('ERROR', error.error.error.message);
     // Descomentar la siguiente línea para mostrar una notificación de error
     // this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok');
   }
     
 }
+

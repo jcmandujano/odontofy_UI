@@ -1,9 +1,5 @@
 <app-nav-bar></app-nav-bar>
-@if(spinner){
-    <div class="progress-loader">
-        <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-      </div>
-}
+<ngx-spinner type="ball-newton-cradle"></ngx-spinner>
 
 <div class="container">
     <div class="row navigation_row">
@@ -19,7 +15,14 @@
             </div>
         </div>
         <div class="col-6">
-            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="newAppointment()">Agregar Cita</button> </div>
+            <div class="nuevo_paciente_button_container"> 
+              <button mat-stroked-button color="primary" class="google-connect-btn" (click)="syncGoogle()" *ngIf="!isUserSyncGoogle">
+                <img src="icons/google-calendar.png" alt="Google logo" />
+                Connectar
+              </button>
+              
+              <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="newAppointment()">Agregar Cita</button> 
+            </div>
         </div>
     </div>
 

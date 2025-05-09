@@ -8,6 +8,7 @@ import { SessionStorageService } from '../../../../core/services/session-storage
 import { MatButtonModule } from '@angular/material/button';
 import { UserService } from '../../../../core/services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 
 @Component({
     selector: 'app-user-profile',
@@ -16,7 +17,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
         MatFormFieldModule,
         MatInputModule,
         MatDatepickerModule,
-        MatButtonModule
+        MatButtonModule,
+        NgxSpinnerModule
     ],
     templateUrl: './user-profile.component.html',
     styleUrl: './user-profile.component.scss'
@@ -24,12 +26,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class UserProfileComponent {
   userProfileForm: FormGroup
   currentUser: User = new User;
-  spinner= false
   isEmailDisabled = true
   constructor(
     private sessionService :SessionStorageService,
     private userService: UserService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private spinner: NgxSpinnerService,
+
   ){
     this.userProfileForm = this.buildUserProfileform()
   }
@@ -62,15 +65,15 @@ export class UserProfileComponent {
 
   updateProfile(){
     if(this.userProfileForm.valid){
-      this.spinner = true
+      this.spinner.show()
       const updatedUser = this.userProfileForm.value
       delete updatedUser.email
       this.userService.updateUser(this.currentUser.id, this.userProfileForm.value).subscribe(data=>{
         this.sessionService.saveUser(data)
         this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
-        this.spinner = false
+        this.spinner.hide()
       },(error)=>{
-        this.spinner = false
+        this.spinner.hide()
         console.log('ERROR', error)
         this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
       })

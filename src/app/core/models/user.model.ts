@@ -8,6 +8,8 @@ export class User {
     public avatar?: string
     public email?: string 
     public password?:string
+    public show_finance_stats?: boolean
+    public is_google_synced?: boolean
 
 }
 

@@ -1,6 +1,6 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerInputEvent, MatDatepickerIntl, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PacientesService } from '../../../core/services/patient.service';
@@ -14,19 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-
-
-export const MY_DATE_FORMATS = {
-  parse: {
-    dateInput: 'DD/MM/YYYY',
-  },
-  display: {
-    dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY'
-  },
-};
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-patient-file',
@@ -54,6 +42,7 @@ export class PatientFileComponent {
     private pacientesService: PacientesService, 
     private router: Router,
     private route: ActivatedRoute,
+    private location: Location,
     private snackBar: MatSnackBar) { 
     this.crearPacientesForm = this.buildPacientesForm()
   }
@@ -67,8 +56,8 @@ export class PatientFileComponent {
         this.spinner = false
       },(error)=>{
         this.spinner = false
-        console.log('ERROR', error.error.error.message)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+        console.log('ERROR', error.error.msg)
+        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
       })
     }
   }
@@ -114,7 +103,7 @@ export class PatientFileComponent {
       },(error)=>{
         this.spinner = false
         console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
       })
     }
   }
@@ -125,12 +114,11 @@ export class PatientFileComponent {
       this.patient = this.crearPacientesForm.value
       this.pacientesService.updatePatient(this.pacienteId, this.patient).subscribe(data=>{
         this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
-        this.router.navigate(['/lista-pacientes'])
         this.spinner = false
       },(error)=>{
         this.spinner = false
         console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
       })
     }
   }
@@ -265,6 +253,10 @@ export class PatientFileComponent {
 
       })
     })
+  }
+
+  cancel(){
+    this.location.back();
   }
 
   openSnackbar(message: string, action: string) {
