@@ -24,24 +24,23 @@ import { UserConceptsService } from '../../../core/services/user-concepts.servic
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
-  selector: 'app-patient-payments',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatTableModule,
-    CommonModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatFormFieldModule, //FORM MODULES
-    ReactiveFormsModule, //FORM MODULES
-    MatInputModule, //FORM MODULES
-    NoDataFoundComponent
-  ],
-  templateUrl: './patient-payments.component.html',
-  styleUrl: './patient-payments.component.scss'
+    selector: 'app-patient-payments',
+    imports: [
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatTableModule,
+        CommonModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatFormFieldModule, //FORM MODULES
+        ReactiveFormsModule, //FORM MODULES
+        MatInputModule, //FORM MODULES
+        NoDataFoundComponent
+    ],
+    templateUrl: './patient-payments.component.html',
+    styleUrl: './patient-payments.component.scss'
 })
 export class PatientPaymentsComponent {
   displayedColumns: string[] = ['conceptos', 'fecha', 'total', 'ingreso', 'adeudo', 'actions'];

@@ -20,7 +20,7 @@ export class AppointmentService{
     }
 
     listAppointments(){
-        return this.http.get<Appointment[]>(`${PATH_API}/appointments`, httpOptions).pipe(
+        return this.http.get<Appointment[]>(`${PATH_API}/appointments?fromToday=true`, httpOptions).pipe(
             map((response: any)=> {
                 return response
             })

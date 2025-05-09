@@ -13,21 +13,20 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 
 
 @Component({
-  selector: 'app-signed-consent-mgmt-dialog',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatDatepickerModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    FormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSelectModule,
-    NgxDropzoneModule
-  ],
-  templateUrl: './signed-consent-mgmt-dialog.component.html',
-  styleUrl: './signed-consent-mgmt-dialog.component.scss'
+    selector: 'app-signed-consent-mgmt-dialog',
+    imports: [
+        MatFormFieldModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        FormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatSelectModule,
+        NgxDropzoneModule
+    ],
+    templateUrl: './signed-consent-mgmt-dialog.component.html',
+    styleUrl: './signed-consent-mgmt-dialog.component.scss'
 })
 export class SignedConsentMgmtDialogComponent {
   patientName = new FormControl({ value: '', disabled: true });

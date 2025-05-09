@@ -24,4 +24,10 @@ export class AuthService {
   register(payload:any): Observable<any> {
     return this.http.post(AUTH_API + '/auth/register',payload, httpOptions);
   }
+
+  verifyPassword(password: string): Observable<any> {
+    return this.http.post(AUTH_API + '/auth/verify-password', {
+      password: password
+    }, httpOptions);
+  }
 }

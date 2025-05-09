@@ -11,22 +11,23 @@ import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialo
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { NoDataFoundComponent } from '../../../../shared/components/no-data-found/no-data-found.component';
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 
 
 @Component({
-  selector: 'app-user-concepts',
-  standalone: true,
-  imports: [
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDialogModule,
-    CommonModule,
-    MatCardModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './user-concepts.component.html',
-  styleUrl: './user-concepts.component.scss'
+    selector: 'app-user-concepts',
+    imports: [
+        MatTableModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDialogModule,
+        CommonModule,
+        MatCardModule,
+        NoDataFoundComponent,
+        NgxSpinnerModule
+    ],
+    templateUrl: './user-concepts.component.html',
+    styleUrl: './user-concepts.component.scss'
 })
 export class UserConceptsComponent {
   displayedColumns: string[] = ['description', 'unit_cost', 'actions'];
@@ -34,7 +35,8 @@ export class UserConceptsComponent {
   constructor(
     public userConceptServ: UserConceptsService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private spinner: NgxSpinnerService
   ) {}  
   
   ngOnInit() {
@@ -49,13 +51,16 @@ export class UserConceptsComponent {
   
     dialogRef.afterClosed().subscribe(result => {
       if(result){
+        this.spinner.show()
         const updatedConcept = { ...result, is_custom: true };
         this.userConceptServ.createUserConcept(updatedConcept).subscribe(response=>{
+          this.spinner.hide()
           this.listUserConcepts()
           this.openSnackbar('Concepto creado', 'Cerrar');
         }
         ,(error)=>{
-          console.log('ERROR', error.error.error.message)
+          this.spinner.show()
+          console.log('ERROR', error.error.msg)
         }
         );
       }
@@ -71,12 +76,15 @@ export class UserConceptsComponent {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         const updatedConcept = { ...result, is_custom: concept.is_custom };
+        this.spinner.show()
         this.userConceptServ.updateUserConcept(concept.id, updatedConcept).subscribe(response=>{
+          this.spinner.hide()
           this.listUserConcepts()
           this.openSnackbar('Concepto actualizado', 'Cerrar');
         }
         ,(error)=>{
-          console.log('ERROR', error.error.error.message)
+          this.spinner.hide()
+          console.log('ERROR', error.error.msg)
         });
       }
     });
@@ -92,11 +100,14 @@ export class UserConceptsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
+        this.spinner.show()
         this.userConceptServ.deleteUserConcept(id).subscribe(response=>{
+          this.spinner.hide()
           this.listUserConcepts()
           this.openSnackbar('Concepto eliminado', 'Cerrar');
         }
         ,(error)=>{
+          this.spinner.hide()
           console.log('ERROR', error.error.msg)
           this.openSnackbar(error.error.msg, 'Cerrar');
         }
@@ -106,7 +117,9 @@ export class UserConceptsComponent {
   }
 
   listUserConcepts(){
+    this.spinner.show()
     this.userConceptServ.listUserConcepts().subscribe(response=>{
+      this.spinner.hide()
       this.dataSource = response.map((item: any) => ({
         id: item.id,
         description: item.description,
@@ -116,7 +129,8 @@ export class UserConceptsComponent {
         updatedAt: new Date(item.updatedAt)
       }));
     },(error)=>{
-      console.log('ERROR', error.error.error.message)
+      this.spinner.hide()
+      console.log('ERROR', error.error.msg)
     })
   }
 

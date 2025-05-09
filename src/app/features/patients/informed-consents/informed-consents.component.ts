@@ -26,24 +26,23 @@ import { UserInformedConsent } from '../../../core/models/user-consent.model';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
-  selector: 'app-informed-consents',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    FormsModule,
-    MatTableModule,
-    CommonModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './informed-consents.component.html',
-  styleUrl: './informed-consents.component.scss'
+    selector: 'app-informed-consents',
+    imports: [
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        FormsModule,
+        MatTableModule,
+        CommonModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        NoDataFoundComponent
+    ],
+    templateUrl: './informed-consents.component.html',
+    styleUrl: './informed-consents.component.scss'
 })
 export class InformedConsentsComponent {
   // Columnas a mostrar en la tabla de consentimientos
@@ -205,7 +204,6 @@ export class InformedConsentsComponent {
   launchAddSignedConsentDialog(): void {
     const dialogRef = this.dialog.open(SignedConsentMgmtDialogComponent, {
       width: '40vw',
-      height: '480px',
       data: {
         informedConsentList: this.informedConsentList,
         patient: this.currentPatient

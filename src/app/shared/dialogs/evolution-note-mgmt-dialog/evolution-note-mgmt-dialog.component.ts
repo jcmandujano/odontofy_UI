@@ -9,19 +9,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { QuillModule } from 'ngx-quill';
 
 @Component({
-  selector: 'app-evolution-note-mgmt-dialog',
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatInputModule,
-    FormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    QuillModule
-  ],
-  templateUrl: './evolution-note-mgmt-dialog.component.html',
-  styleUrl: './evolution-note-mgmt-dialog.component.scss'
+    selector: 'app-evolution-note-mgmt-dialog',
+    imports: [
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatInputModule,
+        FormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        QuillModule
+    ],
+    templateUrl: './evolution-note-mgmt-dialog.component.html',
+    styleUrl: './evolution-note-mgmt-dialog.component.scss'
 })
 export class EvolutionNoteMgmtDialogComponent {
   creationDate: Date

@@ -167,12 +167,21 @@ table {
 .debt-content-column{
   font-family: 'Roboto';
   font-style: normal;
-  font-weight: 500;
   font-size: 14px;
   line-height: 20px;
   color: $warn--primary;
   width: 10%;
   text-align: center;
+}
+
+.debt_balanced_value{
+  color: $warn--primary;
+  font-weight: 500;
+}
+
+.favor_balanced_value{
+  color: $main--blue;
+  font-weight: 500;
 }
 
 .nextdate-content-column{

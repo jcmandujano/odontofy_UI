@@ -23,7 +23,7 @@ export class PaymentService{
     }
 
     getPaymentBalance(){
-        return this.http.get(`${PATH_API}/patients/payment/payment-balance `, httpOptions);
+        return this.http.get(`${PATH_API}/patients/payment/payment-balance?currentMonthOnly=true`, httpOptions);
     }
                 
 

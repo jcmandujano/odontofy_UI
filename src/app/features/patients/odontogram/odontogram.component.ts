@@ -55,16 +55,15 @@ const dentalDerInferior: CuadranteDental[] = [
 ]
 
 @Component({
-  selector: 'app-odontogram',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatIconModule,
-    MatRadioModule,
-    MatButtonModule
-  ],
-  templateUrl: './odontogram.component.html',
-  styleUrl: './odontogram.component.scss'
+    selector: 'app-odontogram',
+    imports: [
+        NavBarComponent,
+        MatIconModule,
+        MatRadioModule,
+        MatButtonModule
+    ],
+    templateUrl: './odontogram.component.html',
+    styleUrl: './odontogram.component.scss'
 })
 export class OdontogramComponent {
   dentalIzqSuperior = dentalIzqSuperior.reverse()

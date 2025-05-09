@@ -36,23 +36,21 @@ const PAYMENT_METHOD_LIST = [
 ]
 
 @Component({
-  selector: 'app-payment-mgmt-dialog',
-  standalone: true,
-  imports: [
-    MatDialogModule,
-    MatTableModule,
-    MatIconModule,
-    MatSelectModule,
-    CommonModule,
-    MatButtonModule,
-    MatFormFieldModule, //FORM MODULES
-    ReactiveFormsModule, //FORM MODULES
-    MatInputModule //FORM MODULES
-  ],
-  providers: [DatePipe, CurrencyPipe],
-  templateUrl: './payment-mgmt-dialog.component.html',
-  styleUrl: './payment-mgmt-dialog.component.scss',
-  
+    selector: 'app-payment-mgmt-dialog',
+    imports: [
+        MatDialogModule,
+        MatTableModule,
+        MatIconModule,
+        MatSelectModule,
+        CommonModule,
+        MatButtonModule,
+        MatFormFieldModule, //FORM MODULES
+        ReactiveFormsModule, //FORM MODULES
+        MatInputModule //FORM MODULES
+    ],
+    providers: [DatePipe, CurrencyPipe],
+    templateUrl: './payment-mgmt-dialog.component.html',
+    styleUrl: './payment-mgmt-dialog.component.scss'
 })
 export class PaymentMgmtDialogComponent {
   @ViewChild(MatTable)

@@ -43,7 +43,8 @@
 
 //botones para acciones
 .action-button-confirm{
-    background-color: #6CA6FE;
+    background-color: $second--blue;
+    color: #fff;
     height: 35px;
     letter-spacing: 0.02em;
     box-shadow: none !important;

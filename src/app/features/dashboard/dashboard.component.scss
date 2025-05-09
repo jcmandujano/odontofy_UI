@@ -36,7 +36,7 @@
 }
 
 .dashboard-title-name{
-  margin-top: 30px;
+  margin-top: 10px;
   font-style: normal;
   font-weight: 700;
   font-size: 36px;
@@ -50,6 +50,7 @@
   width: 250px;
 }
 .dashboard-card{
+  background-color: white;
   width: auto;
   height: 100%;
 }
@@ -159,6 +160,15 @@ mat-card-title{
   width: 50px;
   height: auto;
   margin: 0px 20px;
+}
+
+.dashboard_hide_show_finance_icon{
+  width: 50px;
+  height: auto;
+  margin: 10px 20px;
+  font-size: 30px;
+  cursor: pointer;
+  color: #407DDA;
 }
 
 .dashboard_agenda_dot{
@@ -277,8 +287,6 @@ mat-list{
   height: 100%;
 }
 
-
-
 .dashboard_finanzas_table_title{
   font-family: 'Roboto Condensed';
   font-style: normal;
@@ -339,4 +347,17 @@ mat-list{
 .no-data-found{
   background-color: aliceblue;
   height: 100%;
+}
+
+.financeDot {
+  height: 15px;
+  width: 15px; 
+  background-color: #407DDA;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0px 2px;
+}
+
+.finance_money_container{
+  min-width: 110px;
 }

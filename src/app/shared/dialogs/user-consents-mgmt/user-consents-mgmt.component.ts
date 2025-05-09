@@ -8,24 +8,22 @@ import { MatInputModule } from '@angular/material/input';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 
 @Component({
-  selector: 'app-user-consents-mgmt',
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    MatDialogActions,
-    MatDialogClose,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    FormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    NgxDropzoneModule
-
-  ],
-  templateUrl: './user-consents-mgmt.component.html',
-  styleUrl: './user-consents-mgmt.component.scss'
+    selector: 'app-user-consents-mgmt',
+    imports: [
+        MatDialogTitle,
+        MatDialogActions,
+        MatDialogClose,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        FormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        NgxDropzoneModule
+    ],
+    templateUrl: './user-consents-mgmt.component.html',
+    styleUrl: './user-consents-mgmt.component.scss'
 })
 export class UserConsentsMgmtComponent {
   userConsentsForm: FormGroup;

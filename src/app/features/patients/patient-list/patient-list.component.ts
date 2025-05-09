@@ -17,30 +17,30 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 
 @Component({
-  selector: 'app-patient-list',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatTableModule,
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    NoDataFoundComponent
-  ],
-  templateUrl: './patient-list.component.html',
-  styleUrl: './patient-list.component.scss'
+    selector: 'app-patient-list',
+    imports: [
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatPaginatorModule,
+        MatTableModule,
+        CommonModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        NoDataFoundComponent,
+        NgxSpinnerModule
+    ],
+    templateUrl: './patient-list.component.html',
+    styleUrl: './patient-list.component.scss'
 })
 export class PatientListComponent {
   displayedColumns: string[] = ['nombre', 'ingreso', 'adeudo', 'prox_cita', 'actions'];
   dataSource = new MatTableDataSource<Patient>();
-  spinner= false
   pacientesList: Patient[] = []
   paginator: any
   constructor(private matIconRegistry: MatIconRegistry,
@@ -49,6 +49,7 @@ export class PatientListComponent {
     private snackBar: MatSnackBar,
     private router: Router,
     public dialog: MatDialog,
+    private spinner: NgxSpinnerService,
     private elementRef: ElementRef) {
       this.matIconRegistry.addSvgIcon(
         "pacientes",
@@ -73,15 +74,15 @@ export class PatientListComponent {
   }
 
   recuperaPacientes(){
-    this.spinner = true
+    this.spinner.show()
     this.pacientesService.listPatients().subscribe(data=>{
-      this.pacientesList = data.patients
+      this.pacientesList = data.patients.map(Patient.fromJson);
       //JCMV hay que añadir paginacion a este servicio
       //this.paginator = data.meta
       this.dataSource.data = this.pacientesList
-      this.spinner = false
+      this.spinner.hide()
     },(error)=>{
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
@@ -116,12 +117,13 @@ export class PatientListComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
+        this.spinner.show()
         this.pacientesService.deletePatient(pacienteId).subscribe(data=>{
           this.openSnackbar('Se elimino la informacion correctamente', 'Ok')
           this.recuperaPacientes()
-          this.spinner = false
+          this.spinner.hide()
         },(error)=>{
-          this.spinner = false
+          this.spinner.hide()
           console.log('ERROR', error.error.error.message)
           this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
         })

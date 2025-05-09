@@ -8,19 +8,18 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-print-consent-dialog',
-  standalone: true,
-  imports: [
-    MatDialogModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    FormsModule,
-    MatSelectModule,
-    MatButtonModule
-  ],
-  templateUrl: './print-consent-dialog.component.html',
-  styleUrl: './print-consent-dialog.component.scss'
+    selector: 'app-print-consent-dialog',
+    imports: [
+        MatDialogModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        FormsModule,
+        MatSelectModule,
+        MatButtonModule
+    ],
+    templateUrl: './print-consent-dialog.component.html',
+    styleUrl: './print-consent-dialog.component.scss'
 })
 export class PrintConsentDialogComponent {
   informedConsent = new FormControl('');

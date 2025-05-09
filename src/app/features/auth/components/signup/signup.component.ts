@@ -24,22 +24,20 @@ export interface signUpUserData{
 }
 
 @Component({
-  selector: 'app-signup',
-  standalone: true,
-  imports: [ 
-    MatIconModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    RouterModule,
-    MatDatepickerModule,
-    MatProgressSpinnerModule,
-    MatNativeDateModule
-
-  ],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'es-MX' }],
-  templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss'
+    selector: 'app-signup',
+    imports: [
+        MatIconModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        RouterModule,
+        MatDatepickerModule,
+        MatProgressSpinnerModule,
+        MatNativeDateModule
+    ],
+    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'es-MX' }],
+    templateUrl: './signup.component.html',
+    styleUrl: './signup.component.scss'
 })
 export class SignupComponent implements OnInit {
   hide = true

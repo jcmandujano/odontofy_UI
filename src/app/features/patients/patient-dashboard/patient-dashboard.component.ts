@@ -10,15 +10,14 @@ import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.comp
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'app-patient-dashboard',
-  standalone: true,
-  imports: [
-    NavBarComponent,
-    MatProgressSpinnerModule,
-    MatIconModule
-  ],
-  templateUrl: './patient-dashboard.component.html',
-  styleUrl: './patient-dashboard.component.scss'
+    selector: 'app-patient-dashboard',
+    imports: [
+        NavBarComponent,
+        MatProgressSpinnerModule,
+        MatIconModule
+    ],
+    templateUrl: './patient-dashboard.component.html',
+    styleUrl: './patient-dashboard.component.scss'
 })
 export class PatientDashboardComponent {
   pacienteId: any
