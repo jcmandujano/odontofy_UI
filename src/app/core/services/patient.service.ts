@@ -1,44 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Patient } from '../models/patient.model';
+import { ApiService } from '../../core/services/api.service';
+import { PaginatedResponse } from '../../core/models/api-response.model';
+
 const API_PATH = environment.API_URL;
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+
 @Injectable({
     providedIn: 'root'
 })
-
 export class PacientesService {
-    constructor(private http: HttpClient) { }
+    constructor(private api: ApiService) { }
 
-    createPatient(paciente: Patient){ //crear modelo de paciente
-        return this.http.post(API_PATH + '/patients',  paciente , httpOptions);
+    createPatient(paciente: Patient) {
+        return this.api.post<Patient>(`${API_PATH}/patients`, paciente);
     }
 
-    listPatients(){
-        return this.http.get<Patient[]>(API_PATH + '/patients', httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
+    listPatients(page = 1, limit = 10) {
+        return this.api.get<PaginatedResponse<Patient>>(
+            `${API_PATH}/patients?page=${page}&limit=${limit}`
         );
     }
 
-    findPatient(id: any){
-        return this.http.get(`${API_PATH}/patients/${id}`, httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
-        );
-    }
-    
-    updatePatient(id: any, paciente: Patient){
-        return this.http.put(`${API_PATH}/patients/${id}`, paciente, httpOptions);
+    findPatient(id: number) {
+        return this.api.get<Patient>(`${API_PATH}/patients/${id}`);
     }
 
-    deletePatient(id: any){
-        return this.http.delete(`${API_PATH}/patients/${id}`, httpOptions);
+    updatePatient(id: number, paciente: Patient) {
+        return this.api.put<Patient>(`${API_PATH}/patients/${id}`, paciente);
+    }
+
+    deletePatient(id: number) {
+        return this.api.delete<null>(`${API_PATH}/patients/${id}`);
     }
 }

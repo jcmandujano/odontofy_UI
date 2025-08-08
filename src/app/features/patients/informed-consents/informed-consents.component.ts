@@ -18,31 +18,31 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserConsentService } from '../../../core/services/user-consents.service';
 import { UserInformedConsent } from '../../../core/models/user-consent.model';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
-    selector: 'app-informed-consents',
-    imports: [
-        NavBarComponent,
-        MatProgressSpinnerModule,
-        MatIconModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        FormsModule,
-        MatTableModule,
-        CommonModule,
-        MatPaginatorModule,
-        MatButtonModule,
-        NoDataFoundComponent
-    ],
-    templateUrl: './informed-consents.component.html',
-    styleUrl: './informed-consents.component.scss'
+  selector: 'app-informed-consents',
+  imports: [
+    NavBarComponent,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    FormsModule,
+    MatTableModule,
+    CommonModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    NoDataFoundComponent
+  ],
+  templateUrl: './informed-consents.component.html',
+  styleUrl: './informed-consents.component.scss'
 })
 export class InformedConsentsComponent {
   // Columnas a mostrar en la tabla de consentimientos
@@ -50,7 +50,7 @@ export class InformedConsentsComponent {
   // Indicador para mostrar el spinner de carga
   spinner = false;
   // Fuente de datos para la tabla
-  dataSource: SignedConsent[] = [];
+  dataSource = new MatTableDataSource<SignedConsent>();
   // Usuario actualmente autenticado
   currentUser: User;
   // Listas de consentimientos informados y firmados
@@ -60,7 +60,11 @@ export class InformedConsentsComponent {
   selectedPatientId: string | null = null;
   // Información del paciente actual
   currentPatient: Patient | null = null;
-
+  // Paginador y configuración de paginación
+  length = 0;
+  pageIndex = 1;
+  pageSize = 10;
+  pageEvent: PageEvent = new PageEvent;
   /**
    * Constructor del componente donde se inyectan los servicios necesarios.
    * @param sessionService Servicio para manejar la sesión del usuario.
@@ -122,8 +126,8 @@ export class InformedConsentsComponent {
    */
   private loadInformedConsents(): void {
     this.userConsentService.listUserConsent().subscribe({
-      next: data => {
-        this.informedConsentList = data; // Asignar lista de consentimientos informados
+      next: response => {
+        this.informedConsentList = response.data?.results ?? []; // Asignar lista de consentimientos informados
         this.spinner = false;
       },
       error: err => this.handleError(err) // Manejo de errores
@@ -133,12 +137,15 @@ export class InformedConsentsComponent {
   /**
    * Carga la lista de consentimientos firmados desde el servicio y la asigna al componente.
    */
-  private loadSignedConsents(): void {
-    this.signedConsentService.listSignedConsents().subscribe({
-      next: data => {
+  private loadSignedConsents(page: number = 0): void {
+    this.signedConsentService.listSignedConsents(this.selectedPatientId, page, this.pageSize).subscribe({
+      next: response => {
+        console.log('response', response)
         // Mapear los consentimientos firmados y construir la fuente de datos
-        this.signedConsentList = data.data.map((consent: SignedConsent) => this.mapSignedConsent(consent));
-        this.dataSource = [...this.signedConsentList]; // Asignar a la fuente de datos de la tabla
+        this.signedConsentList = response.data?.results ?? [];
+        this.dataSource = new MatTableDataSource<SignedConsent>(this.signedConsentList); // Asignar a la fuente de datos de la tabla
+        this.length = response.data?.total ?? 0;
+        this.pageIndex = (response.data?.page ?? 1) - 1;
         this.spinner = false;
       },
       error: err => this.handleError(err) // Manejo de errores
@@ -150,32 +157,13 @@ export class InformedConsentsComponent {
    */
   private retrievePatient(): void {
     this.spinner = true;
-    this.pacientesService.findPatient(this.selectedPatientId!).subscribe({
+    this.pacientesService.findPatient(Number(this.selectedPatientId!)).subscribe({
       next: data => {
-        this.currentPatient = data.patient; // Asignar datos del paciente actual
+        this.currentPatient = data.data; // Asignar datos del paciente actual
         this.spinner = false;
       },
       error: err => this.handleError(err) // Manejo de errores
     });
-  }
-
-  /**
-   * Mapea un objeto `SignedConsent` añadiendo el nombre del consentimiento informado relacionado.
-   * @param consent Consentimiento firmado a mapear.
-   * @returns Consentimiento firmado con el nombre del consentimiento informado agregado.
-   */
-  private mapSignedConsent(consent: SignedConsent): SignedConsent {
-    const consentName = this.findConsentName(consent.consent_id);
-    return { ...consent, consent_name: consentName };
-  }
-
-  /**
-   * Encuentra el nombre del consentimiento informado relacionado con un `consent_id`.
-   * @param consentId ID del consentimiento informado.
-   * @returns Nombre del consentimiento informado.
-   */
-  private findConsentName(consentId: number): string {
-    return this.informedConsentList.find(consent => consent.id === consentId)?.name || '';
   }
 
   /**
@@ -214,14 +202,14 @@ export class InformedConsentsComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const newSignedConsentPayload = { ...result, doctor_id: this.currentUser.id };
-        console.log('newSignedConsentPayload',newSignedConsentPayload)
+        console.log('newSignedConsentPayload', newSignedConsentPayload)
         this.createSignedConsent(newSignedConsentPayload)
       }
     });
   }
 
-  createSignedConsent(payload: any){
-    this.signedConsentService.createSignedConsents(payload).subscribe({
+  createSignedConsent(payload: any) {
+    this.signedConsentService.createSignedConsent(this.selectedPatientId, payload).subscribe({
       next: data => {
         this.openSnackbar(`Se ha guardado la información correctamente`, 'Ok')
         this.loadConsents()
@@ -230,7 +218,7 @@ export class InformedConsentsComponent {
     });
   }
 
-  deleteSignedConsent(id: number){
+  deleteSignedConsent(SignedConsentId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Eliminar Consentimiento Informado',
@@ -239,8 +227,8 @@ export class InformedConsentsComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-         this.signedConsentService.deleteSignedConsent(id).subscribe({
+      if (result) {
+        this.signedConsentService.deleteSignedConsent(this.selectedPatientId, SignedConsentId).subscribe({
           next: data => {
             this.openSnackbar(`Se ha guardado la información correctamente`, 'Ok')
             this.loadConsents()
@@ -249,7 +237,7 @@ export class InformedConsentsComponent {
         });
       }
     });
-   
+
   }
 
 
@@ -280,5 +268,13 @@ export class InformedConsentsComponent {
     this.snackBar.open(message, action, {
       duration: 3000
     });
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.loadSignedConsents(this.pageIndex + 1);
   }
 }

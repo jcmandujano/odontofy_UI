@@ -1,42 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Payment } from '../models/payment.model';
-const PATH_API = environment.API_URL;
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+import { ApiService } from '../../core/services/api.service';
+import { ApiResponse, PaginatedResponse } from '../../core/models/api-response.model';
+
+const API_PATH = environment.API_URL;
 
 @Injectable({
     providedIn: 'root'
 })
-export class PaymentService{
-    constructor(private http: HttpClient) { }   
+export class PaymentService {
+    constructor(private api: ApiService) { }
 
-    listPayments(patientId: number){
-        return this.http.get<Payment[]>(`${PATH_API}/patients/${patientId}/payment `, httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
+    listPayments(patientId: number, page = 1, limit = 10) {
+        return this.api.get<PaginatedResponse<Payment>>(
+            `${API_PATH}/patients/${patientId}/payment?page=${page}&limit=${limit}`
         );
     }
 
-    getPaymentBalance(){
-        return this.http.get(`${PATH_API}/patients/payment/payment-balance?currentMonthOnly=true`, httpOptions);
-    }
-                
-
-    createPayment(patientId: number, newPayment: Payment){
-        return this.http.post(`${PATH_API}/patients/${patientId}/payment `,  newPayment , httpOptions);
+    getPaymentBalance() {
+        return this.api.get<any>(`${API_PATH}/patients/payment/payment-balance?currentMonthOnly=true`);
     }
 
-    deletePayment(patientId: number, paymentId: number): Observable<any> {
-        return this.http.delete(`${PATH_API}/patients/${patientId}/payment/${paymentId}` , httpOptions);
+    createPayment(patientId: number, newPayment: Payment) {
+        return this.api.post<Payment>(`${API_PATH}/patients/${patientId}/payment`, newPayment);
     }
 
-    updatePayment(paymentId: number, patientId: number, newPayment: Payment){
-        return this.http.patch(`${PATH_API}/patients/${patientId}/payment/${paymentId}`,  newPayment , httpOptions);
+    updatePayment(paymentId: number, patientId: number, newPayment: Payment) {
+        return this.api.put<Payment>(`${API_PATH}/patients/${patientId}/payment/${paymentId}`, newPayment);
     }
 
+    deletePayment(patientId: number, paymentId: number) {
+        return this.api.delete<null>(`${API_PATH}/patients/${patientId}/payment/${paymentId}`);
+    }
 }

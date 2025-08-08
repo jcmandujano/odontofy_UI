@@ -34,28 +34,28 @@ const colors: Record<string, EventColor> = {
 };
 
 @Component({
-    selector: 'app-agenda',
-    imports: [
-        CalendarModule,
-        MatProgressSpinnerModule,
-        NavBarComponent,
-        MatProgressSpinnerModule,
-        MatIconModule,
-        MatButtonModule,
-        NgxSpinnerModule
-    ],
-    templateUrl: './agenda.component.html',
-    styleUrls: ['./agenda.component.scss'],
-    providers: [
-        {
-            provide: DateAdapter,
-            useFactory: adapterFactory
-        },
-        CalendarUtils,
-        CalendarA11y,
-        CalendarDateFormatter,
-        CalendarEventTitleFormatter
-    ]
+  selector: 'app-agenda',
+  imports: [
+    CalendarModule,
+    MatProgressSpinnerModule,
+    NavBarComponent,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatButtonModule,
+    NgxSpinnerModule
+  ],
+  templateUrl: './agenda.component.html',
+  styleUrls: ['./agenda.component.scss'],
+  providers: [
+    {
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    },
+    CalendarUtils,
+    CalendarA11y,
+    CalendarDateFormatter,
+    CalendarEventTitleFormatter
+  ]
 })
 export class AgendaComponent {
   viewDate: Date = new Date(); // Asegúrate de que sea el mes actual
@@ -76,11 +76,11 @@ export class AgendaComponent {
     private patientService: PacientesService,
     private appointmentService: AppointmentService,
     private spinner: NgxSpinnerService,
-    private sessionService : SessionStorageService,
+    private sessionService: SessionStorageService,
     private userService: UserService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
-  ){ 
+  ) {
     this.matIconRegistry.addSvgIcon(
       "calendar",
       this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/google-calendar.png")
@@ -96,34 +96,34 @@ export class AgendaComponent {
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument
-        .body.style.backgroundColor = '#ffffff';
+      .body.style.backgroundColor = '#ffffff';
   }
 
-  retrievePatients(){
+  retrievePatients() {
     this.spinner.show()
-    this.patientService.listPatients().subscribe(data=>{
-      this.patientsList = data.patients
+    this.patientService.listPatients().subscribe(data => {
+      this.patientsList = []//data.patients
       this.spinner.hide()
-    },(error)=>{
+    }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
-  retrieveAppointments(){
+  retrieveAppointments() {
     this.spinner.show()
-    this.appointmentService.listAppointments().subscribe(data=>{
-      this.events = this.transformAppointmentsToEvents(data.appointments);
+    this.appointmentService.listAppointments().subscribe(response => {
+      this.events = this.transformAppointmentsToEvents(response.data?.results ?? []);
       this.spinner.hide()
-    },(error)=>{
+    }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
-  newAppointment() { 
+  newAppointment() {
     this.launchAppointmentDialog(undefined)
   }
 
@@ -131,12 +131,12 @@ export class AgendaComponent {
     this.launchAppointmentDialog(appointment)
   }
 
-  buildAppointmentData(appointmentData: any): Appointment { 
+  buildAppointmentData(appointmentData: any): Appointment {
     // Convertir appointmentDate a 'YYYY-MM-DD'
     const appointmentDate = new Date(appointmentData.appointmentDate).toISOString().split('T')[0];
 
     // Asegurarse de que appointmentTime esté en formato 'HH:MM:SS'
-    const appointmentTime = appointmentData.appointmentTime.length === 5 
+    const appointmentTime = appointmentData.appointmentTime.length === 5
       ? `${appointmentData.appointmentTime}:00`  // Agregar segundos si solo tiene horas y minutos  
       : appointmentData.appointmentTime;
 
@@ -154,24 +154,24 @@ export class AgendaComponent {
 
   transformAppointmentsToEvents(appointments: Appointment[]): CalendarEvent[] {
     return appointments.map(appointment => {
-        // Combinar fecha y hora en formato ISO (YYYY-MM-DDTHH:mm:ss)
-        const appointmentDateTime = `${appointment.appointment_date}T${appointment.appointment_time}`;
-        const appointmentDate = new Date(appointmentDateTime);
+      // Combinar fecha y hora en formato ISO (YYYY-MM-DDTHH:mm:ss)
+      const appointmentDateTime = `${appointment.appointment_date}T${appointment.appointment_time}`;
+      const appointmentDate = new Date(appointmentDateTime);
 
-        return {
-            id: appointment.id,
-            meta: { appointment },
-            start: appointmentDate, 
-            end: appointmentDate, 
-            title: `Cita con paciente: ${this.findPatientNameById(appointment.patient_id)}`,
-            color: { ...colors['blue'] },
-            actions: this.buildEventActions(appointment.patient_id),
-            cssClass: 'action-icons'
-        } as CalendarEvent;
+      return {
+        id: appointment.id,
+        meta: { appointment },
+        start: appointmentDate,
+        end: appointmentDate,
+        title: `Cita con paciente: ${this.findPatientNameById(appointment.patient_id)}`,
+        color: { ...colors['blue'] },
+        actions: this.buildEventActions(appointment.patient_id),
+        cssClass: 'action-icons'
+      } as CalendarEvent;
     });
-}
+  }
 
-  launchAppointmentDialog(appointmentEvent?: CalendarEvent ): void {
+  launchAppointmentDialog(appointmentEvent?: CalendarEvent): void {
     const dialogRef = this.dialog.open(AppointmentMgmtDialogComponent, {
       width: '40vw',
       height: '80vh',
@@ -186,11 +186,11 @@ export class AgendaComponent {
         // Convertir appointmentDate a 'YYYY-MM-DD'
         const appointment = this.buildAppointmentData(result);
         //si viene informacion de appointmentEvent, quiere decir que es una edicion
-        if(appointmentEvent){
+        if (appointmentEvent) {
           if (appointmentEvent?.id !== undefined) {
             this.updateAppointment(Number(appointmentEvent.id), appointment);
           }
-        }else{
+        } else {
           //si no viene informacion de appointmentEvent, quiere decir que es una creacion
           this.createAppointment(appointment);
         }
@@ -209,7 +209,7 @@ export class AgendaComponent {
         },
       },
       {
-        id:patientId,
+        id: patientId,
         label: '<i class="fa fa-trash" aria-hidden="true"></i>',
         a11yLabel: 'Delete',
         onClick: ({ event }: { event: CalendarEvent }): void => {
@@ -233,44 +233,44 @@ export class AgendaComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        if(event.id){
+      if (result) {
+        if (event.id) {
           this.deleteAppointment(Number(event.id))
         }
       }
     });
   }
 
-  createAppointment(appointment: Appointment){
+  createAppointment(appointment: Appointment) {
     this.spinner.show()
-    this.appointmentService.createAppointment(appointment).subscribe(data=>{
+    this.appointmentService.createAppointment(appointment).subscribe(data => {
       this.retrieveAppointments()
       this.openSnackbar('Cita creada exitosamente', 'Ok')
-    },(error)=>{
+    }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
-  deleteAppointment(appointment_id: number){
+  deleteAppointment(appointment_id: number) {
     this.spinner.show()
-    this.appointmentService.deleteAppointment(appointment_id).subscribe(data=>{
+    this.appointmentService.deleteAppointment(appointment_id).subscribe(data => {
       this.retrieveAppointments()
       this.openSnackbar('Cita eliminada exitosamente', 'Ok')
-    },(error)=>{
+    }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
-  updateAppointment(appointment_id: number, appointment: Appointment){
+  updateAppointment(appointment_id: number, appointment: Appointment) {
     this.spinner.show()
-    this.appointmentService.updateAppointment(appointment_id, appointment).subscribe(data=>{
+    this.appointmentService.updateAppointment(appointment_id, appointment).subscribe(data => {
       this.retrieveAppointments()
       this.openSnackbar('Cita actualizada exitosamente', 'Ok')
-    },(error)=>{
+    }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
@@ -284,30 +284,32 @@ export class AgendaComponent {
       'GoogleAuth',
       'width=600,height=600'
     );
-  
+
     // Escuchar mensajes desde la ventana hija
     window.addEventListener('message', (event) => {
       if (event.origin !== 'http://localhost:8000') return; // seguridad
       console.log('Mensaje recibido:', event.data);
-  
+
       if (event.data === 'google_sync_success') {
         // Puedes hacer alguna acción en el frontend, como recargar datos
-          this.retrieveCurrentUser(this.currentUser.id)
+        this.retrieveCurrentUser(this.currentUser.id)
       }
     });
   }
 
-  retrieveCurrentUser(id: number){
+  retrieveCurrentUser(id: number) {
     console.log('retrieve user with id', id)
-    this.userService.findUser(id).subscribe(data=>{
-      console.log('data', data)
-      this.currentUser = data
-      this.sessionService.saveUser(data)
+    this.userService.findUser(id).subscribe(response => {
+      console.log('data', response)
+      if (response.data) {
+        this.currentUser = response.data;
+        this.sessionService.saveUser(response.data);
+      }
     }
-    ,(error)=>{
-      console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
-    })
+      , (error) => {
+        console.log('ERROR', error.error.error.message)
+        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      })
   }
 
 
@@ -321,7 +323,7 @@ export class AgendaComponent {
       duration: 3000
     });
   }
-  
+
   setView(view: CalendarView) {
     this.view = view;
   }
@@ -337,6 +339,6 @@ export class AgendaComponent {
         this.activeDayIsOpen = true;
       }
       this.viewDate = date;
-    } 
+    }
   }
 }

@@ -1,45 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Appointment } from '../models/appointment.model';
-const PATH_API = environment.API_URL;
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+import { ApiService } from '../../core/services/api.service';
+import { PaginatedResponse } from '../../core/models/api-response.model';
+
+const API_PATH = environment.API_URL;
 
 @Injectable({
     providedIn: 'root'
 })
 
-export class AppointmentService{
-    constructor(private http: HttpClient) { }
+export class AppointmentService {
+    constructor(private api: ApiService) { }
 
-    createAppointment(appointment: Appointment){
-        return this.http.post(`${PATH_API}/appointments`, appointment , httpOptions);
+    createAppointment(appointment: Appointment) {
+        return this.api.post(`${API_PATH}/appointments`, appointment);
     }
 
-    listAppointments(){
-        return this.http.get<Appointment[]>(`${PATH_API}/appointments?fromToday=true`, httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
+    listAppointments(page = 1, limit = 10) {
+        return this.api.get<PaginatedResponse<Appointment>>(
+            `${API_PATH}/appointments?fromToday=true&page=${page}&limit=${limit}`
         );
     }
 
-    findAppointment(appointment_id: any, criteria: string){
-        return this.http.get<Appointment[]>(`${PATH_API}/appointments/${appointment_id}?&criterio=${criteria}`, httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
-        );
-    }
-    
-    updateAppointment(appointment_id: number, appointment: Appointment){
-        return this.http.put(`${PATH_API}/appointments/${appointment_id}`, appointment, httpOptions);
+    findAppointment(id: any) {
+        return this.api.get<Appointment>(`${API_PATH}/appointments/${id}`);
     }
 
-    deleteAppointment(appointment_id: number){
-        return this.http.delete(`${PATH_API}/appointments/${appointment_id}`, httpOptions);
+    updateAppointment(id: number, appointment: Appointment) {
+        return this.api.put<Appointment>(`${API_PATH}/appointments/${id}`, appointment);
+    }
+
+    deleteAppointment(id: number) {
+        return this.api.delete<null>(`${API_PATH}/appointments/${id}`);
     }
 }

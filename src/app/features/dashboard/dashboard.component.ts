@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { forkJoin, Observable, tap } from 'rxjs';
+import { forkJoin, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,20 +31,20 @@ import { ConfirmWithPasswordDialogComponent } from '../../shared/dialogs/confirm
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
-    selector: 'app-dashboard',
-    imports: [
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatCardModule,
-        MatListModule,
-        CommonModule,
-        NoDataFoundComponent,
-        NgxSpinnerModule,
-        NavBarComponent
-    ],
-    templateUrl: './dashboard.component.html',
-    styleUrl: './dashboard.component.scss'
+  selector: 'app-dashboard',
+  imports: [
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule,
+    MatListModule,
+    CommonModule,
+    NoDataFoundComponent,
+    NgxSpinnerModule,
+    NavBarComponent
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   currentUser: User = new User;
@@ -54,20 +54,20 @@ export class DashboardComponent implements OnInit {
   appointmentList: Appointment[] = []
   paymentBalance: PaymentBalance = new PaymentBalance();
   showFinanceData: boolean = true;
-  constructor(private sessionService : SessionStorageService,
-  private router: Router, 
-  private elementRef: ElementRef,
-  private matIconRegistry: MatIconRegistry,
-  private dialog: MatDialog,
-  private snackBar: MatSnackBar,
-  private userConsentService: UserConsentService,
-  private appointmentService: AppointmentService,
-  private patientService: PacientesService,
-  private paymentService: PaymentService,
-  private spinner: NgxSpinnerService,
-  private domSanitizer: DomSanitizer,
-  public authService: AuthService,
-  private userService: UserService) {
+  constructor(private sessionService: SessionStorageService,
+    private router: Router,
+    private elementRef: ElementRef,
+    private matIconRegistry: MatIconRegistry,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private userConsentService: UserConsentService,
+    private appointmentService: AppointmentService,
+    private patientService: PacientesService,
+    private paymentService: PaymentService,
+    private spinner: NgxSpinnerService,
+    private domSanitizer: DomSanitizer,
+    public authService: AuthService,
+    private userService: UserService) {
     this.matIconRegistry.addSvgIcon(
       "agenda",
       this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_agenda.svg")
@@ -121,21 +121,21 @@ export class DashboardComponent implements OnInit {
       this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_delete_cita.svg")
     );
 
-   }
+  }
 
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();
     this.showFinanceData = this.currentUser.show_finance_stats ?? false;
     this.spinner.show();
-  
+
     const metodos$ = [
       this.loadInformedConsents(),
       this.retrievePatients(),
       this.retrieveAppointments(),
       this.retrievePaymentBalance()
     ].filter(m => m);
-  
+
     forkJoin(metodos$).subscribe({
       next: () => {
         console.log('Todos los métodos ejecutados');
@@ -149,61 +149,61 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#fff';
   }
 
-  doLogout(){
+  doLogout() {
     this.sessionService.signOut();
     this.router.navigate([''])
   }
 
-  crearPaciente(){
+  crearPaciente() {
     this.router.navigate(['patient-file'])
   }
 
-  listadePacientes(){
+  listadePacientes() {
     this.router.navigate(['patient-list'])
   }
 
-  goToAgenda(){
+  goToAgenda() {
     this.router.navigate(['schedule'])
   }
 
-  retrieveAppointments(){
-    this.appointmentService.listAppointments().subscribe(data=>{
+  retrieveAppointments() {
+    this.appointmentService.listAppointments().subscribe(response => {
 
       // Asignar el nombre completo del paciente a cada cita
-      this.appointmentList = data.appointments.map((appointment: Appointment) => ({
+      this.appointmentList = response.data?.results.map((appointment: Appointment) => ({
         ...appointment,
         patientFullName: this.findPatientNameById(appointment.patient_id)
-      }));
+      })) ?? [];
 
-    },(error)=>{
+    }, (error) => {
       console.log('ERROR', error)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
-  retrievePatients(){
-    this.patientService.listPatients().subscribe(data=>{
-      this.patientsList = data.patients
-    },(error)=>{
+  retrievePatients() {
+    this.patientService.listPatients().subscribe(response => {
+      this.patientsList = response.data?.results ?? [];
+    }, (error) => {
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
-  saveFinanceOptions(showFinanceData: boolean){
+  saveFinanceOptions(showFinanceData: boolean) {
     const financeOptions = {
       show_finance_stats: showFinanceData
     } as unknown as User
     this.spinner.show()
-    this.userService.updateUser(this.currentUser.id, financeOptions).subscribe(data=>{
+    this.userService.updateUser(this.currentUser.id, financeOptions).subscribe(data => {
       this.spinner.hide()
       this.sessionService.saveUser(data)
       console.log('Se guardaron las opciones de finanzas', data)
-    },(error)=>{
+    }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
@@ -211,10 +211,10 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  retrievePaymentBalance(){
-    this.paymentService.getPaymentBalance().subscribe(data=>{
-      this.paymentBalance = data as PaymentBalance;
-    },(error)=>{
+  retrievePaymentBalance() {
+    this.paymentService.getPaymentBalance().subscribe(response => {
+      this.paymentBalance = response.data as PaymentBalance;
+    }, (error) => {
       console.log('ERROR', error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
     })
@@ -231,29 +231,29 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  visibilityFinanceHandler(visibility: boolean){
-    if(visibility) {
+  visibilityFinanceHandler(visibility: boolean) {
+    if (visibility) {
       const dialogRef = this.dialog.open(ConfirmWithPasswordDialogComponent, {
         width: '40vw',
       });
-  
+
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           const confirmPassword = result
           this.spinner.show()
-          this.authService.verifyPassword(confirmPassword).subscribe(data=>{
+          this.authService.verifyPassword(confirmPassword).subscribe(data => {
             this.saveFinanceOptions(visibility)
             this.showFinanceData = visibility;
             this.spinner.hide()
             console.log('Se confirma operacion')
-          },(error)=>{
+          }, (error) => {
             this.spinner.hide()
             console.log('ERROR', error.error.msg)
             this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
           })
         }
       });
-    }else{
+    } else {
       this.saveFinanceOptions(visibility)
       this.showFinanceData = visibility;
     }
@@ -264,10 +264,13 @@ export class DashboardComponent implements OnInit {
    */
   private loadInformedConsents(): Observable<UserInformedConsent[]> {
     return this.userConsentService.listUserConsent().pipe(
-      tap(data => this.informedConsentList = data) // Asignar datos al recibir respuesta
+      tap(response => this.informedConsentList = response.data?.results ?? []), // Asignar datos al recibir respuesta
+      // Map the API response to just the results array
+      // Import 'map' from 'rxjs/operators' if not already imported
+      map(response => response.data?.results ?? [])
     );
   }
-  
+
 
   /**
    * Abre un diálogo para crear un nuevo consentimiento informado.
@@ -308,6 +311,5 @@ export class DashboardComponent implements OnInit {
     // Descomentar la siguiente línea para mostrar una notificación de error
     // this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok');
   }
-    
-}
 
+}

@@ -1,42 +1,86 @@
+main {
+    height: 100vh;
+    /* Ocupa toda la pantalla */
+    display: flex;
+    align-items: stretch;
+}
+
+
 .login_row {
     display: flex;
+    width: 100%;
 }
-    
+
 /* Create two equal columns that sits next to each other */
 .login_form_column {
-    flex: 65%;
-    // padding: 10px;
+    flex: 3 1 60%;
+    display: flex;
+    flex-direction: column;
     background-color: white;
 }
 
 .extra_info_column {
-    flex: 35%;
+    flex: 2 1 40%;
     background-image: url('/img/dummy.jpg.png');
-    background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
-h1{
+
+/* Centrado vertical y horizontal del form */
+.center_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 20px;
+    /* Padding base para pantallas pequeñas */
+    width: 100%;
+}
+
+/* Pantallas medianas (tablets en adelante) */
+@media (min-width: 768px) {
+    .center_container {
+        padding: 0 60px;
+    }
+}
+
+/* Pantallas grandes (laptops y monitores medianos) */
+@media (min-width: 1024px) {
+    .center_container {
+        padding: 0 120px;
+    }
+}
+
+/* Pantallas muy grandes (monitores grandes) */
+@media (min-width: 1440px) {
+    .center_container {
+        padding: 0 200px;
+    }
+}
+
+
+h1 {
     font-weight: 700;
 }
 
-.login_form_title{
+.login_form_title {
     font-size: 45px;
 }
 
-.login_form_container{
+.login_form_container {
     display: flex;
     justify-content: center;
     text-align: center;
-    height: 80%;
+    height: 100%;
 }
 
-.login_form_control{
+.login_form_control {
     margin-bottom: 15px;
     width: 100%;
 }
 
-.login_form_pass_toggle{
+.login_form_pass_toggle {
     background: transparent;
     border: 0;
     color: #c0d9ff !important;
@@ -50,18 +94,19 @@ h1{
 ::ng-deep.mat-form-field-underline {
     /*change color of underline*/
     background-color: #407dda !important;
-} 
+}
 
 ::ng-deep.mat-form-field-ripple {
     /*change color of underline when focused*/
-    background-color: #407dda !important;;
+    background-color: #407dda !important;
+    ;
 }
 
 mat-label {
     color: #407dda;
 }
 
-.mat-input-element{
+.mat-input-element {
     margin-top: 5px;
 }
 
@@ -69,57 +114,98 @@ mat-label {
     padding-left: 15px;
 }
 
-.prefix_form_color{
+.prefix_form_color {
     color: #407dda !important;
     margin: 0px 20 !important;
 }
 
-.login_form_logo{
+.login_form_logo {
     margin-top: 15px;
     margin-left: 15px;
 }
 
-.login_form_container_welcome{
+.login_form_container_welcome h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.login_form_container_welcome {
     margin-bottom: 30px;
 }
 
-.login_form_container_form{
-    margin-bottom: 20px;
+.login_form_container_form {
+    margin-bottom: 30px;
 }
 
-.button{
+.button {
     margin-bottom: 40px;
 }
-.login_form_containe_legal{
-    margin-top: 55px;
+
+.subtitle {
+    font-size: 16px;
+    margin-bottom: 30px;
 }
 
-.subtitle{
-    font-size: 17px;
-}
-
-.legal_text{
+.legal_text {
     font-size: 17px;
     color: #b8b8b8;
     text-decoration: underline;
 }
 
-.options_text{
+.options_text {
     font-size: 18px;
     font-weight: 500;
     color: #407dda;
     margin-bottom: 20px;
 }
 
-.legal_text:hover{
+.legal_text:hover {
     cursor: pointer;
 }
 
-.options_text:hover{
+.options_text:hover {
     cursor: pointer;
 }
 
 
-input{
+input {
     margin-left: 10px;
+}
+
+/* Ajustes para inputs */
+mat-form-field.login_form_control {
+    width: 100%;
+}
+
+/* Pie de página legal */
+.login_form_containe_legal {
+    margin-top: auto;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.legal_text {
+    color: #b8b8b8;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.options_text {
+    color: #407dda;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .extra_info_column {
+        display: none;
+    }
+
+    .login_form_column {
+        flex: 1 1 100%;
+        padding: 20px;
+    }
 }
