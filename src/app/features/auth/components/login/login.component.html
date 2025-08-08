@@ -1,52 +1,52 @@
 <ngx-spinner type="ball-newton-cradle"></ngx-spinner>
 <main>
-    <section class="login_row">
-        <section class="login_form_column">
-          <section class="login_form_logo">
-            <img src="/img/logo.png" (click)="gotoHome()" alt="">
-          </section>
-          <div class="login_form_container">
-            <form [formGroup]="loginForm">
-            <div class="login_form_container_welcome">
-              <h1 class="login_form_title">Bienvenido</h1>
-              <p class="subtitle">Por favor proporciona tus datos de acceso</p>
-            </div>
-            <div class="login_form_container_form">
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
-                <mat-label>Escribe tu correo</mat-label>
-                <input type="email" matInput formControlName="username">
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
-                <mat-label>Escribe tu contraseña</mat-label>
-                <button class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide">
-                  <mat-icon >{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
-                </button>
-                <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" >
-              </mat-form-field>
-              <br>
-            </div>
-            <div class="login_form_container_actions">
-              <button class="button button--confirm" (click)="doLogin()">Login</button><br>
-              <p class="options_text">¿Olvidaste tu contraseña?</p>
-              <p class="options_text" routerLink="/register" >¿No tienes cuenta?</p>
-            </div>
-            <div class="login_form_containe_legal">
-              <div class="row">
-                <div class="col-6">
-                  <p class="legal_text">Términos y condiciones</p>
-                </div>
-                <div class="col-6">
-                  <p class="legal_text">Avido de privacidad</p>
-                </div>
+  <section class="login_row">
+    <section class="login_form_column">
+      <section class="login_form_logo">
+        <img src="/img/logo.png" (click)="gotoHome()" alt="">
+      </section>
+      <div class="login_form_container center_container">
+        <form [formGroup]="loginForm">
+          <div class="login_form_container_welcome">
+            <h1 class="login_form_title">Bienvenido</h1>
+            <p class="subtitle">Por favor proporciona tus datos de acceso</p>
+          </div>
+          <div class="login_form_container_form">
+            <mat-form-field class="login_form_control" appearance="outline">
+              <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
+              <mat-label>Escribe tu correo</mat-label>
+              <input type="email" matInput formControlName="username">
+            </mat-form-field>
+            <br>
+            <mat-form-field class="login_form_control" appearance="outline">
+              <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
+              <mat-label>Escribe tu contraseña</mat-label>
+              <button class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide">
+                <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <input matInput formControlName="password" [type]="hide ? 'password' : 'text'">
+            </mat-form-field>
+            <br>
+          </div>
+          <div class="login_form_container_actions">
+            <button class="button button--confirm" (click)="doLogin()">Login</button><br>
+            <p class="options_text">¿Olvidaste tu contraseña?</p>
+            <p class="options_text" routerLink="/register">¿No tienes cuenta?</p>
+          </div>
+          <div class="login_form_containe_legal">
+            <div class="row">
+              <div class="col-6">
+                <p class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</p>
+              </div>
+              <div class="col-6">
+                <p class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</p>
               </div>
             </div>
-          </form>
-        </div>
-        </section>
-        <section class="extra_info_column" >
-        </section>
-      </section>
-    </main>
+          </div>
+        </form>
+      </div>
+    </section>
+    <section class="extra_info_column">
+    </section>
+  </section>
+</main>

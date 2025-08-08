@@ -1,44 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserConcept } from '../models/user-concept.model';
+import { ApiService } from '../../core/services/api.service';
+import { PaginatedResponse } from '../../core/models/api-response.model';
 
-
-const PATH_API = environment.API_URL;
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+const API_PATH = environment.API_URL;
 
 @Injectable({
     providedIn: 'root'
 })
-
+// Service to manage concepts created by users
 export class UserConceptsService {
-    constructor(private http: HttpClient) { }   
+    constructor(private api: ApiService) { }
 
-    listUserConcepts(){
-        return this.http.get<UserConcept[]>(`${PATH_API}/user-concepts`, httpOptions).pipe(
-            map((response: any)=> {
-                return response.concepts
-            })
+    listUserConcepts(page = 1, limit = 10) {
+        return this.api.get<PaginatedResponse<UserConcept>>(
+            `${API_PATH}/user-concepts?page=${page}&limit=${limit}`
         );
     }
-
-    createUserConcept(concept: UserConcept){
-        return this.http.post(`${PATH_API}/user-concepts`, concept, httpOptions);
-    }   
-
-    updateUserConcept(id: number, concept: UserConcept){
-        return this.http.put(`${PATH_API}/user-concepts/${id}`, concept, httpOptions);
+    createUserConcept(concept: UserConcept) {
+        return this.api.post<UserConcept>(`${API_PATH}/user-concepts`, concept);
     }
 
-    deleteUserConcept(id: number){
-        return this.http.delete(`${PATH_API}/user-concepts/${id}`, httpOptions);
+    updateUserConcept(id: number, concept: UserConcept) {
+        return this.api.put<UserConcept>(`${API_PATH}/user-concepts/${id}`, concept);
     }
 
-    getUserConcept(id: number){
-        return this.http.get<UserConcept>(`${PATH_API}/user-concepts/${id}`, httpOptions);
+    deleteUserConcept(id: number) {
+        return this.api.delete<null>(`${API_PATH}/user-concepts/${id}`);
     }
 
+    getUserConcept(id: number) {
+        return this.api.get<UserConcept>(`${API_PATH}/user-concepts/${id}`);
+    }
 }

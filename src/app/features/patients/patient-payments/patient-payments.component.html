@@ -1,7 +1,7 @@
 <app-nav-bar></app-nav-bar>
 <div class="progress-loader" *ngIf="spinner">
     <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-  </div>
+</div>
 <div class="container">
     <div class="row navigation_row">
         <div class="col-12">
@@ -16,8 +16,9 @@
             </div>
         </div>
         <div class="col-6">
-            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button" (click)="openPaymentDialog()">Agregar Nuevo</button> </div>
-            
+            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button"
+                    (click)="openPaymentDialog()">Agregar Nuevo</button> </div>
+
         </div>
     </div>
     <div class="row filters_row">
@@ -25,9 +26,9 @@
             <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
                 <mat-label>Buscar</mat-label>
                 <input matInput placeholder="">
-                <button matSuffix mat-icon-button aria-label="Clear" >
+                <button matSuffix mat-icon-button aria-label="Clear">
                     <mat-icon>close</mat-icon>
-                  </button>
+                </button>
             </mat-form-field>
             <button mat-icon-button color="primary" class="searchButtton">
                 <mat-icon>search</mat-icon>
@@ -40,31 +41,38 @@
             <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
                 <ng-container matColumnDef="conceptos">
                     <th mat-header-cell *matHeaderCellDef class="concept-header-column"> Concepto(s) </th>
-                    <td mat-cell *matCellDef="let element"class="concept-content-column"> {{element.displayConcepts}} </td>
-                  </ng-container>
+                    <td mat-cell *matCellDef="let element" class="concept-content-column"> {{element.displayConcepts}}
+                    </td>
+                </ng-container>
                 <ng-container matColumnDef="fecha">
                     <th mat-header-cell *matHeaderCellDef class="signin-header-column"> Fecha </th>
-                    <td mat-cell *matCellDef="let element"class="signin-content-column"> {{element.createdAt | date}} </td>
-                  </ng-container>
+                    <td mat-cell *matCellDef="let element" class="signin-content-column"> {{element.createdAt | date}}
+                    </td>
+                </ng-container>
                 <ng-container matColumnDef="total">
-                  <th mat-header-cell *matHeaderCellDef class="total-header-column"> Total </th>
-                  <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.total | currency:'MXN':'symbol':'1.2-2'}}</td>
+                    <th mat-header-cell *matHeaderCellDef class="total-header-column"> Total </th>
+                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.total |
+                        currency:'MXN':'symbol':'1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="ingreso">
                     <th mat-header-cell *matHeaderCellDef class="ingreso-header-column"> Ingreso </th>
-                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.income | currency:'MXN':'symbol':'1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="adeudo">
+                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.income |
+                        currency:'MXN':'symbol':'1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="adeudo">
                     <th mat-header-cell *matHeaderCellDef class="adeudo-header-column"> Adeudo </th>
-                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.debt | currency:'MXN':'symbol':'1.2-2'}}</td>
-                  </ng-container>
+                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.debt |
+                        currency:'MXN':'symbol':'1.2-2'}}</td>
+                </ng-container>
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Acciones </th>
-                    <td mat-cell *matCellDef="let element" class="nextdate-content-column"> 
+                    <td mat-cell *matCellDef="let element" class="nextdate-content-column">
                         <div class="dashboard_list_container">
                             <div class="dashboard_list_actons">
-                                <mat-icon class="dashboard_logout_icon" svgIcon="editaCita" (click)="openPaymentDialog(element)"></mat-icon>
-                                <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita" (click)="deletePayment(element.id)"></mat-icon>
+                                <mat-icon class="dashboard_logout_icon" svgIcon="editaCita"
+                                    (click)="openPaymentDialog(element)"></mat-icon>
+                                <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita"
+                                    (click)="deletePayment(element.id)"></mat-icon>
                             </div>
                         </div>
                     </td>
@@ -77,21 +85,15 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <mat-paginator
-                [length]="10"
-                [pageSize]="10"
-                [pageSizeOptions]="[10, 30]"
-                aria-label="Select page"
-                class="custom-paginator">
+            <mat-paginator (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+                [pageIndex]="pageIndex" [pageSizeOptions]="[10, 25, 50, 100]" class="custom-paginator">
             </mat-paginator>
         </div>
     </div>
     }
     @if (!dataSource || dataSource.length === 0) {
-        <app-no-data-found
-          [title]="'Ups! No tienes pagos generados.'"
-          [message]="'Haz click en el boton Agregar Nuevo para comenzar a generarlos.'"
-          >
-        </app-no-data-found>
+    <app-no-data-found [title]="'Ups! No tienes pagos generados.'"
+        [message]="'Haz click en el boton Agregar Nuevo para comenzar a generarlos.'">
+    </app-no-data-found>
     }
 </div>

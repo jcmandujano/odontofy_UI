@@ -1,7 +1,7 @@
 <app-nav-bar></app-nav-bar>
 <div class="progress-loader" *ngIf="spinner">
     <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-  </div>
+</div>
 <div class="container">
     <div class="row navigation_row">
         <div class="col-12">
@@ -16,58 +16,56 @@
             </div>
         </div>
         <div class="col-6">
-            <div class="nuevo_paciente_button_container"> 
-                <button mat-fab extended class="logout-navbar-button print-consent-btn" [disableRipple]="true" (click)="launchPrintConsentDialog()">Imprimir Consentimiento</button> 
-                    <button mat-fab extended class="logout-navbar-button" [disableRipple]="true" (click)="launchAddSignedConsentDialog()">Agregar Consentimiento</button>
+            <div class="nuevo_paciente_button_container">
+                <button mat-fab extended class="logout-navbar-button print-consent-btn" [disableRipple]="true"
+                    (click)="launchPrintConsentDialog()">Imprimir Consentimiento</button>
+                <button mat-fab extended class="logout-navbar-button" [disableRipple]="true"
+                    (click)="launchAddSignedConsentDialog()">Agregar Consentimiento</button>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-12">
-            @if (dataSource && dataSource.length > 0) {
-                <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
-                    <ng-container matColumnDef="date">
-                        <th mat-header-cell *matHeaderCellDef class="signin-header-column"> Fecha de creacion </th>
-                        <td mat-cell *matCellDef="let element"class="signin-content-column"> {{element.signed_date | date }} </td>
-                      </ng-container>
-                    <ng-container matColumnDef="consent">
-                      <th mat-header-cell *matHeaderCellDef class="name-header-column"> Consentimiento </th>
-                      <td mat-cell *matCellDef="let element" class="name-content-column"> {{element.consent_name}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Acciones </th>
-                        <td mat-cell *matCellDef="let element" class="nextdate-content-column"> 
-                            <div class="dashboard_list_container">
-                                <div class="dashboard_list_actons">
-                                    <mat-icon class="dashboard_logout_icon" (click)="deleteSignedConsent(element.id)" svgIcon="eliminaCita"></mat-icon>
-                                </div>
+            @if (dataSource && dataSource.data.length > 0) {
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef class="signin-header-column"> Fecha de creacion </th>
+                    <td mat-cell *matCellDef="let element" class="signin-content-column"> {{element.signed_date | date
+                        }} </td>
+                </ng-container>
+                <ng-container matColumnDef="consent">
+                    <th mat-header-cell *matHeaderCellDef class="name-header-column"> Consentimiento </th>
+                    <td mat-cell *matCellDef="let element" class="name-content-column"> {{element.consent.name}}</td>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Acciones </th>
+                    <td mat-cell *matCellDef="let element" class="nextdate-content-column">
+                        <div class="dashboard_list_container">
+                            <div class="dashboard_list_actons">
+                                <mat-icon class="dashboard_logout_icon" (click)="deleteSignedConsent(element.id)"
+                                    svgIcon="eliminaCita"></mat-icon>
                             </div>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
-                    </tr>
-                </table>
+                        </div>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                </tr>
+            </table>
             }
-            @if (!dataSource || dataSource.length === 0) {
-                <app-no-data-found
-                    [title]="'Ups! Este paciente no tiene consentimientos informados'"
-                    [message]="'Haz click en el boton Agregar consentimiento para comenzar a generarlos.'"
-                    >
-                </app-no-data-found>
+            @if (!dataSource || dataSource.data.length === 0) {
+            <app-no-data-found [title]="'Ups! Este paciente no tiene consentimientos informados'"
+                [message]="'Haz click en el boton Agregar consentimiento para comenzar a generarlos.'">
+            </app-no-data-found>
             }
         </div>
     </div>
     <div class="row">
         <div class="col-12">
-            @if (dataSource && dataSource.length > 0) {
-                <mat-paginator
-                    [length]="0"
-                    [pageSize]="10"
-                    [pageSizeOptions]="[10, 30]"
-                    aria-label="Select page"
-                    class="custom-paginator">
-                </mat-paginator>   
+            @if (dataSource && dataSource.data.length > 0) {
+            <mat-paginator (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+                [pageIndex]="pageIndex" [pageSizeOptions]="[10, 25, 50, 100]" class="custom-paginator">
+            </mat-paginator>
             }
         </div>
     </div>

@@ -1,41 +1,33 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { map } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { SignedConsent } from "../models/signed-consent.model";
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { SignedConsent } from '../models/signed-consent.model';
+import { ApiService } from '../../core/services/api.service';
+import { PaginatedResponse } from '../../core/models/api-response.model';
 
+const API_PATH = environment.API_URL;
 
-const PATH_API = environment.API_URL;
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
 @Injectable({
     providedIn: 'root'
 })
-export class SignedConsentService{
-    constructor(private http: HttpClient) { }
+//this service manages signed consents for patients in the application
+export class SignedConsentService {
+    constructor(private api: ApiService) { }
 
-    listSignedConsents(){
-        return this.http.get(`${PATH_API}/signed-consents`, httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
+    listSignedConsents(patientId: any, page = 1, limit = 10) {
+        return this.api.get<PaginatedResponse<SignedConsent>>(
+            `${API_PATH}/patients/${patientId}/signed-consents?page=${page}&limit=${limit}`
         );
     }
 
-    getSignedConsents(id:number){
-        return this.http.get(`${PATH_API}/signed-consents/${id}`, httpOptions).pipe(
-            map((response: any)=> {
-                return response
-            })
-        );
+    getSignedConsent(patientId: any, id: number) {
+        return this.api.get<SignedConsent>(`${API_PATH}/patients/${patientId}/signed-consents/${id}`);
     }
 
-    createSignedConsents(signedConsent: SignedConsent){
-        return this.http.post(`${PATH_API}/signed-consents/`, signedConsent , httpOptions);
+    createSignedConsent(patientId: any, signedConsent: SignedConsent) {
+        return this.api.post<SignedConsent>(`${API_PATH}/patients/${patientId}/signed-consents`, signedConsent);
     }
 
-    deleteSignedConsent(id:number){
-        return this.http.delete(`${PATH_API}/signed-consents/${id}`, httpOptions);
+    deleteSignedConsent(patientId: any, id: number) {
+        return this.api.delete<null>(`${API_PATH}/patients/${patientId}/signed-consents/${id}`);
     }
 }

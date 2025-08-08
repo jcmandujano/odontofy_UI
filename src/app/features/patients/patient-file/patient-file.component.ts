@@ -17,44 +17,46 @@ import { MatButtonModule } from '@angular/material/button';
 import { Location } from '@angular/common';
 
 @Component({
-    selector: 'app-patient-file',
-    imports: [
-        MatSelectModule,
-        MatRadioModule,
-        MatExpansionModule,
-        MatDatepickerModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatProgressSpinnerModule,
-        NavBarComponent,
-        MatInputModule,
-        MatButtonModule
-    ],
-    templateUrl: './patient-file.component.html',
-    styleUrl: './patient-file.component.scss'
+  selector: 'app-patient-file',
+  imports: [
+    MatSelectModule,
+    MatRadioModule,
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+    NavBarComponent,
+    MatInputModule,
+    MatButtonModule
+  ],
+  templateUrl: './patient-file.component.html',
+  styleUrl: './patient-file.component.scss'
 })
 export class PatientFileComponent {
   crearPacientesForm: FormGroup
   patient: any //crear modelo de paciente y tipear esto
-  spinner= false
+  spinner = false
   pacienteId: any //if this value exist, we enable update mode
-  constructor(private elementRef: ElementRef, 
-    private pacientesService: PacientesService, 
+  constructor(private elementRef: ElementRef,
+    private pacientesService: PacientesService,
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private snackBar: MatSnackBar) { 
+    private snackBar: MatSnackBar) {
     this.crearPacientesForm = this.buildPacientesForm()
   }
 
   ngOnInit(): void {
     this.pacienteId = this.route.snapshot.paramMap.get('id');
-    if(this.pacienteId){
+    if (this.pacienteId) {
       this.spinner = true
-      this.pacientesService.findPatient(this.pacienteId).subscribe(data=>{
-        this.patchValuesToEdit(data.patient)
+      this.pacientesService.findPatient(this.pacienteId).subscribe(response => {
+        if (response.data) {
+          this.patchValuesToEdit(response.data)
+        }
         this.spinner = false
-      },(error)=>{
+      }, (error) => {
         this.spinner = false
         console.log('ERROR', error.error.msg)
         this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
@@ -67,14 +69,14 @@ export class PatientFileComponent {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#ffffff';
   }
 
-  patchValuesToEdit(paciente: Patient){
-   // console.log('QUE FECHA TRAES', this.calculaEdad(new Date(paciente.fecha_nacimiento).toISOString()))
-     this.crearPacientesForm.patchValue({
+  patchValuesToEdit(paciente: Patient) {
+    // console.log('QUE FECHA TRAES', this.calculaEdad(new Date(paciente.fecha_nacimiento).toISOString()))
+    this.crearPacientesForm.patchValue({
       name: paciente.name,
       middle_name: paciente.middle_name,
       last_name: paciente.last_name,
       date_of_birth: paciente.date_of_birth,
-      age:  this.calculaEdad(new Date(paciente.date_of_birth).toISOString()),
+      age: this.calculaEdad(new Date(paciente.date_of_birth).toISOString()),
       gender: paciente.gender,
       occupation: paciente.occupation,
       marital_status: paciente.marital_status,
@@ -88,19 +90,19 @@ export class PatientFileComponent {
       emergency_contact_phone: paciente.emergency_contact_phone,
       family_medical_history: paciente.family_medical_history,
       personal_medical_history: paciente.personal_medical_history,
-     })
+    })
   }
 
   //guarda la informacion del paciente
-  crearPaciente(){
-    if(this.crearPacientesForm.valid){
+  crearPaciente() {
+    if (this.crearPacientesForm.valid) {
       this.spinner = true
       this.patient = this.crearPacientesForm.value
-      this.pacientesService.createPatient(this.patient).subscribe(data=>{
+      this.pacientesService.createPatient(this.patient).subscribe(data => {
         this.openSnackbar('Se guardo la informacion correctamente', 'Ok')
         this.router.navigate(['/lista-pacientes'])
         this.spinner = false
-      },(error)=>{
+      }, (error) => {
         this.spinner = false
         console.log('ERROR', error)
         this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
@@ -108,14 +110,14 @@ export class PatientFileComponent {
     }
   }
 
-  actualizarPaciente(){
-    if(this.crearPacientesForm.valid){
+  actualizarPaciente() {
+    if (this.crearPacientesForm.valid) {
       this.spinner = true
       this.patient = this.crearPacientesForm.value
-      this.pacientesService.updatePatient(this.pacienteId, this.patient).subscribe(data=>{
+      this.pacientesService.updatePatient(this.pacienteId, this.patient).subscribe(data => {
         this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
         this.spinner = false
-      },(error)=>{
+      }, (error) => {
         this.spinner = false
         console.log('ERROR', error)
         this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
@@ -124,10 +126,10 @@ export class PatientFileComponent {
   }
 
   //hook al cambiar el valor de la fecha de nacimiento
-  onDateChange(eventChange: MatDatepickerInputEvent<Date>){
+  onDateChange(eventChange: MatDatepickerInputEvent<Date>) {
     const edad = this.calculaEdad(moment(eventChange.value).format())
-    if(edad){
-      this.crearPacientesForm.patchValue({age: edad})
+    if (edad) {
+      this.crearPacientesForm.patchValue({ age: edad })
     }
   }
 
@@ -137,9 +139,8 @@ export class PatientFileComponent {
     var birthDate = new Date(dateString);
     var age = today.getFullYear() - birthDate.getFullYear();
     var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
-    {
-        age--;
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
     }
     return age;
   }
@@ -162,7 +163,7 @@ export class PatientFileComponent {
     return this.crearPacientesForm.controls['phone'].hasError('pattern') ? 'No es un telefono valido' : '';
   }
 
-  buildPacientesForm(): FormGroup{
+  buildPacientesForm(): FormGroup {
     return new FormGroup({
       name: new FormControl('', Validators.required),
       middle_name: new FormControl('', Validators.required),
@@ -255,7 +256,7 @@ export class PatientFileComponent {
     })
   }
 
-  cancel(){
+  cancel() {
     this.location.back();
   }
 

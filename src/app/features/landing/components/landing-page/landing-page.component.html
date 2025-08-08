@@ -1,18 +1,18 @@
 <main>
-    <section class="content">
-      <img src="/img/logo_blue.png"><br>
-      <div class="row content_actions">
-        <div class="col-6" align="right">
-          <button routerLink="/login" mat-raised-button class="button button--alt">Login</button>
-        </div>
-        <div class="col-6">
-          <button routerLink="/register" mat-raised-button class="button button--alt">Registrarme</button>
-        </div>
+  <section class="content">
+    <img src="/img/logo_blue.png"><br>
+    <div class="row content_actions">
+      <div class="col-6" align="right">
+        <button routerLink="/login" mat-raised-button class="button button--alt">Login</button>
       </div>
-      <div class="content_legal">
-        <p class="legal_text">Términos y condiciones</p><br>
-        <p class="legal_text">Aviso de privacidad</p>
+      <div class="col-6">
+        <button routerLink="/register" mat-raised-button class="button button--alt">Registrarme</button>
       </div>
-    </section>
-    <router-outlet></router-outlet>
-  </main>
+    </div>
+    <div class="content_legal">
+      <p class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</p><br>
+      <p class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</p>
+    </div>
+  </section>
+  <router-outlet></router-outlet>
+</main>

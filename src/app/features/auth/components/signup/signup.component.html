@@ -1,84 +1,85 @@
 @if (spinner) {
-    <div class="progress-loader" >
-        <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-    </div>
+<div class="progress-loader">
+  <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
+</div>
 }
-  <main>
-      <section class="login_row">
-          <section class="login_form_column">
-            <div class="custom">
-              <section class="login_form_logo">
-                <img src="/img/logo.png" (click)="gotoHome()" alt="">
-              </section>
-              <div class="login_form_container">
-                <form [formGroup]="signupForm">
-                  <div class="login_form_container_welcome">
-                    <h1 class="login_form_title">Cuentanos sobre ti</h1>
-                    <p class="subtitle">Por favor proporcionanos tus datos para<br> poderte brindar una solución a tu medida</p>
-                  </div>
-                  <div class="login_form_container_form">
-                    <mat-form-field class="login_form_control" appearance="outline">
-                      <!-- <mat-icon class="prefix_form_color" matPrefix> email</mat-icon> -->
-                      <mat-label>Nombre</mat-label>
-                      <input matInput  formControlName="nombre" appearance="outline">
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field class="login_form_control" appearance="outline">
-                      <mat-label>Apellido Paterno</mat-label>
-                      <input matInput formControlName="apellido_pat">
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field class="login_form_control" appearance="outline">
-                      <mat-label>Apellido Materno</mat-label>
-                      <input matInput formControlName="apellido_mat">
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field class="login_form_control" appearance="outline">
-                      <mat-label>Fecha de Nacimiento</mat-label>
-                      <input matInput [matDatepicker]="picker" formControlName="fechaNac">
-                      <mat-hint>DD/MM/YYYY</mat-hint>
-                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                      <mat-datepicker #picker></mat-datepicker>
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field class="login_form_control" appearance="outline">
-                      <mat-icon class="prefix_form_color" matPrefix> call</mat-icon>
-                      <mat-label>Escribe tu telefono</mat-label>
-                      <span matPrefix>&nbsp;+52&nbsp;</span>
-                      <input matInput  mask="(000) 000-0000" formControlName="telefono">
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field class="login_form_control" appearance="outline">
-                        <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
-                      <mat-label>Escribe tu correo</mat-label>
-                      <input matInput formControlName="email">
-                    </mat-form-field>
-                    <br>
-                    <mat-form-field class="login_form_control" appearance="outline">
-                      <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
-                      <mat-label>Escribe tu password</mat-label>
-                      <input matInput formControlName="password">
-                    </mat-form-field>
-                  </div>
-                  <div class="login_form_container_actions">
-                    <button class="button button--confirm"  (click)="doSignUp()">Enviar</button><br>
-                    <p class="options_text" routerLink="/login">¿Ya tienes cuenta?</p>
-                  </div>
-                  <div class="login_form_containe_legal">
-                    <div class="row">
-                      <div class="col-6">
-                        <p class="legal_text">Términos y condiciones</p>
-                      </div>
-                      <div class="col-6">
-                        <p class="legal_text">Avido de privacidad</p>
-                      </div>
-                    </div>
-                  </div>
-                </form>
+<main>
+  <section class="login_row">
+    <section class="login_form_column">
+      <div class="custom">
+        <section class="login_form_logo">
+          <img src="/img/logo.png" (click)="gotoHome()" alt="">
+        </section>
+        <div class="login_form_container center_container">
+          <form [formGroup]="signupForm">
+            <div class="login_form_container_welcome">
+              <h1 class="login_form_title">Cuéntanos sobre ti</h1>
+              <p class="subtitle">
+                Por favor proporciónanos tus datos para<br>
+                poder brindarte una solución a tu medida
+              </p>
+            </div>
+            <div class="login_form_container_form">
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="nombre">
+              </mat-form-field>
+              <br>
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-label>Apellido Paterno</mat-label>
+                <input matInput formControlName="apellido_pat">
+              </mat-form-field>
+              <br>
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-label>Apellido Materno</mat-label>
+                <input matInput formControlName="apellido_mat">
+              </mat-form-field>
+              <br>
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-label>Fecha de Nacimiento</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="fechaNac">
+                <mat-hint>DD/MM/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <br>
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-icon class="prefix_form_color" matPrefix> call</mat-icon>
+                <mat-label>Teléfono</mat-label>
+                <span matPrefix>&nbsp;+52&nbsp;</span>
+                <input matInput mask="(000) 000-0000" formControlName="telefono">
+              </mat-form-field>
+              <br>
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
+                <mat-label>Correo</mat-label>
+                <input matInput formControlName="email">
+              </mat-form-field>
+              <br>
+              <mat-form-field class="login_form_control" appearance="outline">
+                <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
+                <mat-label>Contraseña</mat-label>
+                <input matInput formControlName="password" type="password">
+              </mat-form-field>
+            </div>
+            <div class="login_form_container_actions">
+              <button class="button button--confirm" (click)="doSignUp()">Enviar</button><br>
+              <p class="options_text" routerLink="/login">¿Ya tienes cuenta?</p>
+            </div>
+            <div class="login_form_containe_legal">
+              <div class="row">
+                <div class="col-6">
+                  <p class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</p>
+                </div>
+                <div class="col-6">
+                  <p class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</p>
+                </div>
               </div>
             </div>
-          </section>
-          <section class="extra_info_column" >
-          </section>
-        </section>
-      </main>
+          </form>
+        </div>
+      </div>
+    </section>
+    <section class="extra_info_column"></section>
+  </section>
+</main>

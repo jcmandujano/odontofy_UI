@@ -1,44 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserInformedConsent } from '../models/user-consent.model';
+import { ApiService } from '../../core/services/api.service';
+import { PaginatedResponse } from '../../core/models/api-response.model';
 
-
-const PATH_API = environment.API_URL;
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+const API_PATH = environment.API_URL;
 
 @Injectable({
     providedIn: 'root'
 })
-
+/** Service to manage informed consents created by users */
 export class UserConsentService {
-    constructor(private http: HttpClient) { }   
+    constructor(private api: ApiService) { }
 
-    listUserConsent(){
-        return this.http.get<UserInformedConsent[]>(`${PATH_API}/user-informed-consents`, httpOptions).pipe(
-            map((response: any)=> {
-                return response.consents
-            })
+    listUserConsent(page = 1, limit = 10) {
+        return this.api.get<PaginatedResponse<UserInformedConsent>>(
+            `${API_PATH}/user-informed-consents?page=${page}&limit=${limit}`
         );
     }
 
-    createUserConsent(concept: UserInformedConsent){
-        return this.http.post(`${PATH_API}/user-informed-consents`, concept, httpOptions);
-    }   
-
-    updateUserConsent(id: number, concept: UserInformedConsent){
-        return this.http.put(`${PATH_API}/user-informed-consents/${id}`, concept, httpOptions);
+    createUserConsent(concept: UserInformedConsent) {
+        return this.api.post<UserInformedConsent>(`${API_PATH}/user-informed-consents`, concept);
     }
 
-    deleteUserConsent(id: number){
-        return this.http.delete(`${PATH_API}/user-informed-consents/${id}`, httpOptions);
+    updateUserConsent(id: number, concept: UserInformedConsent) {
+        return this.api.put<UserInformedConsent>(`${API_PATH}/user-informed-consents/${id}`, concept);
     }
 
-    getUserConsent(id: number){
-        return this.http.get<UserInformedConsent>(`${PATH_API}/user-informed-consents/${id}`, httpOptions);
+    deleteUserConsent(id: number) {
+        return this.api.delete<null>(`${API_PATH}/user-informed-consents/${id}`);
     }
 
+    getUserConsent(id: number) {
+        return this.api.get<UserInformedConsent>(`${API_PATH}/user-informed-consents/${id}`);
+    }
 }

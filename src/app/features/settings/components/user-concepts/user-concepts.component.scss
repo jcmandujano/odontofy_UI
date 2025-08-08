@@ -1,18 +1,19 @@
 @use "../../../../../vars.scss" as *;
 
 table {
-    width: 100%;
-  }
+  width: 100%;
+}
 
 .info-table {
-  background-color: #fff;  /* Cambia esto al color que prefieras */
+  background-color: #fff;
+  /* Cambia esto al color que prefieras */
 }
 
 .mat-mdc-row .mat-mdc-cell {
   border: 1px solid #C0D9FF;
 }
 
-.mat-mdc-header-row .mat-mdc-header-cell{
+.mat-mdc-header-row .mat-mdc-header-cell {
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 400;
@@ -23,13 +24,13 @@ table {
   border: 2px solid #C0D9FF;
 }
 
-.title_container{
+.title_container {
   display: flex;
   align-items: center;
   height: 100%;
 }
 
-.section_title{
+.section_title {
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 400;
@@ -40,25 +41,25 @@ table {
   margin: 30px 0;
 }
 
-.dashboard_list_container{
+.dashboard_list_container {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.dashboard_list_actons{
+.dashboard_list_actons {
   display: flex;
   align-items: center;
 }
 
-.dashboard_logout_icon{
+.dashboard_logout_icon {
   width: 20px;
   height: auto;
   margin: 10px;
   cursor: pointer;
 }
 
-.logout-navbar-button{
+.logout-navbar-button {
   height: 30px;
   color: #fff;
   background-color: $second--blue;
@@ -66,13 +67,19 @@ table {
   box-shadow: none !important;
 }
 
-.nuevo_paciente_button_container{
+.nuevo_paciente_button_container {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
-.main-container{
+.main-container {
   margin-bottom: 50px;
+}
+
+.custom-paginator {
+  color: $main--blue;
+  margin-bottom: 35px;
+  background-color: #fff;
 }
