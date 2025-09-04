@@ -10,6 +10,7 @@
         <section class="login_form_logo">
           <img src="/img/logo.png" (click)="gotoHome()" alt="">
         </section>
+        @if(!isRegistrationComplete){
         <div class="login_form_container center_container">
           <form [formGroup]="signupForm">
             <div class="login_form_container_welcome">
@@ -78,6 +79,20 @@
             </div>
           </form>
         </div>
+        }
+        @if(isRegistrationComplete){
+        <div class="confirm-account center_container">
+          <h1 class="login_form_title">¡Cuenta creada con éxito!</h1>
+          <p class="subtitle">
+            Hemos registrado tus datos correctamente.
+            En unos momen tos recibirás un correo electrónico con un enlace para confirmar tu cuenta.
+            Si no lo ves en tu bandeja de entrada, revisa también tu carpeta de spam o correo no deseado.
+          </p>
+          <button class="button button--confirm" (click)="gotoLogin()">Ir a Iniciar Sesión</button>
+        </div>
+        }
+
+
       </div>
     </section>
     <section class="extra_info_column"></section>

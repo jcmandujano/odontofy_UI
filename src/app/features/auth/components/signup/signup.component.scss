@@ -32,6 +32,11 @@ main {
     width: 100%;
 }
 
+.confirm-account {
+    height: 90%;
+    align-items: center;
+}
+
 /* Responsive padding adaptativo */
 @media (min-width: 768px) {
     .center_container {

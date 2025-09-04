@@ -44,9 +44,6 @@ export interface signUpUserData {
 })
 export class SignupComponent implements OnInit {
   hide = true
-  /*   faEnvelope = faEnvelope;
-    fakey = faKeyboard
-    faContactBook = faContactBook */
   userdata = new User;
   spinner = false
   emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -60,6 +57,7 @@ export class SignupComponent implements OnInit {
     fechaNac: new FormControl('', Validators.required),
     telefono: new FormControl('', Validators.required),
   });
+  isRegistrationComplete = false;
   constructor(private router: Router,
     public authService: AuthService,
     private snackBar: MatSnackBar,
@@ -85,8 +83,10 @@ export class SignupComponent implements OnInit {
       this.authService.register(this.buildSignupData(this.signupForm.value)).subscribe(data => {
         this.userdata = data;
         const pass = this.signupForm.value.password || ''
-        this.doLogin(data.user.email, pass)
+        //this.doLogin(data.user.email, pass) // comentado por que ahora tiene que verificar su cuenta
+        this.openSnackbar('Registro exitoso, por favor verifica tu correo para activar tu cuenta', 'Ok')
         this.spinner = false
+        this.isRegistrationComplete = true
       })
     } else {
       this.validateForm()
