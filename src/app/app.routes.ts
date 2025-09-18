@@ -14,23 +14,26 @@ import { InformedConsentsComponent } from './features/patients/informed-consents
 import { OdontogramComponent } from './features/patients/odontogram/odontogram.component';
 import { AgendaComponent } from './features/dentist/agenda/agenda.component';
 import { SettingsComponent } from './features/settings/components/settings/settings.component';
+import { ResetPasswordComponent } from './features/auth/components/reset-password/reset-password.component';
+import { AuthGuard } from './core/guards/auth-guard.guard';
 
 export const routes: Routes = [
-    { path: '', component: LandingPageComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: SignupComponent },
-    { path: 'forgot-password', component: ForgotPasswordComponent },
-    { path: 'confirm-account', component: ConfirmAccountComponent },
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'patient-list', component: PatientListComponent },
-    { path: 'patient-file', component: PatientFileComponent },
-    { path: 'patient-dashboard', component: PatientDashboardComponent },
-    { path: 'evolution-notes', component: EvolutionNotesComponent },
-    { path: 'patient-payment', component: PatientPaymentsComponent },
-    { path: 'informed-consents', component: InformedConsentsComponent },
-    { path: 'odontogram', component: OdontogramComponent },
-    { path: 'schedule', component: AgendaComponent },
-    { path: 'settings', component: SettingsComponent }
+  { path: '', component: LandingPageComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: SignupComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'confirm-account', component: ConfirmAccountComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'patient-list', component: PatientListComponent, canActivate: [AuthGuard] },
+  { path: 'patient-file', component: PatientFileComponent, canActivate: [AuthGuard] },
+  { path: 'patient-dashboard', component: PatientDashboardComponent, canActivate: [AuthGuard] },
+  { path: 'evolution-notes', component: EvolutionNotesComponent, canActivate: [AuthGuard] },
+  { path: 'patient-payment', component: PatientPaymentsComponent, canActivate: [AuthGuard] },
+  { path: 'informed-consents', component: InformedConsentsComponent, canActivate: [AuthGuard] },
+  { path: 'odontogram', component: OdontogramComponent, canActivate: [AuthGuard] },
+  { path: 'schedule', component: AgendaComponent, canActivate: [AuthGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] }
 
 ];
 
