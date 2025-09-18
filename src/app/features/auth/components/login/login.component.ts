@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -28,12 +28,11 @@ import { TermsConditionsComponent } from '../../../../shared/dialogs/terms-condi
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   hide = true
-  emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   userdata = new User;
   loginForm = new FormGroup({
-    username: new FormControl('', Validators.compose([Validators.required, Validators.pattern(this.emailRegex)])),
+    username: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
   });
   constructor(private router: Router,
@@ -43,8 +42,6 @@ export class LoginComponent implements OnInit {
     private dialog: MatDialog,
     private sessionService: SessionStorageService) { }
 
-  ngOnInit(): void {
-  }
 
   gotoHome() {
     this.router.navigate([''])
