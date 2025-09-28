@@ -4,169 +4,183 @@
     <div class="row dashboard-title">
         <!--here goes name and settings-->
         <div class="col-12">
-            <h1 class="dashboard-title-name">{{ currentUser.name + ' ' + currentUser.middle_name + ' '+ currentUser.last_name| titlecase}}</h1>
+            <h1 class="dashboard-title-name">{{ currentUser.name + ' ' + currentUser.middle_name + ' '+
+                currentUser.last_name| titlecase}}</h1>
             <p class="welcome-letter">Bienvenido ¿Que necesitas hacer hoy?</p>
         </div>
     </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="grid-container">
-                    <div class="item1">
-                        <mat-card class="dashboard-card" >
-                            <mat-card-header>
-                                <div class="custom_card_header">
+    <div class="row">
+        <div class="col-12">
+            <div class="grid-container">
+                <div class="item1">
+                    <mat-card class="dashboard-card">
+                        <mat-card-header>
+                            <div class="custom_card_header">
+                                <div class="custom_icon">
+                                    <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+                                </div>
+                                <div class="custom_title">
+                                    <p class="custom_card_title">Agenda</p>
+                                    <span class="custom-card-subtitle">Consulta tus próximas citas</span>
+                                </div>
+                                <div class="custom_actions">
+                                    <button class="dashboard_button card_button" (click)="goToAgenda()"><span>Nueva
+                                            Cita</span></button>
+                                </div>
+                            </div>
+                        </mat-card-header>
+                        <mat-card-content class="full-heigth">
+                            @if (appointmentList && appointmentList.length > 0) {
+                            <mat-list role="list">
+                                @for (event of appointmentList; track event) {
+                                <mat-list-item>
+                                    <div class="dashboard_list_container">
+                                        <div>
+                                            <mat-icon class="dashboard_agenda_dot" svgIcon="agendaDot"></mat-icon>
+                                            <span>
+                                                <span class="day">{{event.appointment_date | date:'dd/MM/y'}} </span>
+                                                <span class="hour">{{event.appointment_time | slice:0:5 }} </span>
+                                                <span class="date_name">{{event.patientFullName}} </span>
+                                            </span>
+                                        </div>
+                                        <div class="dashboard_list_actons">
+                                            <mat-icon class="dashboard_logout_icon" svgIcon="editaCita"
+                                                (click)="goToAgenda()"></mat-icon>
+                                            <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita"
+                                                (click)="goToAgenda()"></mat-icon>
+                                        </div>
+                                    </div>
+
+                                </mat-list-item>
+                                }
+                            </mat-list>
+                            }
+
+                            @if (!appointmentList || appointmentList.length === 0) {
+                            <div class="no-data-found d-flex justify-content-center align-items-center">
+                                <p class="slogan">
+                                    No tienes eventos proximos agendados
+                                </p>
+                            </div>
+                            }
+
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="item2">
+                    <mat-card class="dashboard-card">
+                        <mat-card-content class="full-heigth">
+                            <div class="dashboard_container">
+                                <div class="custom_card_flex_container">
                                     <div class="custom_icon">
-                                        <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+                                        <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
                                     </div>
                                     <div class="custom_title">
-                                        <p class="custom_card_title">Agenda</p>
-                                        <span class="custom-card-subtitle">Consulta tus próximas citas</span>
+                                        <p class="custom_card_title pacientes_list_btn" (click)="listadePacientes()">
+                                            Pacientes</p>
+                                        <span class="custom-card-subtitle">Gestiona o agrega pacientes y sus
+                                            registros.</span>
                                     </div>
                                     <div class="custom_actions">
-                                        <button  class="dashboard_button card_button" (click)="goToAgenda()"><span>Nueva Cita</span></button>
-                                    </div>
-                                </div>
-                              </mat-card-header>
-                              <mat-card-content class="full-heigth">
-                                @if (appointmentList && appointmentList.length > 0) {
-                                    <mat-list role="list">
-                                        @for (event of appointmentList; track event) {
-                                            <mat-list-item>
-                                                <div class="dashboard_list_container">
-                                                    <div>
-                                                        <mat-icon class="dashboard_agenda_dot" svgIcon="agendaDot"></mat-icon>
-                                                        <span>
-                                                            <span class="day">{{event.appointment_date | date:'dd/MM/y'}} </span>
-                                                            <span class="hour">{{event.appointment_time | slice:0:5 }} </span>
-                                                            <span class="date_name">{{event.patientFullName}} </span>
-                                                        </span> 
-                                                    </div>
-                                                    <div class="dashboard_list_actons">
-                                                        <mat-icon class="dashboard_logout_icon" svgIcon="editaCita" (click)="goToAgenda()"></mat-icon>
-                                                        <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita" (click)="goToAgenda()"></mat-icon>
-                                                    </div>
-                                                </div>
-                                                
-                                            </mat-list-item>
-                                        }
-                                    </mat-list>
-                                }
-
-                                @if (!appointmentList || appointmentList.length === 0) {
-                                    <div class="no-data-found d-flex justify-content-center align-items-center">
-                                        <p class="slogan">
-                                            No tienes eventos proximos agendados
-                                        </p>
-                                    </div>
-                                }
-                                    
-                              </mat-card-content>
-                          </mat-card>                      
-                    </div>
-                    <div class="item2">
-                        <mat-card class="dashboard-card">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex align-items-center flex-direction-row">
-                                    <div class="custom_icon">
-                                        <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
-                                    </div>
-                                    <div class="custom_title">
-                                        <p class="custom_card_title">Mis finanzas</p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="custom_icon">
-                                        <mat-icon aria-label="Ocultar finanzas" aria-hidden="false" fontIcon="visibility" class="dashboard_hide_show_finance_icon" *ngIf="!showFinanceData" (click)="visibilityFinanceHandler(true)"></mat-icon>
-                                        <mat-icon aria-label="Mostrar finanzas" aria-hidden="false" fontIcon="visibility_off" class="dashboard_hide_show_finance_icon" *ngIf="showFinanceData" (click)="visibilityFinanceHandler(false)"></mat-icon>
+                                        <button class="dashboard_button card_button"
+                                            (click)="crearPaciente()"><span>Agregar</span></button>
                                     </div>
                                 </div>
                             </div>
+                        </mat-card-content>
+                    </mat-card>
 
-                            
-                            <mat-card-content class="finanzas_card_content">
-                               <div class="finanzas_container">
+                </div>
+                <div class="item3">
+                    <mat-card class="dashboard-card">
+                        <mat-card-content class="full-heigth">
+                            <div class="dashboard_container">
+                                <div class="custom_card_flex_container">
+                                    <div class="custom_icon">
+                                        <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+                                    </div>
+                                    <div class="custom_title">
+                                        <p class="custom_card_title">Consentimientos Informados</p>
+                                        <span class="custom-card-subtitle">Gestiona tu catalogo de consentimientos
+                                            informados para tus pacientes.</span>
+                                    </div>
+                                    <div class="custom_actions">
+                                        <button class="dashboard_button card_button"
+                                            (click)="launchPrintConsentDialog()"><span>Imprimir</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="item4">
+                    <mat-card class="dashboard-card">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex align-items-center flex-direction-row">
+                                <div class="custom_icon">
+                                    <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
+                                </div>
+                                <div class="custom_title">
+                                    <p class="custom_card_title">Mis finanzas</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="custom_icon">
+                                    <mat-icon aria-label="Ocultar finanzas" aria-hidden="false" fontIcon="visibility"
+                                        class="dashboard_hide_show_finance_icon" *ngIf="!showFinanceData"
+                                        (click)="visibilityFinanceHandler(true)"></mat-icon>
+                                    <mat-icon aria-label="Mostrar finanzas" aria-hidden="false"
+                                        fontIcon="visibility_off" class="dashboard_hide_show_finance_icon"
+                                        *ngIf="showFinanceData" (click)="visibilityFinanceHandler(false)"></mat-icon>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <mat-card-content class="finanzas_card_content">
+                            <div class="finanzas_container">
                                 <div class="finance_money_container">
                                     <p class="dashboard_finanzas_table_title">Total</p>
-                                    <p class="dashboard_finanzas_table_total" *ngIf="showFinanceData"> 
-                                        {{paymentBalance.totalPayments | currency}} 
+                                    <p class="dashboard_finanzas_table_total" *ngIf="showFinanceData">
+                                        {{paymentBalance.totalPayments | currency}}
                                     </p>
-                                    <p  class="dashboard_finanzas_table_total"*ngIf="!showFinanceData">
+                                    <p class="dashboard_finanzas_table_total" *ngIf="!showFinanceData">
                                         <span class="financeDot"></span>
                                         <span class="financeDot"></span>
                                         <span class="financeDot"></span>
-                                        <span class="financeDot"></span> 
-                                        <span class="financeDot"></span> 
+                                        <span class="financeDot"></span>
+                                        <span class="financeDot"></span>
                                     </p>
                                 </div>
                                 <div class="finance_money_container">
                                     <p class="dashboard_finanzas_table_title">Ingreso</p>
-                                    <p class="dashboard_finanzas_table_ingreso" *ngIf="showFinanceData">{{paymentBalance.totalIncome | currency}}</p>
-                                    <p  class="dashboard_finanzas_table_total"*ngIf="!showFinanceData">
+                                    <p class="dashboard_finanzas_table_ingreso" *ngIf="showFinanceData">
+                                        {{paymentBalance.totalIncome | currency}}</p>
+                                    <p class="dashboard_finanzas_table_total" *ngIf="!showFinanceData">
                                         <span class="financeDot"></span>
                                         <span class="financeDot"></span>
                                         <span class="financeDot"></span>
-                                        <span class="financeDot"></span> 
-                                        <span class="financeDot"></span> 
+                                        <span class="financeDot"></span>
+                                        <span class="financeDot"></span>
                                     </p>
                                 </div>
                                 <div class="finance_money_container">
                                     <p class="dashboard_finanzas_table_title">Adeudo Total</p>
-                                    <p class="dashboard_finanzas_table_adeudo" *ngIf="showFinanceData">{{paymentBalance.totalDebt | currency}}</p>
-                                    <p  class="dashboard_finanzas_table_total"*ngIf="!showFinanceData">
+                                    <p class="dashboard_finanzas_table_adeudo" *ngIf="showFinanceData">
+                                        {{paymentBalance.totalDebt | currency}}</p>
+                                    <p class="dashboard_finanzas_table_total" *ngIf="!showFinanceData">
                                         <span class="financeDot"></span>
                                         <span class="financeDot"></span>
                                         <span class="financeDot"></span>
-                                        <span class="financeDot"></span> 
-                                        <span class="financeDot"></span> 
+                                        <span class="financeDot"></span>
+                                        <span class="financeDot"></span>
                                     </p>
                                 </div>
-                               </div>
-                            </mat-card-content>
-                          </mat-card>
-                    </div>
-                    <div class="item3">
-                        <mat-card class="dashboard-card">
-                            <mat-card-content class="full-heigth">
-                                <div class="dashboard_container">
-                                    <div class="custom_card_flex_container">
-                                        <div class="custom_icon">
-                                            <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
-                                        </div>
-                                        <div class="custom_title">
-                                            <p class="custom_card_title">Consentimientos Informados</p>
-                                            <span class="custom-card-subtitle">Gestiona tu catalogo de consentimientos informados para tus pacientes.</span>
-                                        </div>
-                                        <div class="custom_actions">
-                                            <button  class="dashboard_button card_button" (click)="launchPrintConsentDialog()"><span>Imprimir</span></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                          </mat-card>
-                    </div>  
-                    <div class="item4">
-                        <mat-card class="dashboard-card">
-                            <mat-card-content class="full-heigth">
-                                <div class="dashboard_container">
-                                    <div class="custom_card_flex_container">
-                                        <div class="custom_icon">
-                                            <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
-                                        </div>
-                                        <div class="custom_title">
-                                            <p class="custom_card_title pacientes_list_btn" (click)="listadePacientes()">Pacientes</p>
-                                            <span class="custom-card-subtitle">Gestiona o agrega pacientes y sus registros.</span>
-                                        </div>
-                                        <div class="custom_actions">
-                                            <button class="dashboard_button card_button" (click)="crearPaciente()"><span>Agregar</span></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </mat-card-content>
-                          </mat-card>
-                    </div>
-                  </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
             </div>
         </div>
     </div>
-    
-    
+</div>

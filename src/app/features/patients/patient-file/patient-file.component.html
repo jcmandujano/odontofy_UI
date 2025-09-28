@@ -1,8 +1,8 @@
 <app-nav-bar></app-nav-bar>
 @if(spinner){
-    <div class="progress-loader">
-        <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-      </div>
+<div class="progress-loader">
+    <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
+</div>
 }
 <form [formGroup]="crearPacientesForm">
     <div class="container-fluid main-container">
@@ -25,7 +25,7 @@
                         <mat-label>Nombre</mat-label>
                         <input matInput formControlName="name">
                         @if(crearPacientesForm.controls['name'].invalid){
-                            <mat-error>Debes ingresar el numbre</mat-error>
+                        <mat-error>Debes ingresar el numbre</mat-error>
                         }
                     </mat-form-field>
                 </div>
@@ -34,7 +34,7 @@
                         <mat-label>Apellido Paterno</mat-label>
                         <input matInput formControlName="middle_name">
                         @if(crearPacientesForm.controls['middle_name'].invalid){
-                            <mat-error>Debes ingresar el apellido paterno</mat-error>
+                        <mat-error>Debes ingresar el apellido paterno</mat-error>
                         }
                     </mat-form-field>
                 </div>
@@ -43,7 +43,7 @@
                         <mat-label>Apellido Materno</mat-label>
                         <input matInput formControlName="last_name">
                         @if(crearPacientesForm.controls['last_name'].invalid){
-                            <mat-error>Debes ingresar el apellido materno</mat-error>
+                        <mat-error>Debes ingresar el apellido materno</mat-error>
                         }
                     </mat-form-field>
                 </div>
@@ -52,16 +52,17 @@
                 <div class="col-4">
                     <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Fecha de Nacimiento</mat-label>
-                        <input matInput [matDatepicker]="picker" formControlName="date_of_birth" (dateInput)="onDateChange($event)" (dateChange)="onDateChange($event)">
+                        <input matInput [matDatepicker]="picker" formControlName="date_of_birth"
+                            (dateInput)="onDateChange($event)" (dateChange)="onDateChange($event)">
                         @if(crearPacientesForm.controls['date_of_birth'].invalid){
-                            <mat-error>Debes ingresar la fecha de nacimiento</mat-error>
+                        <mat-error>Debes ingresar la fecha de nacimiento</mat-error>
                         }
                         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field class="full-width" appearance="outline" >
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Edad</mat-label>
                         <input matInput formControlName="age">
                     </mat-form-field>
@@ -70,16 +71,16 @@
                     <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Sexo</mat-label>
                         <mat-select matNativeControl formControlName="gender">
-                          <mat-option value="MALE">Masculino</mat-option>
-                          <mat-option value="FEMALE">Femenino</mat-option>
-                          <mat-option value="OTHER">Indefinido</mat-option>
+                            <mat-option value="MALE">Masculino</mat-option>
+                            <mat-option value="FEMALE">Femenino</mat-option>
+                            <mat-option value="OTHER">Indefinido</mat-option>
                         </mat-select>
-                      </mat-form-field>
+                    </mat-form-field>
                 </div>
             </section>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field class="full-width" appearance="outline" >
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Ocupación</mat-label>
                         <input matInput formControlName="occupation">
                     </mat-form-field>
@@ -88,39 +89,39 @@
                     <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Estado Civil</mat-label>
                         <mat-select matNativeControl formControlName="marital_status">
-                          <mat-option value="MARRIED">Casadx</mat-option>
-                          <mat-option value="DIVORCED">Divorciadx</mat-option>
-                          <mat-option value="NA">No aplica</mat-option>
-                          <mat-option value="SEPARATED">Separadx</mat-option>
-                          <mat-option value="SINGLE">Solterx</mat-option>
-                          <mat-option value="COMMON LAW">Union Libre</mat-option>
-                          <mat-option value="WIDOWED">Viudx</mat-option>
+                            <mat-option value="MARRIED">Casadx</mat-option>
+                            <mat-option value="DIVORCED">Divorciadx</mat-option>
+                            <mat-option value="NA">No aplica</mat-option>
+                            <mat-option value="SEPARATED">Separadx</mat-option>
+                            <mat-option value="SINGLE">Solterx</mat-option>
+                            <mat-option value="COMMON LAW">Union Libre</mat-option>
+                            <mat-option value="WIDOWED">Viudx</mat-option>
                         </mat-select>
-                      </mat-form-field>
+                    </mat-form-field>
                 </div>
                 <div class="col-4">
                     <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Teléfono</mat-label>
                         <input matInput formControlName="phone">
                         @if(crearPacientesForm.controls['phone'].invalid){
-                            <mat-error>{{getPhoneErrorMessage()}}</mat-error>
+                        <mat-error>{{getPhoneErrorMessage()}}</mat-error>
                         }
-                       
+
                     </mat-form-field>
                 </div>
             </section>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field class="full-width" appearance="outline" >
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Email</mat-label>
                         <input matInput formControlName="email">
                         @if(crearPacientesForm.controls['email'].invalid){
-                            <mat-error>{{getEmailErrorMessage()}}</mat-error>
+                        <mat-error>{{getEmailErrorMessage()}}</mat-error>
                         }
                     </mat-form-field>
                 </div>
                 <div class="col-4">
-                    <mat-form-field class="full-width" appearance="outline" >
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Dirección</mat-label>
                         <input matInput formControlName="address">
                     </mat-form-field>
@@ -134,7 +135,7 @@
             </section>
             <section class="row">
                 <div class="col-12">
-                    <mat-form-field class="full-width" appearance="outline" >
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Motivo de Consulta</mat-label>
                         <input matInput formControlName="reason_for_consultation">
                     </mat-form-field>
@@ -143,7 +144,7 @@
             <p class="emergency-contact-data">Contacto de emergencia</p>
             <section class="row">
                 <div class="col-4">
-                    <mat-form-field class="full-width" appearance="outline" >
+                    <mat-form-field class="full-width" appearance="outline">
                         <mat-label>Nombre</mat-label>
                         <input matInput formControlName="emergency_contact_name">
                     </mat-form-field>
@@ -166,35 +167,37 @@
             <mat-accordion>
                 <mat-expansion-panel class="heredofamiliares-panel">
                     <mat-expansion-panel-header>
-                      <mat-panel-title class="section_title">
-                        Antecedentes Heredofamiliares
-                      </mat-panel-title>
+                        <mat-panel-title class="section_title">
+                            Antecedentes Heredofamiliares
+                        </mat-panel-title>
                     </mat-expansion-panel-header>
                     <section class="row">
                         <div class="col-12">
                             <mat-form-field class="full-width" appearance="outline">
                                 <mat-label></mat-label>
-                                <textarea formControlName="family_medical_history" matInput placeholder="Diabetes, cardiovasculares, etc..." rows="2"></textarea>
-                              </mat-form-field>
+                                <textarea formControlName="family_medical_history" matInput
+                                    placeholder="Diabetes, cardiovasculares, etc..." rows="2"></textarea>
+                            </mat-form-field>
                         </div>
                     </section>
-                  </mat-expansion-panel>
+                </mat-expansion-panel>
             </mat-accordion>
         </section>
         <section id="personalesPatologicos" formGroupName="personal_medical_history">
             <mat-accordion>
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
-                      <mat-panel-title class="section_title">
-                        Antecedentes Personales Patologicos
-                      </mat-panel-title>
+                        <mat-panel-title class="section_title">
+                            Antecedentes Personales Patologicos
+                        </mat-panel-title>
                     </mat-expansion-panel-header>
                     <!--TODO Content here-->
                     <section class="row" formGroupName="bajoTratamientoMedico">
                         <div class="col-6">
                             <div class="row personales-patologicos-control">
                                 <div class="col-6">
-                                    <label class="personales-patologicos-label">¿Esta usted bajo algún tratamiento medico?</label>
+                                    <label class="personales-patologicos-label">¿Esta usted bajo algún tratamiento
+                                        medico?</label>
                                 </div>
                                 <div class="col-6">
                                     <mat-radio-group aria-label="Select an option" formControlName="respuesta">
@@ -203,7 +206,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -216,7 +219,8 @@
                         <div class="col-6">
                             <div class="row personales-patologicos-control">
                                 <div class="col-6">
-                                    <label class="personales-patologicos-label">¿Le han practicado alguna intervención quirúrgica?</label>
+                                    <label class="personales-patologicos-label">¿Le han practicado alguna intervención
+                                        quirúrgica?</label>
                                 </div>
                                 <div class="col-6">
                                     <mat-radio-group aria-label="Select an option" formControlName="respuesta">
@@ -225,7 +229,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -247,7 +251,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -269,7 +273,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -291,7 +295,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -313,7 +317,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -335,7 +339,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -357,7 +361,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -379,7 +383,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -401,7 +405,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -423,7 +427,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -445,7 +449,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -467,7 +471,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -480,7 +484,8 @@
                         <div class="col-6">
                             <div class="row personales-patologicos-control">
                                 <div class="col-6">
-                                    <label class="personales-patologicos-label">Alergia (Penicilina, anestesia, aspirina, alimentos, etc.)</label>
+                                    <label class="personales-patologicos-label">Alergia (Penicilina, anestesia,
+                                        aspirina, alimentos, etc.)</label>
                                 </div>
                                 <div class="col-6">
                                     <mat-radio-group aria-label="Select an option" formControlName="respuesta">
@@ -489,7 +494,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -511,7 +516,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -533,7 +538,7 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -555,7 +560,23 @@
                                     </mat-radio-group>
                                 </div>
                             </div>
-                            
+
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field class="full-width" appearance="outline">
+                                <mat-label>Observaciones</mat-label>
+                                <input matInput formControlName="comentarios">
+                            </mat-form-field>
+                        </div>
+                    </section>
+                    <section class="row" formGroupName="otros">
+                        <div class="col-6">
+                            <div class="row personales-patologicos-control">
+                                <div class="col-6">
+                                    <label class="personales-patologicos-label">Otros</label>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="col-6">
                             <mat-form-field class="full-width" appearance="outline">
@@ -574,14 +595,16 @@
                         Cancelar
                     </button>
                     @if(!pacienteId){
-                        <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3" (click)="crearPaciente()">
-                            Guardar
-                        </button>
+                    <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3"
+                        (click)="crearPaciente()">
+                        Guardar
+                    </button>
                     }
                     @if(pacienteId){
-                        <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3" (click)="actualizarPaciente()">
-                            Actualizar
-                        </button>
+                    <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3"
+                        (click)="actualizarPaciente()">
+                        Actualizar
+                    </button>
                     }
                 </div>
             </div>

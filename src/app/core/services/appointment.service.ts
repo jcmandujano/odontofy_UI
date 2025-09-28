@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Appointment } from '../models/appointment.model';
 import { ApiService } from '../../core/services/api.service';
-import { PaginatedResponse } from '../../core/models/api-response.model';
+import { ApiResponse } from '../../core/models/api-response.model';
 
 const API_PATH = environment.API_URL;
 
@@ -17,9 +17,9 @@ export class AppointmentService {
         return this.api.post(`${API_PATH}/appointments`, appointment);
     }
 
-    listAppointments(page = 1, limit = 10) {
-        return this.api.get<PaginatedResponse<Appointment>>(
-            `${API_PATH}/appointments?fromToday=true&page=${page}&limit=${limit}`
+    listAppointments(startDate?: string, endDate?: string) {
+        return this.api.get<ApiResponse<Appointment[]>>(
+            `${API_PATH}/appointments?startDate=${startDate}&endDate=${endDate}`
         );
     }
 

@@ -35,9 +35,9 @@ import { Location } from '@angular/common';
 })
 export class PatientFileComponent {
   crearPacientesForm: FormGroup
-  patient: any //crear modelo de paciente y tipear esto
+  patient: Patient = new Patient();
   spinner = false
-  pacienteId: any //if this value exist, we enable update mode
+  pacienteId!: number; //if this value exist, we enable update mode
   constructor(private elementRef: ElementRef,
     private pacientesService: PacientesService,
     private router: Router,
@@ -48,7 +48,7 @@ export class PatientFileComponent {
   }
 
   ngOnInit(): void {
-    this.pacienteId = this.route.snapshot.paramMap.get('id');
+    this.pacienteId = this.route.snapshot.paramMap.get('id') ? Number(this.route.snapshot.paramMap.get('id')) : 0;
     if (this.pacienteId) {
       this.spinner = true
       this.pacientesService.findPatient(this.pacienteId).subscribe(response => {
@@ -250,8 +250,10 @@ export class PatientFileComponent {
         embarazo: new FormGroup({
           respuesta: new FormControl(''),
           comentarios: new FormControl('')
+        }),
+        otros: new FormGroup({
+          comentarios: new FormControl('')
         })
-
       })
     })
   }

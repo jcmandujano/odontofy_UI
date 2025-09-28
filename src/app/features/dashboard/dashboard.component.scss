@@ -1,27 +1,27 @@
 .grid-container {
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-gap: 10px;
-    padding: 0px 40px;
-    min-height: 70vh;
-    margin-bottom: 30px;
-  }
-  
-  .grid-container > div {
-    text-align: center;
-    padding: 5px 0;
-    font-size: 30px;
-  }
-  
-  .item1 {
-    grid-row: 1 / span 3;
-  }
-
-  .button{
-    margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  padding: 0px 40px;
+  min-height: 70vh;
+  margin-bottom: 30px;
 }
 
-.logo-letter{
+.grid-container>div {
+  text-align: center;
+  padding: 5px 0;
+  font-size: 30px;
+}
+
+.item1 {
+  grid-row: 1 / span 3;
+}
+
+.button {
+  margin-bottom: 40px;
+}
+
+.logo-letter {
   font-style: normal;
   font-weight: 700;
   font-size: 60px;
@@ -31,11 +31,11 @@
   color: #6CA6FE;
 }
 
-.second-blue{
+.second-blue {
   color: #407DDA;
 }
 
-.dashboard-title-name{
+.dashboard-title-name {
   margin-top: 10px;
   font-style: normal;
   font-weight: 700;
@@ -45,26 +45,27 @@
   color: #407DDA;
 }
 
-.dashboard-logo{
+.dashboard-logo {
   margin-bottom: 10px;
   width: 250px;
 }
-.dashboard-card{
+
+.dashboard-card {
   background-color: white;
   width: auto;
   height: 100%;
 }
 
-.dashboard-header{
+.dashboard-header {
   padding: 0px 70px;
   padding-top: 20px;
 }
 
-.dashboard-title{
+.dashboard-title {
   padding: 0 80px;
 }
 
-.dashboard_button{
+.dashboard_button {
   background-color: #6CA6FE;
   font-weight: 500;
   border: none;
@@ -90,7 +91,7 @@
   padding-left: 10px;
 }
 
-.welcome-letter{
+.welcome-letter {
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -98,30 +99,30 @@
   color: #7A7A7A;
 }
 
-.dashboard_settings{
+.dashboard_settings {
   display: flex;
-    align-items: center;
-    justify-content: end;
+  align-items: center;
+  justify-content: end;
 }
 
-.dashboard_settings_icon{
+.dashboard_settings_icon {
   width: 30px;
   height: auto
 }
 
-.label_exception{
+.label_exception {
   position: relative;
   top: -2px;
 }
 
-.dashboard_logout_icon{
+.dashboard_logout_icon {
   width: 20px;
   height: auto;
   margin: 10px;
   cursor: pointer;
 }
 
-.dashboard_agenda_actions{
+.dashboard_agenda_actions {
   width: 70px;
   height: auto;
   margin: 0px 20px;
@@ -138,31 +139,31 @@
   background-size: cover;
 }
 
-mat-card-title{
+mat-card-title {
   text-align: start;
 }
 
-.custom_card_header{
+.custom_card_header {
   display: flex;
   flex-direction: row;
   align-items: center;
   flex-grow: 4;
 }
 
-.custom_card_flex_container{
+.custom_card_flex_container {
   display: flex;
   flex-direction: row;
   align-items: center;
   flex-grow: 4;
 }
 
-.dashboard_agenda_icon{
+.dashboard_agenda_icon {
   width: 50px;
   height: auto;
   margin: 0px 20px;
 }
 
-.dashboard_hide_show_finance_icon{
+.dashboard_hide_show_finance_icon {
   width: 50px;
   height: auto;
   margin: 10px 20px;
@@ -171,7 +172,7 @@ mat-card-title{
   color: #407DDA;
 }
 
-.dashboard_agenda_dot{
+.dashboard_agenda_dot {
   width: 15px;
   height: auto;
   margin: 0px 10px;
@@ -179,28 +180,29 @@ mat-card-title{
   top: 8px !important;
 }
 
-.custom_title{
+.custom_title {
   text-align: start;
   align-items: center;
   flex-grow: 1;
 }
-.custom_actions{
+
+.custom_actions {
   flex-grow: 1;
   text-align: end;
-    padding-right: 20px;
+  padding-right: 20px;
 }
 
-.card_button{
+.card_button {
   width: 150px;
   height: 30px;
 }
 
-.mat-card{
+.mat-card {
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(94, 136, 244, 0.25);
 }
 
-.custom_card_title{
+.custom_card_title {
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 400;
@@ -213,7 +215,7 @@ mat-card-title{
   margin: 0;
 }
 
-.custom-card-subtitle{
+.custom-card-subtitle {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
@@ -222,13 +224,13 @@ mat-card-title{
   color: #7A7A7A;
 }
 
-mat-list-item{
+mat-list-item {
   background: rgba(217, 232, 255, 0.4);
   margin-bottom: 10px;
   justify-content: space-between;
 }
 
-mat-list{
+mat-list {
   padding: 10px 20px;
 }
 
@@ -236,22 +238,22 @@ mat-list{
   justify-content: space-between;
 }
 
-.day{
+.day {
   color: #407DDA;
   font-weight: 500;
 }
 
-.hour{
+.hour {
   color: #6CA6FE;
   font-weight: 500;
 }
 
-.date_name{
+.date_name {
   color: #7A7A7A;
   font-weight: 500;
 }
 
-.cita{
+.cita {
   color: #27AE60;
   font-style: italic;
   font-weight: 500;
@@ -259,7 +261,7 @@ mat-list{
   cursor: pointer;
 }
 
-.finanzas_container{
+.finanzas_container {
   background: rgba(217, 232, 255, 0.4);
   display: flex;
   justify-content: space-around;
@@ -267,7 +269,7 @@ mat-list{
   height: 100%;
 }
 
-.finanzas_card_content{
+.finanzas_card_content {
   height: 60%;
   margin-top: 20px;
 }
@@ -277,17 +279,17 @@ mat-list{
   width: 80%;
 }
 
-.dashboard_container{
+.dashboard_container {
   display: flex;
   align-items: center;
   height: 100%;
 }
 
-.full-heigth{
+.full-heigth {
   height: 100%;
 }
 
-.dashboard_finanzas_table_title{
+.dashboard_finanzas_table_title {
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 400;
@@ -295,10 +297,10 @@ mat-list{
   line-height: 24px;
   letter-spacing: 0.01em;
   /* main-blue */
-  color: #407DDA; 
+  color: #407DDA;
 }
 
-.dashboard_finanzas_table_total{
+.dashboard_finanzas_table_total {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
@@ -307,7 +309,7 @@ mat-list{
   color: #407DDA;
 }
 
-.dashboard_finanzas_table_ingreso{
+.dashboard_finanzas_table_ingreso {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
@@ -316,7 +318,7 @@ mat-list{
   color: #6FCF97;
 }
 
-.dashboard_finanzas_table_adeudo{
+.dashboard_finanzas_table_adeudo {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
@@ -325,39 +327,39 @@ mat-list{
   color: #EB5757;
 }
 
-.dashboard_list_container{
+.dashboard_list_container {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.dashboard_list_actons{
+.dashboard_list_actons {
   display: flex;
   align-items: center;
 }
 
-.pacientes_list_btn{
+.pacientes_list_btn {
   cursor: pointer;
 }
 
-.full-heigth{
+.full-heigth {
   height: 100%;
 }
 
-.no-data-found{
+.no-data-found {
   background-color: aliceblue;
   height: 100%;
 }
 
 .financeDot {
   height: 15px;
-  width: 15px; 
+  width: 15px;
   background-color: #407DDA;
   border-radius: 50%;
   display: inline-block;
   margin: 0px 2px;
 }
 
-.finance_money_container{
+.finance_money_container {
   min-width: 110px;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Payment } from '../models/payment.model';
 import { ApiService } from '../../core/services/api.service';
-import { ApiResponse, PaginatedResponse } from '../../core/models/api-response.model';
+import { PaginatedResponse } from '../../core/models/api-response.model';
 
 const API_PATH = environment.API_URL;
 

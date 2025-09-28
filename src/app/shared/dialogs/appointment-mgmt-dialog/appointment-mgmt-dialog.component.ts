@@ -6,32 +6,32 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {provideMomentDateAdapter} from '@angular/material-moment-adapter';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatSelectModule } from '@angular/material/select';
 import { Patient } from '../../../core/models/patient.model';
 import { QuillModule } from 'ngx-quill';
 import 'moment/locale/es';
 
 @Component({
-    selector: 'app-appointment-mgmt-dialog',
-    imports: [
-        MatFormFieldModule,
-        MatDatepickerModule,
-        MatInputModule,
-        FormsModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatSelectModule,
-        QuillModule,
-        MatFormFieldModule,
-        ReactiveFormsModule
-    ],
-    providers: [
-        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-        provideMomentDateAdapter(),
-    ],
-    templateUrl: './appointment-mgmt-dialog.component.html',
-    styleUrl: './appointment-mgmt-dialog.component.scss'
+  selector: 'app-appointment-mgmt-dialog',
+  imports: [
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatInputModule,
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSelectModule,
+    QuillModule,
+    MatFormFieldModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+    provideMomentDateAdapter(),
+  ],
+  templateUrl: './appointment-mgmt-dialog.component.html',
+  styleUrl: './appointment-mgmt-dialog.component.scss'
 })
 export class AppointmentMgmtDialogComponent {
   appointmentDate: Date = new Date();
@@ -54,7 +54,7 @@ export class AppointmentMgmtDialogComponent {
     ],
     scrollingContainer: 'html',                   // Contenedor con scroll
     bounds: 'self'                               // Limitar el editor dentro de un área
-    
+
   };
   constructor(
     public dialogRef: MatDialogRef<AppointmentMgmtDialogComponent>,
@@ -68,11 +68,13 @@ export class AppointmentMgmtDialogComponent {
       appointmentNote: ['']
     });
 
-    if(data.patients){
+    console.log('DIALOG DATA', data)
+
+    if (data.patients) {
       this.patientsList = data.patients
     }
-    
-    if(data.appointment){
+
+    if (data.appointment) {
       const appointment = data.appointment.meta.appointment
       //patcheamos los valores del formulario con la informacion del appointment
       this.appointmentForm.patchValue({
@@ -82,18 +84,18 @@ export class AppointmentMgmtDialogComponent {
         appointmentNote: appointment.note
       })
     }
-  } 
+  }
 
   ngOnInit(): void {
-    
+
   }
 
   getFullName(patient: Patient): string {
     return `${patient.name} ${patient.middle_name} ${patient.last_name}`
   }
-  
+
   onTimeChange(event: any): void {
-     this.selectedTime = event;
+    this.selectedTime = event;
   }
 
   onSave(): void {
@@ -104,7 +106,7 @@ export class AppointmentMgmtDialogComponent {
     }
   }
 
-  cancel(){
+  cancel() {
     this.dialogRef.close()
   }
 }

@@ -1,14 +1,14 @@
 import { Component, ElementRef } from '@angular/core';
 import { CalendarEvent, CalendarModule, CalendarUtils, DateAdapter, CalendarA11y, CalendarDateFormatter, CalendarEventTitleFormatter, CalendarView, DAYS_OF_WEEK, CalendarEventAction, CalendarEventTimesChangedEvent } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { isSameDay, isSameMonth } from 'date-fns';
+import { format, isSameDay, isSameMonth } from 'date-fns';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { registerLocaleData } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { EventColor } from 'calendar-utils';
-import { Subject } from 'rxjs';
+import { from, Subject } from 'rxjs';
 import localeEs from '@angular/common/locales/es';
 import { AppointmentMgmtDialogComponent } from '../../../shared/dialogs/appointment-mgmt-dialog/appointment-mgmt-dialog.component';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
@@ -23,7 +23,11 @@ import { User } from '../../../core/models/user.model';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { UserService } from '../../../core/services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import {
+  startOfMonth, endOfMonth,
+  startOfWeek, endOfWeek,
+  startOfDay, endOfDay
+} from 'date-fns';
 registerLocaleData(localeEs);
 
 const colors: Record<string, EventColor> = {
@@ -69,6 +73,9 @@ export class AgendaComponent {
   patientsList: Patient[] = []
   currentUser: User = new User;
   isUserSyncGoogle: boolean = false;
+  fromDate: string | null = null;
+  toDate: string | null = null;
+
   constructor(
     private elementRef: ElementRef,
     public dialog: MatDialog,
@@ -91,7 +98,13 @@ export class AgendaComponent {
     this.currentUser = this.sessionService.getUser();
     this.isUserSyncGoogle = this.currentUser.is_google_synced ?? false;
     this.retrievePatients()
-    this.retrieveAppointments()
+    // Aquí calculas el rango inicial del mes actual (porque view = Month al inicio)
+    const range = this.getViewRange();
+    this.fromDate = range.start;
+    this.toDate = range.end;
+    console.log('Rango inicial:', this.fromDate, '→', this.toDate);
+
+    this.retrieveAppointments(this.fromDate, this.toDate);
   }
 
   ngAfterViewInit() {
@@ -101,8 +114,9 @@ export class AgendaComponent {
 
   retrievePatients() {
     this.spinner.show()
-    this.patientService.listPatients().subscribe(data => {
-      this.patientsList = []//data.patients
+    this.patientService.listPatients().subscribe(response => {
+      console.log('data', response.data?.results)
+      this.patientsList = response.data?.results ?? []
       this.spinner.hide()
     }, (error) => {
       this.spinner.hide()
@@ -111,16 +125,19 @@ export class AgendaComponent {
     })
   }
 
-  retrieveAppointments() {
-    this.spinner.show()
-    this.appointmentService.listAppointments().subscribe(response => {
-      this.events = this.transformAppointmentsToEvents(response.data?.results ?? []);
-      this.spinner.hide()
-    }, (error) => {
-      this.spinner.hide()
-      console.log('ERROR', error)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
-    })
+  retrieveAppointments(startDate: string, endDate: string) {
+    this.spinner.show();
+    this.appointmentService.listAppointments(startDate, endDate)
+      .subscribe(response => {
+        console.log('data', response.data)
+        const appointments: Appointment[] = response.data ?? [];
+        this.events = this.transformAppointmentsToEvents(appointments);
+        this.spinner.hide();
+      }, (error) => {
+        this.spinner.hide();
+        console.error('ERROR', error);
+        this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Ok');
+      });
   }
 
   newAppointment() {
@@ -244,7 +261,7 @@ export class AgendaComponent {
   createAppointment(appointment: Appointment) {
     this.spinner.show()
     this.appointmentService.createAppointment(appointment).subscribe(data => {
-      this.retrieveAppointments()
+      this.retrieveAppointments(this.fromDate ?? '', this.toDate ?? '')
       this.openSnackbar('Cita creada exitosamente', 'Ok')
     }, (error) => {
       this.spinner.hide()
@@ -256,7 +273,7 @@ export class AgendaComponent {
   deleteAppointment(appointment_id: number) {
     this.spinner.show()
     this.appointmentService.deleteAppointment(appointment_id).subscribe(data => {
-      this.retrieveAppointments()
+      this.retrieveAppointments(this.fromDate ?? '', this.toDate ?? '')
       this.openSnackbar('Cita eliminada exitosamente', 'Ok')
     }, (error) => {
       this.spinner.hide()
@@ -268,7 +285,7 @@ export class AgendaComponent {
   updateAppointment(appointment_id: number, appointment: Appointment) {
     this.spinner.show()
     this.appointmentService.updateAppointment(appointment_id, appointment).subscribe(data => {
-      this.retrieveAppointments()
+      this.retrieveAppointments(this.fromDate ?? '', this.toDate ?? '')
       this.openSnackbar('Cita actualizada exitosamente', 'Ok')
     }, (error) => {
       this.spinner.hide()
@@ -326,6 +343,7 @@ export class AgendaComponent {
 
   setView(view: CalendarView) {
     this.view = view;
+    this.onViewChange();
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -340,5 +358,44 @@ export class AgendaComponent {
       }
       this.viewDate = date;
     }
+  }
+
+  getViewRange(): { start: string; end: string } {
+    let start: Date;
+    let end: Date;
+
+    switch (this.view) {
+      case CalendarView.Month:
+        start = startOfMonth(this.viewDate);
+        end = endOfMonth(this.viewDate);
+        break;
+      case CalendarView.Week:
+        start = startOfWeek(this.viewDate, { weekStartsOn: this.weekStartsOn as import('date-fns').Day });
+        end = endOfWeek(this.viewDate, { weekStartsOn: this.weekStartsOn as import('date-fns').Day });
+        break;
+      case CalendarView.Day:
+        start = startOfDay(this.viewDate);
+        end = endOfDay(this.viewDate);
+        break;
+    }
+
+    // 👉 Formatear a 'yyyy-MM-dd'
+    return {
+      start: format(start, 'yyyy-MM-dd'),
+      end: format(end, 'yyyy-MM-dd')
+    };
+  }
+
+  onViewDateChange(date: Date) {
+    this.viewDate = date;
+    this.onViewChange();
+  }
+
+  onViewChange() {
+    const range = this.getViewRange();
+    console.log('Consultando citas del', range.start, 'al', range.end);
+    this.fromDate = range.start;
+    this.toDate = range.end;
+    this.retrieveAppointments(this.fromDate, this.toDate);
   }
 }
