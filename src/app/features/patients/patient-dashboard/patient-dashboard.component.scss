@@ -65,7 +65,7 @@
 
 .finanzas_container{
     display: flex;
-    justify-content: space-around;
+    justify-content: end;
     align-items: center;
     height: 100%;
 }
@@ -107,3 +107,17 @@
     line-height: 30px;
     color: #EB5757;
   }
+
+  .alergy-icon{
+    //warning icon eith yellow color
+    color: #F2C94C;
+    margin: 4px 15px;
+  }
+
+.balance-debt-color{
+    color: #EB5757;
+}
+
+.balance-income-color{
+    color: #6FCF97;
+}

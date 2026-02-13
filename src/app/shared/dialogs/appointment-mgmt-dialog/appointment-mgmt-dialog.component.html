@@ -10,6 +10,10 @@
               }
             </mat-select>
         </mat-form-field>
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Motivo de la Cita</mat-label>
+            <input matInput formControlName="reason" placeholder="Escribe el motivo de la cita">
+        </mat-form-field>
         <div class="row">
             <div class="col-6">
                 <mat-form-field class="full-width" appearance="outline">
@@ -20,10 +24,18 @@
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
             </div>
+        </div>
+        <div class="row">
             <div class="col-6">
                 <mat-form-field class="full-width" appearance="outline">
-                    <mat-label>Hora</mat-label>
-                    <input matInput formControlName="appointmentTime" type="time">
+                    <mat-label>Hora de Inicio</mat-label>
+                    <input matInput formControlName="appointmentPickerTime" type="time">
+                </mat-form-field>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="full-width" appearance="outline">
+                    <mat-label>Hora de Fin</mat-label>
+                    <input matInput formControlName="appointmentPickerEndTime" type="time">
                 </mat-form-field>
             </div>
         </div>

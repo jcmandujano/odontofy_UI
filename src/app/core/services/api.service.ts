@@ -35,4 +35,10 @@ export class ApiService {
             catchError((error) => throwError(() => error))
         );
     }
+
+    patch<T>(url: string, body: any): Observable<ApiResponse<T>> {
+        return this.http.patch<ApiResponse<T>>(url, body).pipe(
+            catchError((error) => throwError(() => error))
+        );
+    }
 }

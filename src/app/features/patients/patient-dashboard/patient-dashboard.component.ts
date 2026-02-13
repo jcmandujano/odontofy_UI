@@ -8,13 +8,17 @@ import { SessionStorageService } from '../../../core/services/session-storage.se
 import { Patient } from '../../../core/models/patient.model';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-patient-dashboard',
   imports: [
     NavBarComponent,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule,
+    CommonModule
   ],
   templateUrl: './patient-dashboard.component.html',
   styleUrl: './patient-dashboard.component.scss'
@@ -23,6 +27,8 @@ export class PatientDashboardComponent {
   pacienteId: any
   paciente: Patient | undefined
   spinner = false
+  antecedentes: string | null = null
+  patientBalance: number = 0
   constructor(private sessionService: SessionStorageService,
     private elementRef: ElementRef,
     private router: Router,
@@ -79,7 +85,8 @@ export class PatientDashboardComponent {
       this.spinner = true
       this.pacientesService.findPatient(this.pacienteId).subscribe(response => {
         this.paciente = response.data ?? undefined
-        //this.patchValuesToEdit(data.data.attributes)
+        this.antecedentes = this.getPositiveMedicalConditions(this.paciente!)
+        this.patientBalance = (this.paciente?.debt ?? 0) * -1
         this.spinner = false
       }, (error) => {
         this.spinner = false
@@ -88,6 +95,20 @@ export class PatientDashboardComponent {
       })
     }
   }
+
+  getPositiveMedicalConditions(patient: Patient): string | null {
+    const history = patient.personal_medical_history;
+    if (!history) return null;
+  
+    const positives = Object.entries(history)
+      .filter(([_, data]) => (data as { respuesta?: string }).respuesta?.toLowerCase() === 'si')
+      .map(([key]) => key);
+  
+    return positives.length > 0
+      ? `Antecedentes: ${positives.join(', ')}`
+      : null;
+  }
+  
 
   goToExpediente() {
     this.router.navigate(['/patient-file', { id: this.pacienteId }])

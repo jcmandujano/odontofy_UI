@@ -27,7 +27,7 @@ export class PaymentService {
     }
 
     updatePayment(paymentId: number, patientId: number, newPayment: Payment) {
-        return this.api.put<Payment>(`${API_PATH}/patients/${patientId}/payment/${paymentId}`, newPayment);
+        return this.api.patch<Payment>(`${API_PATH}/patients/${patientId}/payment/${paymentId}`, newPayment);
     }
 
     deletePayment(patientId: number, paymentId: number) {

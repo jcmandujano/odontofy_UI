@@ -4,7 +4,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { format, isSameDay, isSameMonth } from 'date-fns';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { registerLocaleData } from '@angular/common';
+import { formatDate, registerLocaleData } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { EventColor } from 'calendar-utils';
@@ -28,6 +28,7 @@ import {
   startOfWeek, endOfWeek,
   startOfDay, endOfDay
 } from 'date-fns';
+import { environment } from '../../../../environments/environment';
 registerLocaleData(localeEs);
 
 const colors: Record<string, EventColor> = {
@@ -100,9 +101,8 @@ export class AgendaComponent {
     this.retrievePatients()
     // Aquí calculas el rango inicial del mes actual (porque view = Month al inicio)
     const range = this.getViewRange();
-    this.fromDate = range.start;
-    this.toDate = range.end;
-    console.log('Rango inicial:', this.fromDate, '→', this.toDate);
+    this.fromDate = formatDate(range.start, 'yyyy-MM-dd', 'en-US');
+    this.toDate = formatDate(range.end, 'yyyy-MM-dd', 'en-US');
 
     this.retrieveAppointments(this.fromDate, this.toDate);
   }
@@ -115,7 +115,6 @@ export class AgendaComponent {
   retrievePatients() {
     this.spinner.show()
     this.patientService.listPatients().subscribe(response => {
-      console.log('data', response.data?.results)
       this.patientsList = response.data?.results ?? []
       this.spinner.hide()
     }, (error) => {
@@ -130,8 +129,10 @@ export class AgendaComponent {
     this.appointmentService.listAppointments(startDate, endDate)
       .subscribe(response => {
         console.log('data', response.data)
-        const appointments: Appointment[] = response.data ?? [];
+        const appointments: Appointment[] = Array.isArray(response.data) ? response.data : [];
+        console.log('Transformed Appointments:', appointments);
         this.events = this.transformAppointmentsToEvents(appointments);
+        console.log('Calendar Events:', this.events);
         this.spinner.hide();
       }, (error) => {
         this.spinner.hide();
@@ -149,21 +150,15 @@ export class AgendaComponent {
   }
 
   buildAppointmentData(appointmentData: any): Appointment {
-    // Convertir appointmentDate a 'YYYY-MM-DD'
-    const appointmentDate = new Date(appointmentData.appointmentDate).toISOString().split('T')[0];
-
-    // Asegurarse de que appointmentTime esté en formato 'HH:MM:SS'
-    const appointmentTime = appointmentData.appointmentTime.length === 5
-      ? `${appointmentData.appointmentTime}:00`  // Agregar segundos si solo tiene horas y minutos  
-      : appointmentData.appointmentTime;
 
     // Crear instancia de la clase Appointment
     return new Appointment(
       appointmentData.id,
       appointmentData.patient,
-      appointmentDate, // Fecha en formato 'YYYY-MM-DD'
-      appointmentTime, // Tiempo en formato 'HH:MM:SS'
+      appointmentData.appointmentTime, // Fecha y hora en formato ISO UTC
+      appointmentData.appointmentEndTime,
       appointmentData.appointmentNote,
+      appointmentData.reason,
       appointmentData.google_event_id,
       'pendiente' // Estado por defecto
     );
@@ -172,17 +167,20 @@ export class AgendaComponent {
   transformAppointmentsToEvents(appointments: Appointment[]): CalendarEvent[] {
     return appointments.map(appointment => {
       // Combinar fecha y hora en formato ISO (YYYY-MM-DDTHH:mm:ss)
-      const appointmentDateTime = `${appointment.appointment_date}T${appointment.appointment_time}`;
-      const appointmentDate = new Date(appointmentDateTime);
+      console.log('date time', appointment.appointment_datetime)
+      const appointmentDate = new Date(appointment.appointment_datetime);
+      const appointmentEndDate = new Date(appointment.appointment_end_datetime);
 
       return {
         id: appointment.id,
         meta: { appointment },
         start: appointmentDate,
-        end: appointmentDate,
-        title: `Cita con paciente: ${this.findPatientNameById(appointment.patient_id)}`,
+        end: appointmentEndDate,
+        title : appointment.reason, 
+        //title: `Cita con paciente: ${this.findPatientNameById(appointment.patient_id)}`,
         color: { ...colors['blue'] },
-        actions: this.buildEventActions(appointment.patient_id),
+        //if appointment's id is null, means comes from google so we dont asign actions
+        actions: appointment.id ? this.buildEventActions(appointment.patient_id) : [],
         cssClass: 'action-icons'
       } as CalendarEvent;
     });
@@ -296,15 +294,16 @@ export class AgendaComponent {
 
   syncGoogle() {
     //TODO : Cambiar la URL a la de produccion
+    const apiUrl = environment.API_URL;
     const popup = window.open(
-      `http://localhost:8000/api/google/init?uid=${this.currentUser.id}`,
+      `${apiUrl}/google/init?uid=${this.currentUser.id}`,
       'GoogleAuth',
       'width=600,height=600'
     );
 
     // Escuchar mensajes desde la ventana hija
     window.addEventListener('message', (event) => {
-      if (event.origin !== 'http://localhost:8000') return; // seguridad
+      if (event.origin !== apiUrl) return; // seguridad
       console.log('Mensaje recibido:', event.data);
 
       if (event.data === 'google_sync_success') {
@@ -394,8 +393,8 @@ export class AgendaComponent {
   onViewChange() {
     const range = this.getViewRange();
     console.log('Consultando citas del', range.start, 'al', range.end);
-    this.fromDate = range.start;
-    this.toDate = range.end;
+    this.fromDate = new Date(range.start).toISOString();
+    this.toDate = new Date(range.end).toISOString();
     this.retrieveAppointments(this.fromDate, this.toDate);
   }
 }

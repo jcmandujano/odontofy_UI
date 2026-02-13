@@ -14,7 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
@@ -33,7 +33,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
     ReactiveFormsModule,
     MatButtonModule,
     NoDataFoundComponent,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    FormsModule
   ],
   templateUrl: './patient-list.component.html',
   styleUrl: './patient-list.component.scss'
@@ -46,6 +47,7 @@ export class PatientListComponent implements AfterViewInit {
   pageIndex = 1;
   pageSize = 10;
   pageEvent: PageEvent = new PageEvent;
+  searchCriteria: string = '';
   constructor(private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     private pacientesService: PacientesService,
@@ -79,7 +81,7 @@ export class PatientListComponent implements AfterViewInit {
 
   recuperaPacientes(page: number = 0) {
     this.spinner.show()
-    this.pacientesService.listPatients(page, this.pageSize).subscribe(response => {
+    this.pacientesService.listPatients(page, this.pageSize, this.searchCriteria).subscribe(response => {
       this.pacientesList = (response.data?.results ?? []).map(Patient.fromJson);
       this.dataSource.data = this.pacientesList
       this.length = response.data?.total ?? 0;
@@ -134,6 +136,19 @@ export class PatientListComponent implements AfterViewInit {
         })
       }
     });
+  }
+
+  
+  onSearch(): void {
+    // Aquí llamas tu endpoint con el filtro actual
+    console.log('Buscando pacientes con criterio:', this.searchCriteria);
+    this.recuperaPacientes(); // Reinicia a la primera página al buscar
+  }
+
+  clearSearch(): void {
+    this.searchCriteria = '';
+    this.recuperaPacientes(); // Reinicia a la primera página al limpiar
+    console.log('Búsqueda limpiada. Mostrar todos los pacientes.');
   }
 
   handlePageEvent(e: PageEvent) {

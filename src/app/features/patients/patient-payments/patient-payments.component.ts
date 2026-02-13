@@ -22,6 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { UserConceptsService } from '../../../core/services/user-concepts.service';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-patient-payments',
@@ -37,7 +38,8 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
     MatFormFieldModule, //FORM MODULES
     ReactiveFormsModule, //FORM MODULES
     MatInputModule, //FORM MODULES
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    NgxSpinnerModule
   ],
   templateUrl: './patient-payments.component.html',
   styleUrl: './patient-payments.component.scss'
@@ -48,7 +50,6 @@ export class PatientPaymentsComponent {
   patient: Patient | null = null;
   conceptList: UserConcept[] = []
   displayJointConcepts = ''
-  spinner = false
   selectedPatientId: number = 0
   length = 0;
   pageIndex = 1;
@@ -60,6 +61,7 @@ export class PatientPaymentsComponent {
     private pacientesService: PacientesService,
     private userConceptsService: UserConceptsService,
     private snackBar: MatSnackBar,
+    private spinner: NgxSpinnerService,
     private paymentService: PaymentService
   ) { }
 
@@ -71,7 +73,7 @@ export class PatientPaymentsComponent {
   }
 
   retrievePatientPaymentData(page: number = 0) {
-    this.spinner = true
+    this.spinner.show()
     forkJoin([
       this.pacientesService.findPatient(this.selectedPatientId),
       this.userConceptsService.listUserConcepts(),
@@ -83,11 +85,11 @@ export class PatientPaymentsComponent {
         this.dataSource = (Array.isArray(paymentData.data?.results) ? paymentData.data.results : []).map((payment: Partial<Payment> | undefined) => new Payment(payment));
         this.length = paymentData.data?.total ?? 0;
         this.pageIndex = (paymentData.data?.page ?? 1) - 1;
-        this.spinner = false;
+        this.spinner.hide();
       },
       error => {
         // Manejar errores para ambas llamadas
-        this.spinner = false;
+        this.spinner.hide();
         console.error('Error en llamadas:', error);
         const errorMessage =
           error && error.error && error.error.error && error.error.error.message
@@ -104,6 +106,13 @@ export class PatientPaymentsComponent {
   }
 
   openPaymentDialog(payment?: Payment) {
+
+    //if there is no contepts we show a message and return
+    if (this.conceptList.length === 0) {
+      this.openSnackbar('No hay conceptos disponibles. Por favor, crea un concepto en tus configuraciones antes de agregar un pago.', 'Ok');
+      return;
+    }
+
     const dialogRef = this.dialog.open(PaymentMgmtDialogComponent, {
       minWidth: '70vw',
       data: {
@@ -140,12 +149,12 @@ export class PatientPaymentsComponent {
         quantity: concept.quantity
       }))
     });
-    this.spinner = true
+    this.spinner.show()
     this.paymentService.createPayment(this.selectedPatientId, paymentInstance).subscribe(response => {
       this.reloadPaymentsData()
-      this.spinner = false
+      this.spinner.hide()
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
@@ -164,12 +173,12 @@ export class PatientPaymentsComponent {
         quantity: concept.quantity
       }))
     });
-    this.spinner = true
+    this.spinner.show()
     this.paymentService.updatePayment(paymentId, this.selectedPatientId, paymentInstance).subscribe(response => {
       this.reloadPaymentsData()
-      this.spinner = false
+      this.spinner.hide()
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
@@ -185,13 +194,13 @@ export class PatientPaymentsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.spinner = true
+        this.spinner.show()
         this.paymentService.deletePayment(this.selectedPatientId, paymentId).subscribe(response => {
-          this.spinner = false
+          this.spinner.hide()
           this.openSnackbar(response.message, 'Ok')
           this.reloadPaymentsData()
         }, (error) => {
-          this.spinner = false
+          this.spinner.hide()
           const errorMsg = error.error.error.message ? error.error.error.message : 'Ocurrio un problema al procesar tu solicitud'
           console.log('ERROR', errorMsg)
           this.openSnackbar(`Ocurrio un error: ${errorMsg}`, 'Ok')
@@ -202,14 +211,14 @@ export class PatientPaymentsComponent {
   }
 
   reloadPaymentsData(page: number = 0) {
-    this.spinner = true
+    this.spinner.show()
     this.paymentService.listPayments(this.selectedPatientId, page, this.pageSize).subscribe(response => {
-      this.spinner = false
+      this.spinner.hide()
       this.dataSource = (Array.isArray(response.data?.results) ? response.data.results : []).map((payment: Partial<Payment> | undefined) => new Payment(payment));
       this.length = response.data?.total ?? 0;
       this.pageIndex = (response.data?.page ?? 1) - 1;
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
