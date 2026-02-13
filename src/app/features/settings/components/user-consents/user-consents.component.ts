@@ -61,7 +61,7 @@ export class UserConsentsComponent {
         }
           , (error) => {
             this.spinner.hide()
-            console.log('ERROR', error.error.msg)
+            console.log('ERROR', error.error.message)
           }
         );
       }
@@ -85,7 +85,7 @@ export class UserConsentsComponent {
           this.openSnackbar('Consentimiento actualizado', 'Cerrar');
         }, (error) => {
           this.spinner.hide()
-          console.log('ERROR', error.error.msg);
+          console.log('ERROR', error.error.message);
         });
       }
     });
@@ -109,7 +109,7 @@ export class UserConsentsComponent {
         }
           , (error) => {
             this.spinner.hide()
-            console.log('ERROR', error.error.msg)
+            console.log('ERROR', error.error.message)
           }
         );
       }

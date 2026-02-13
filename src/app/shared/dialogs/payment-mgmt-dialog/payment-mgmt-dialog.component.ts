@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { UserConcept } from '../../../core/models/user-concept.model';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 export interface ConceptModel {
   id: number;
@@ -44,6 +45,7 @@ const PAYMENT_METHOD_LIST = [
         MatSelectModule,
         CommonModule,
         MatButtonModule,
+        MatCheckboxModule,
         MatFormFieldModule, //FORM MODULES
         ReactiveFormsModule, //FORM MODULES
         MatInputModule //FORM MODULES
@@ -63,7 +65,7 @@ export class PaymentMgmtDialogComponent {
   debt = 0
   paymentMethodList = PAYMENT_METHOD_LIST;
   paymentData: Payment
-  displayedColumns: string[] = ['concept', 'unitPrize', 'paymentMethod', 'quantity', 'subtotal', 'actions'];
+  displayedColumns: string[] = ['concept', 'unitPrize', 'paymentMethod', 'quantity', 'subtotal', 'discount', 'actions'];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: {patientData: Patient, conceptsData: UserConcept[], paymentData: Payment},
@@ -79,6 +81,7 @@ export class PaymentMgmtDialogComponent {
         income: ['MX$0.00', Validators.required],
         debt: ['MX$0.00', Validators.required],
         total: ['MX$0.00', Validators.required],
+        discount: ['MX$0.00'],  
         concepts: this.fb.array([]) // Initialize an empty FormArray
       });
 
@@ -97,22 +100,34 @@ export class PaymentMgmtDialogComponent {
 
   ngOnInit(): void {
     if(this.paymentData){
-      this.patchValuesToEdit(this.paymentData)
-    }else{
-      this.conceptData.forEach((item) => {
-        this.concepts.push(
-          new FormGroup({
-            paymentConcept: this.fb.control(item['paymentConcept'], [Validators.required]),
-            unitPrize: this.fb.control(item['unitPrize'], [Validators.required]),
-            paymentMethod: this.fb.control(item['paymentMethod'], [Validators.required]),
-            subtotal: this.fb.control(item['subtotal'], [Validators.required]),
-            quantity: this.fb.control(item['quantity'], [Validators.required]),
-          })
-        );
-      });
+      this.patchValuesToEdit(this.paymentData);
+    } else {
+      this.initFormArray();
     }
+  }
 
-    
+  initFormArray() {
+    // Reiniciar conceptData
+    this.conceptData = [{ id: 1, paymentConcept: '', unitPrize: "0.00", paymentMethod: '', quantity: 1, subtotal: "0" }];
+  
+    // Limpiar FormArray
+    while (this.concepts.length !== 0) {
+      this.concepts.removeAt(0);
+    }
+  
+    // Agregar fila inicial
+    this.conceptData.forEach((item) => {
+      this.concepts.push(
+        this.fb.group({
+          paymentConcept: [item['paymentConcept'], [Validators.required]],
+          unitPrize: [item['unitPrize'], [Validators.required]],
+          paymentMethod: [item['paymentMethod'], [Validators.required]],
+          subtotal: [item['subtotal'], [Validators.required]],
+          quantity: [item['quantity'], [Validators.required]],
+        })
+      );
+    });
+
   }
 
   addItem() {

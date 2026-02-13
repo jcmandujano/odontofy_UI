@@ -85,6 +85,21 @@
             </td>
           </ng-container>
 
+          <!-- discount -->
+          <ng-container matColumnDef="discount">
+            <th mat-header-cell *matHeaderCellDef>Descuento</th>
+            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
+                <!-- we add a check, if is marked we enable discount input-->
+                <div class="d-flex align-items-center justify-content-center">
+                   <mat-checkbox></mat-checkbox>
+                 <mat-form-field appearance="outline" class="full-width">
+                <input matInput type="text" required formControlName="discount"/>
+              </mat-form-field>
+                </div>
+                
+            </td>
+          </ng-container>
+
             <!-- actrions column -->
             <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>

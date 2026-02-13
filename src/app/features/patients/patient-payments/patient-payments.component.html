@@ -1,7 +1,6 @@
 <app-nav-bar></app-nav-bar>
-<div class="progress-loader" *ngIf="spinner">
-    <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-</div>
+<ngx-spinner type="ball-newton-cradle"></ngx-spinner>
+
 <div class="container">
     <div class="row navigation_row">
         <div class="col-12">
@@ -23,7 +22,7 @@
     </div>
     <div class="row filters_row">
         <div class="col-6 flex-container">
-            <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
+           <!--  <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
                 <mat-label>Buscar</mat-label>
                 <input matInput placeholder="">
                 <button matSuffix mat-icon-button aria-label="Clear">
@@ -32,7 +31,7 @@
             </mat-form-field>
             <button mat-icon-button color="primary" class="searchButtton">
                 <mat-icon>search</mat-icon>
-            </button>
+            </button> -->
         </div>
     </div>
     @if (dataSource && dataSource.length > 0) {

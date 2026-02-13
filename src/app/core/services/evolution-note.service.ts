@@ -16,10 +16,13 @@ export class EvolutionNoteService {
         return this.api.post(`${API_PATH}/patients/${patientId}/notes`, note);
     }
 
-    listNotes(patientId: any, page = 1, limit = 10) {
-        return this.api.get<PaginatedResponse<EvolutionNote>>(
-            `${API_PATH}/patients/${patientId}/notes?page=${page}&limit=${limit}`
-        );
+    listNotes(patientId: any, page = 1, limit = 10, search: string = '') {
+        let url =  `${API_PATH}/patients/${patientId}/notes?page=${page}&limit=${limit}`
+        
+        if (search.trim()) {
+          url += `&search=${encodeURIComponent(search.trim())}`;
+        }
+        return this.api.get<PaginatedResponse<EvolutionNote>>(url);
     }
 
     findNoteByCriteria(patientId: any, criteria: string) {

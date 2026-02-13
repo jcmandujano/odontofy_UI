@@ -171,6 +171,13 @@ export class InformedConsentsComponent {
    * Si el diálogo se cierra con un resultado, se inicia la descarga del PDF.
    */
   launchPrintConsentDialog(): void {
+    
+    //if there is no informed consents we show a message and return
+    if (this.informedConsentList.length === 0) {
+      this.openSnackbar('No hay consentimientos informados disponibles. Por favor, crea un consentimiento en tus configuraciones antes de imprimir.', 'Ok');
+      return;
+    }
+
     const dialogRef = this.dialog.open(PrintConsentDialogComponent, {
       width: '40vw',
       height: '280px',
@@ -190,6 +197,13 @@ export class InformedConsentsComponent {
    * Después de cerrarse, si se confirma, el resultado se maneja.
    */
   launchAddSignedConsentDialog(): void {
+
+    //if there is no informed consents we show a message and return
+    if (this.informedConsentList.length === 0) {
+      this.openSnackbar('No hay consentimientos informados disponibles. Por favor, crea un consentimiento en tus configuraciones antes de generarle uno a un paciente.', 'Ok');
+      return;
+    }
+    
     const dialogRef = this.dialog.open(SignedConsentMgmtDialogComponent, {
       width: '40vw',
       data: {
@@ -266,7 +280,7 @@ export class InformedConsentsComponent {
 
   openSnackbar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 3000
+      duration: 5000
     });
   }
 

@@ -16,11 +16,15 @@ export class PacientesService {
         return this.api.post<Patient>(`${API_PATH}/patients`, paciente);
     }
 
-    listPatients(page = 1, limit = 10) {
-        return this.api.get<PaginatedResponse<Patient>>(
-            `${API_PATH}/patients?page=${page}&limit=${limit}`
-        );
-    }
+    listPatients(page = 1, limit = 10, search: string = '') {
+        let url = `${API_PATH}/patients?page=${page}&limit=${limit}`;
+        
+        if (search.trim()) {
+          url += `&search=${encodeURIComponent(search.trim())}`;
+        }
+      
+        return this.api.get<PaginatedResponse<Patient>>(url);
+      }
 
     findPatient(id: number) {
         return this.api.get<Patient>(`${API_PATH}/patients/${id}`);

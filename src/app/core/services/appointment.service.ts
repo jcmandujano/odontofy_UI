@@ -18,7 +18,7 @@ export class AppointmentService {
     }
 
     listAppointments(startDate?: string, endDate?: string) {
-        return this.api.get<ApiResponse<Appointment[]>>(
+        return this.api.get<ApiResponse<Appointment>>(
             `${API_PATH}/appointments?startDate=${startDate}&endDate=${endDate}`
         );
     }

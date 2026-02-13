@@ -18,6 +18,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-evolution-notes',
@@ -33,7 +34,8 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
     CommonModule,
     MatPaginatorModule,
     MatButtonModule,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    NgxSpinnerModule
   ],
   templateUrl: './evolution-notes.component.html',
   styleUrl: './evolution-notes.component.scss'
@@ -41,11 +43,10 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
 export class EvolutionNotesComponent {
   displayedColumns: string[] = ['fecha', 'nota', 'actions'];
   dataSource: EvolutionNote[] = [];
-  spinner = false
   notasList: EvolutionNote[] = []
   paginator: any
   pacienteId: any
-  searchCriteria: string = ''
+  searchCriteria: string = '';
   length = 0;
   pageIndex = 1;
   pageSize = 10;
@@ -56,6 +57,7 @@ export class EvolutionNotesComponent {
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     public dialog: MatDialog,
+    private spinner: NgxSpinnerService,
     private elementRef: ElementRef) {
     this.matIconRegistry.addSvgIcon(
       "pacientes",
@@ -92,28 +94,28 @@ export class EvolutionNotesComponent {
   }
 
   listarNotas(page: number = 0) {
-    this.spinner = true
-    this.notasService.listNotes(this.pacienteId, page, this.pageSize).subscribe(response => {
+    this.spinner.show()
+    this.notasService.listNotes(this.pacienteId, page, this.pageSize, this.searchCriteria).subscribe(response => {
       this.notasList = response.data?.results ?? []
       this.dataSource = this.notasList
       this.length = response.data?.total ?? 0;
       this.pageIndex = (response.data?.page ?? 1) - 1; // Ajuste base 1 ➜ base 0
-      this.spinner = false
+      this.spinner.hide()
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
 
   searchByCriteria(criteria: string) {
-    this.spinner = true
+    this.spinner.show()
     this.notasService.findNoteByCriteria(this.pacienteId, criteria).subscribe(response => {
       this.notasList = response.data ?? []
       this.dataSource = this.notasList
-      this.spinner = false
+      this.spinner.hide()
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
@@ -123,12 +125,12 @@ export class EvolutionNotesComponent {
     const newNota = new EvolutionNote()
     newNota.patient_id = this.pacienteId
     newNota.note = response.noteContent
-    this.spinner = true
+    this.spinner.show()
     this.notasService.createNote(this.pacienteId, newNota).subscribe(data => {
       this.listarNotas()
-      this.spinner = false
+      this.spinner.hide()
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       console.log('ERROR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
@@ -138,12 +140,12 @@ export class EvolutionNotesComponent {
     const newNota = new EvolutionNote()
     newNota.patient_id = this.pacienteId
     newNota.note = response.noteContent
-    this.spinner = true
+    this.spinner.show()
     this.notasService.updateNote(this.pacienteId, idNota, newNota).subscribe(data => {
       this.listarNotas()
-      this.spinner = false
+      this.spinner.hide()
     }, (error) => {
-      this.spinner = false
+      this.spinner.hide()
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
     })
   }
@@ -167,10 +169,8 @@ export class EvolutionNotesComponent {
     });
   }
 
-  onEnterKey(event: any) {
-    if (event.key === 'Enter') {
-      this.searchByCriteria(this.searchCriteria || '')
-    }
+  onSearch() {
+    this.listarNotas();
   }
 
   eliminarNota(id: any) {
@@ -183,12 +183,12 @@ export class EvolutionNotesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.spinner = true
+        this.spinner.show()
         this.notasService.deleteNote(this.pacienteId, id).subscribe(data => {
           this.listarNotas()
-          this.spinner = false
+          this.spinner.hide()
         }, (error) => {
-          this.spinner = false
+          this.spinner.hide()
           this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
         })
       }

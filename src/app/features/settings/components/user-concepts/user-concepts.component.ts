@@ -66,7 +66,7 @@ export class UserConceptsComponent {
         }
           , (error) => {
             this.spinner.show()
-            console.log('ERROR', error.error.msg)
+            console.log('ERROR', error.error.message)
           }
         );
       }
@@ -90,7 +90,7 @@ export class UserConceptsComponent {
         }
           , (error) => {
             this.spinner.hide()
-            console.log('ERROR', error.error.msg)
+            console.log('ERROR', error.error.message)
           });
       }
     });
@@ -114,8 +114,8 @@ export class UserConceptsComponent {
         }
           , (error) => {
             this.spinner.hide()
-            console.log('ERROR', error.error.msg)
-            this.openSnackbar(error.error.msg, 'Cerrar');
+            console.log('ERROR', error.error.message)
+            this.openSnackbar(error.error.message, 'Cerrar');
           }
         );
       }
@@ -142,7 +142,7 @@ export class UserConceptsComponent {
       this.pageIndex = (response.data?.page ?? 1) - 1;
     }, (error) => {
       this.spinner.hide()
-      console.log('ERROR', error.error.msg)
+      console.log('ERROR', error.error.message)
     })
   }
 

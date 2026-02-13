@@ -29,6 +29,7 @@ import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.compone
 import { UserService } from '../../core/services/user.service';
 import { ConfirmWithPasswordDialogComponent } from '../../shared/dialogs/confirm-with-password-dialog/confirm-with-password-dialog.component';
 import { AuthService } from '../../core/services/auth.service';
+import { endOfWeek, startOfWeek } from 'date-fns';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,6 +55,8 @@ export class DashboardComponent implements OnInit {
   appointmentList: Appointment[] = []
   paymentBalance: PaymentBalance = new PaymentBalance();
   showFinanceData: boolean = true;
+  fromDate: string | null = null;
+  toDate: string | null = null;
   constructor(private sessionService: SessionStorageService,
     private router: Router,
     private elementRef: ElementRef,
@@ -128,11 +131,15 @@ export class DashboardComponent implements OnInit {
     this.currentUser = this.sessionService.getUser();
     this.showFinanceData = this.currentUser.show_finance_stats ?? false;
     this.spinner.show();
+    this.fromDate = startOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
+    this.toDate = endOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
+    //this.fromDate = startOfWeek(this.viewDate, { weekStartsOn: this.weekStartsOn as import('date-fns').Day });
+    //this.toDate = endOfWeek(this.viewDate, { weekStartsOn: this.weekStartsOn as import('date-fns').Day });
 
     const metodos$ = [
       this.loadInformedConsents(),
       this.retrievePatients(),
-      this.retrieveAppointments(),
+      this.retrieveAppointments( this.fromDate, this.toDate),
       this.retrievePaymentBalance()
     ].filter(m => m);
 
@@ -170,18 +177,12 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['schedule'])
   }
 
-  retrieveAppointments() {
-    this.appointmentService.listAppointments().subscribe(response => {
-
-      // Asignar el nombre completo del paciente a cada cita
-      this.appointmentList = response.data?.results.map((appointment: Appointment) => ({
-        ...appointment,
-        patientFullName: this.findPatientNameById(appointment.patient_id)
-      })) ?? [];
-
+  retrieveAppointments(fromDate?: string, toDate?: string) {
+    this.appointmentService.listAppointments(fromDate, toDate).subscribe(response => {
+      console.log('APPOINTMENTS', response)
     }, (error) => {
       console.log('ERROR', error)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
     })
   }
 
@@ -248,8 +249,8 @@ export class DashboardComponent implements OnInit {
             console.log('Se confirma operacion')
           }, (error) => {
             this.spinner.hide()
-            console.log('ERROR', error.error.msg)
-            this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
+            console.log('ERROR', error.error.message)
+            this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
           })
         }
       });
@@ -277,6 +278,12 @@ export class DashboardComponent implements OnInit {
    * Si el diálogo se cierra con un resultado, se inicia la descarga del PDF.
    */
   launchPrintConsentDialog(): void {
+    //if there is no informed consents we show a message and return
+    if (this.informedConsentList.length === 0) {
+      this.openSnackbar('No hay consentimientos informados disponibles. Por favor, crea un consentimiento en tus configuraciones antes de imprimir.', 'Ok');
+      return;
+    }
+
     const dialogRef = this.dialog.open(PrintConsentDialogComponent, {
       width: '40vw',
       data: this.informedConsentList,

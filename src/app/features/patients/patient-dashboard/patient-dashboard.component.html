@@ -16,24 +16,30 @@
                 <div class="custom_icon">
                     <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
                 </div>
-                <div class="custom_title">
-                    <p class="custom_card_title">{{paciente?.name}} {{paciente?.middle_name}} {{paciente?.last_name}}</p>
+                <div class="">
+                    <p class="custom_card_title">{{paciente?.name}} {{paciente?.middle_name}} {{paciente?.last_name}} 
+                        @if(antecedentes){
+                            <mat-icon class="alergy-icon" aria-hidden="false" aria-label="Patient Alergys Iccon" fontIcon="warning" [matTooltip]="antecedentes" ></mat-icon>
+                        }
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-5">
             <div class="finanzas_container">
-                <div>
+             <!--    <div>
                     <p class="dashboard_finanzas_table_title">Total</p>
                     <p class="dashboard_finanzas_table_total">$0.00</p>
                 </div>
                 <div>
                     <p class="dashboard_finanzas_table_title">Ingreso</p>
                     <p class="dashboard_finanzas_table_ingreso">$0.00</p>
-                </div>
+                </div> -->
                 <div>
-                    <p class="dashboard_finanzas_table_title">Adeudo Total</p>
-                    <p class="dashboard_finanzas_table_adeudo">$0.00</p>
+                    <p class="dashboard_finanzas_table_title">Balance</p>
+                    <p class="dashboard_finanzas_table_adeudo"
+                        [ngClass]="patientBalance > 0 ? 'balance-income-color' : 'balance-debt-color'"
+                        >{{ patientBalance | currency:'':'symbol':'1.2-2'}} </p>
                 </div>
             </div>
         </div>

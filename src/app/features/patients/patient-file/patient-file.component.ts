@@ -58,8 +58,8 @@ export class PatientFileComponent {
         this.spinner = false
       }, (error) => {
         this.spinner = false
-        console.log('ERROR', error.error.msg)
-        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
+        console.log('ERROR', error.error.message)
+        this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
       })
     }
   }
@@ -105,7 +105,7 @@ export class PatientFileComponent {
       }, (error) => {
         this.spinner = false
         console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
+        this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
       })
     }
   }
@@ -120,7 +120,7 @@ export class PatientFileComponent {
       }, (error) => {
         this.spinner = false
         console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.msg}`, 'Ok')
+        this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
       })
     }
   }
