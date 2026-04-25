@@ -1,11 +1,49 @@
-.empty-records{
-    height: 300px;
-    padding: 0 150px;
-  }
+@use "../../../../vars.scss" as *;
 
-  .large-icon {
-    width: 35%;
-    height: auto;
-    font-size: 100px; /* Cambia el tamaño del icono */
-  }
-  
+.empty-card {
+  margin-top: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.empty-container {
+  min-height: 260px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.icon-wrapper {
+  background-color: #f5f7fb;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.icon-wrapper mat-icon {
+  font-size: 42px;
+  color: #3f51b5;
+}
+
+.empty-title {
+  margin-bottom: 8px;
+  font-weight: 300;
+ color: $main--blue;
+}
+
+.empty-message {
+  max-width: 420px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.empty-image{
+  width: 200px;
+  height: auto;
+}

@@ -1,12 +1,30 @@
-<mat-card appearance="outlined" >
-    <mat-card-content class="empty-records d-flex justify-content-center align-items-center">
-      <mat-icon class="large-icon" fontIcon="manage-search"></mat-icon>
-      <div class="message-container">
-        <h4>
-          {{title}}
-        </h4> 
-        <p>{{message}}</p>
+<mat-card appearance="outlined" class="empty-card">
+  <mat-card-content class="empty-container">
 
-      </div>
-    </mat-card-content>
-  </mat-card>
+    <div class="icon-wrapper">
+      <img
+        src="/img/Frame_13.svg"
+        alt="empty state"
+        class="empty-image">
+    </div>
+
+    <div class="text-wrapper">
+      <h2 class="empty-title">
+        {{ title }}
+      </h2>
+
+      <p class="empty-message">
+        {{ message }}
+      </p>
+
+     <!--  <button 
+        *ngIf="buttonText"
+        mat-raised-button 
+        color="primary"
+        (click)="action.emit()">
+        {{ buttonText }}
+      </button> -->
+    </div>
+
+  </mat-card-content>
+</mat-card>

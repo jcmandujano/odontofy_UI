@@ -133,8 +133,6 @@ export class DashboardComponent implements OnInit {
     this.spinner.show();
     this.fromDate = startOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
     this.toDate = endOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
-    //this.fromDate = startOfWeek(this.viewDate, { weekStartsOn: this.weekStartsOn as import('date-fns').Day });
-    //this.toDate = endOfWeek(this.viewDate, { weekStartsOn: this.weekStartsOn as import('date-fns').Day });
 
     const metodos$ = [
       this.loadInformedConsents(),
