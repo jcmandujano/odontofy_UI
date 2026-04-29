@@ -39,6 +39,7 @@ export class UserProfileComponent {
 
   ngOnInit(){
     this.currentUser = this.sessionService.getUser();
+    console.log('currentUser', this.currentUser)
     // Patch values to the form
     this.userProfileForm.patchValue({
       name: this.currentUser.name || '',
@@ -81,8 +82,15 @@ export class UserProfileComponent {
     
   }
 
-  getInitials(firstName:string = '', lastName:string = '') {
-    return firstName[0].toUpperCase() + lastName[0].toUpperCase();
+  getInitials(firstName: string = '', lastName: string = ''): string {
+    // Guard against null/undefined and empty strings
+    const f = firstName ? firstName.trim() : '';
+    const l = lastName ? lastName.trim() : '';
+
+    const firstInitial = f.length > 0 ? f.charAt(0).toUpperCase() : '';
+    const lastInitial = l.length > 0 ? l.charAt(0).toUpperCase() : '';
+
+    return firstInitial + lastInitial;
   }
 
   //hook al cambiar el valor de la fecha de nacimiento

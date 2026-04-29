@@ -4,8 +4,14 @@
     <div class="row dashboard-title">
         <!--here goes name and settings-->
         <div class="col-12">
-            <h1 class="dashboard-title-name">{{ currentUser.name + ' ' + currentUser.middle_name + ' '+
-                currentUser.last_name| titlecase}}</h1>
+            <h1 class="dashboard-title-name">
+                {{
+                    (currentUser?.name ?? '') + ' ' +
+                    (currentUser?.middle_name ?? '') + ' ' +
+                    (currentUser?.last_name ?? '')
+                    | titlecase
+                }}
+            </h1>
             <p class="welcome-letter">Bienvenido ¿Que necesitas hacer hoy?</p>
         </div>
     </div>

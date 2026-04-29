@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false, 
-  API_URL: 'https://odontofynode-production.up.railway.app/api',
-  DEV_API_URL: 'http://localhost:1337/api'
+  //API_URL: 'https://odontofynode-production.up.railway.app/api',
+  API_URL: 'http://localhost:8000/api'
   
 };
 

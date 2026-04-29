@@ -16,8 +16,7 @@ export class NoDataFoundComponent {
   title!: string;
   @Input()
   message!: string;
-  @Input()
-  icon!: string;
+  @Input() image!: string;
 
 
 }
