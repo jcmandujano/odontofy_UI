@@ -1,3 +1,5 @@
+import { PaginatedResponse } from './api-response.model';
+
 export type ISODateString = string;
 
 export enum TreatmentPlanStatus {
@@ -133,7 +135,7 @@ export interface UpdateTreatmentPlanItemStatusRequest {
     status: TreatmentPlanItemStatus;
 }
 
-export type TreatmentPlanListResponse = TreatmentPlan[];
+export type TreatmentPlanListResponse = PaginatedResponse<TreatmentPlan>;
 
 export type TreatmentPlanDetailResponse = TreatmentPlan;
 

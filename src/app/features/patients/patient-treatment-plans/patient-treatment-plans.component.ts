@@ -1,0 +1,124 @@
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
+import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
+import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+
+@Component({
+  selector: 'app-patient-treatment-plans',
+  imports: [
+    CommonModule,
+    NavBarComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatTableModule,
+    NgxSpinnerModule,
+    NoDataFoundComponent
+  ],
+  templateUrl: './patient-treatment-plans.component.html',
+  styleUrl: './patient-treatment-plans.component.scss'
+})
+export class PatientTreatmentPlansComponent {
+  displayedColumns: string[] = ['title', 'status', 'startDate', 'endDate', 'total', 'createdAt'];
+  dataSource: TreatmentPlan[] = [];
+  selectedPatientId = 0;
+  length = 0;
+  pageIndex = 0;
+  pageSize = 10;
+  pageEvent: PageEvent = new PageEvent();
+
+  readonly statusLabels: Record<TreatmentPlanStatus, string> = {
+    [TreatmentPlanStatus.DRAFT]: 'Borrador',
+    [TreatmentPlanStatus.PROPOSED]: 'Propuesto',
+    [TreatmentPlanStatus.ACCEPTED]: 'Aceptado',
+    [TreatmentPlanStatus.IN_PROGRESS]: 'En progreso',
+    [TreatmentPlanStatus.COMPLETED]: 'Completado',
+    [TreatmentPlanStatus.CANCELLED]: 'Cancelado',
+  };
+
+  constructor(
+    private route: ActivatedRoute,
+    private treatmentPlanService: TreatmentPlanService,
+    private snackBar: MatSnackBar,
+    private spinner: NgxSpinnerService,
+    private elementRef: ElementRef,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer
+  ) {
+    this.matIconRegistry.addSvgIcon(
+      'recetas',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('/icons/dashboard_recetas.svg')
+    );
+  }
+
+  ngOnInit(): void {
+    this.selectedPatientId = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.selectedPatientId) {
+      this.loadTreatmentPlans();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#ffffff';
+  }
+
+  loadTreatmentPlans(page: number = 1): void {
+    this.spinner.show();
+    this.treatmentPlanService.listTreatmentPlansByPatient(this.selectedPatientId, page, this.pageSize).subscribe({
+      next: response => {
+        this.dataSource = response.data?.results ?? [];
+        this.length = response.data?.total ?? 0;
+        this.pageIndex = (response.data?.page ?? 1) - 1;
+        this.pageSize = response.data?.perPage ?? this.pageSize;
+        this.spinner.hide();
+      },
+      error: error => {
+        this.spinner.hide();
+        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
+  }
+
+  handlePageEvent(e: PageEvent): void {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.loadTreatmentPlans(this.pageIndex + 1);
+  }
+
+  getStatusLabel(status: TreatmentPlanStatus): string {
+    return this.statusLabels[status] ?? status;
+  }
+
+  getStatusClass(status: TreatmentPlanStatus): string {
+    return `status-${status.toLowerCase().replace('_', '-')}`;
+  }
+
+  toCurrencyValue(value: number | string): number {
+    return Number(value) || 0;
+  }
+
+  openSnackbar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      duration: 3000
+    });
+  }
+
+  private getErrorMessage(error: any): string {
+    return error?.error?.error?.message
+      ?? error?.error?.message
+      ?? error?.message
+      ?? 'Ocurrio un problema al procesar tu solicitud';
+  }
+}

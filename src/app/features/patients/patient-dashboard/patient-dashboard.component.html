@@ -97,6 +97,19 @@
         <div class="col-12">
             <div class="custom_card_header">
                 <div class="custom_icon">
+                    <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+                </div>
+                <div class="custom_title" (click)="goToTreatmentPlans()">
+                    <p class="custom_card_title">Planes de Tratamiento</p>
+                    <span class="custom-card-subtitle">Consulta las propuestas clinicas y economicas del paciente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row menu_row">
+        <div class="col-12">
+            <div class="custom_card_header">
+                <div class="custom_icon">
                     <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
                 </div>
                 <div class="custom_title" (click)="goToHistorialPagos()">

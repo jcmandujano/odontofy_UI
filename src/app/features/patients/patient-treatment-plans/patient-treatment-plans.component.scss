@@ -1,0 +1,156 @@
+@use "../../../../vars.scss" as *;
+
+.logout-navbar-button {
+  height: 30px;
+  color: #fff;
+  background-color: $second--blue;
+  letter-spacing: 0.02em;
+  box-shadow: none !important;
+}
+
+.pacientes_header_row {
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.navigation_row {
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.pacientes_title {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 30px;
+  letter-spacing: 0.01em;
+  color: $primary--blue;
+}
+
+.dashboard_agenda_icon {
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.title_container {
+  display: flex;
+  align-items: center;
+}
+
+.pacientes_navigation {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.02em;
+  color: $primary--blue;
+}
+
+.info-table {
+  background-color: #fff;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  border: 1px solid #C0D9FF;
+}
+
+.mat-mdc-header-row .mat-mdc-header-cell {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  color: $main--blue;
+  border: 2px solid #C0D9FF;
+}
+
+table {
+  width: 100%;
+}
+
+.title-header-column {
+  width: 34%;
+}
+
+.status-header-column {
+  width: 14%;
+}
+
+.date-header-column {
+  width: 13%;
+}
+
+.total-header-column {
+  width: 13%;
+}
+
+.title-content-column {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #7A7A7A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.status-content-column,
+.date-content-column,
+.total-content-column {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: $main--blue;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 16px;
+  color: $main--blue;
+  background-color: #EAF2FF;
+}
+
+.status-accepted,
+.status-completed {
+  color: #219653;
+  background-color: #E9F8EF;
+}
+
+.status-in-progress,
+.status-proposed {
+  color: #407DDA;
+  background-color: #EAF2FF;
+}
+
+.status-cancelled {
+  color: #EB5757;
+  background-color: #FDECEC;
+}
+
+.status-draft {
+  color: #7A7A7A;
+  background-color: #F2F2F2;
+}
+
+.custom-paginator {
+  color: $main--blue;
+  margin-bottom: 35px;
+  background-color: #fff;
+}

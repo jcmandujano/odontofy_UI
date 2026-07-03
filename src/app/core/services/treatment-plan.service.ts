@@ -24,8 +24,10 @@ const API_PATH = environment.API_URL;
 export class TreatmentPlanService {
     constructor(private api: ApiService) { }
 
-    listTreatmentPlansByPatient(patientId: number) {
-        return this.api.get<TreatmentPlanListResponse>(`${API_PATH}/patients/${patientId}/treatment-plans`);
+    listTreatmentPlansByPatient(patientId: number, page = 1, limit = 10) {
+        return this.api.get<TreatmentPlanListResponse>(
+            `${API_PATH}/patients/${patientId}/treatment-plans?page=${page}&limit=${limit}`
+        );
     }
 
     createTreatmentPlan(patientId: number, treatmentPlan: CreateTreatmentPlanRequest) {

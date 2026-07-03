@@ -1,0 +1,86 @@
+<app-nav-bar></app-nav-bar>
+<ngx-spinner type="ball-newton-cradle"></ngx-spinner>
+
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="pacientes_navigation">Inicio > Pacientes > Planes de Tratamiento</span>
+        </div>
+    </div>
+    <div class="row pacientes_header_row">
+        <div class="col-12">
+            <div class="title_container">
+                <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+                <span class="pacientes_title">Planes de Tratamiento</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (dataSource && dataSource.length > 0) {
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
+                <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef class="title-header-column"> Plan </th>
+                    <td mat-cell *matCellDef="let element" class="title-content-column"> {{element.title}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef class="status-header-column"> Estado </th>
+                    <td mat-cell *matCellDef="let element" class="status-content-column">
+                        <span class="status-badge" [ngClass]="getStatusClass(element.status)">
+                            {{getStatusLabel(element.status)}}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="startDate">
+                    <th mat-header-cell *matHeaderCellDef class="date-header-column"> Inicio estimado </th>
+                    <td mat-cell *matCellDef="let element" class="date-content-column">
+                        {{element.estimated_start_date ? (element.estimated_start_date | date) : '--'}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endDate">
+                    <th mat-header-cell *matHeaderCellDef class="date-header-column"> Fin estimado </th>
+                    <td mat-cell *matCellDef="let element" class="date-content-column">
+                        {{element.estimated_end_date ? (element.estimated_end_date | date) : '--'}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="total">
+                    <th mat-header-cell *matHeaderCellDef class="total-header-column"> Total </th>
+                    <td mat-cell *matCellDef="let element" class="total-content-column">
+                        {{toCurrencyValue(element.total) | currency:'MXN':'symbol':'1.2-2'}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="createdAt">
+                    <th mat-header-cell *matHeaderCellDef class="date-header-column"> Creacion </th>
+                    <td mat-cell *matCellDef="let element" class="date-content-column">
+                        {{element.created_at ? (element.created_at | date) : '--'}}
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            }
+            @if (!dataSource || dataSource.length === 0) {
+            <app-no-data-found [title]="'Este paciente no tiene planes de tratamiento'"
+                [message]="'Cuando existan planes de tratamiento, apareceran en este listado.'">
+            </app-no-data-found>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (dataSource && dataSource.length > 0) {
+            <mat-paginator (page)="handlePageEvent($event)" [length]="length" [pageSize]="pageSize"
+                [pageIndex]="pageIndex" [pageSizeOptions]="[10, 25, 50, 100]" class="custom-paginator">
+            </mat-paginator>
+            }
+        </div>
+    </div>
+</div>

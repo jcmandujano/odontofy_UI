@@ -122,6 +122,10 @@ export class PatientDashboardComponent {
     this.router.navigate(['patient-payment', { id: this.pacienteId }])
   }
 
+  goToTreatmentPlans() {
+    this.router.navigate(['patient-treatment-plans', { id: this.pacienteId }])
+  }
+
   goToOdontograma() {
     this.router.navigate(['odontogram', { id: this.pacienteId }])
   }
