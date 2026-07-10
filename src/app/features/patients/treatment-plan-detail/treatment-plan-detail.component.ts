@@ -22,8 +22,7 @@ import {
   TreatmentPlanStatus,
   UpdateTreatmentPlanItemRequest,
   UpdateTreatmentPlanItemStatusRequest,
-  UpdateTreatmentPlanRequest,
-  UpdateTreatmentPlanStatusRequest
+  UpdateTreatmentPlanRequest
 } from '../../../core/models/treatment-plan.model';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
@@ -55,7 +54,6 @@ export class TreatmentPlanDetailComponent {
   treatmentPlanId = 0;
   patientId = 0;
   treatmentPlan: TreatmentPlan | null = null;
-  selectedStatus: TreatmentPlanStatus | null = null;
   conceptList: UserConcept[] = [];
   selectedItemStatuses: Record<number, TreatmentPlanItemStatus> = {};
   processingItemIds = new Set<number>();
@@ -64,7 +62,6 @@ export class TreatmentPlanDetailComponent {
   readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
   readonly itemStatusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
   readonly priorityLabels = TREATMENT_PLAN_ITEM_PRIORITY_LABELS;
-  readonly statusOptions = Object.values(TreatmentPlanStatus);
   readonly itemStatusOptions = Object.values(TreatmentPlanItemStatus);
 
   constructor(
@@ -105,7 +102,6 @@ export class TreatmentPlanDetailComponent {
     this.treatmentPlanService.getTreatmentPlanDetail(this.treatmentPlanId).subscribe({
       next: response => {
         this.treatmentPlan = response.data;
-        this.selectedStatus = response.data?.status ?? null;
         this.syncSelectedItemStatuses();
         this.spinner.hide();
       },
@@ -181,45 +177,6 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
-      }
-    });
-  }
-
-  confirmStatusUpdate(): void {
-    if (!this.selectedStatus || !this.treatmentPlan || this.selectedStatus === this.treatmentPlan.status) {
-      return;
-    }
-
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Actualizar estado',
-        message: `¿Seguro que quieres cambiar el estado del plan a ${this.getStatusLabel(this.selectedStatus)}?`,
-        confirmText: 'Actualizar'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.updateTreatmentPlanStatus({
-          status: this.selectedStatus as TreatmentPlanStatus
-        });
-      } else {
-        this.selectedStatus = this.treatmentPlan?.status ?? null;
-      }
-    });
-  }
-
-  updateTreatmentPlanStatus(payload: UpdateTreatmentPlanStatusRequest): void {
-    this.spinner.show();
-    this.treatmentPlanService.updateTreatmentPlanStatus(this.treatmentPlanId, payload).subscribe({
-      next: response => {
-        this.openSnackbar(response.message || 'Estado del plan actualizado correctamente', 'Ok');
-        this.loadTreatmentPlanDetail();
-      },
-      error: error => {
-        this.spinner.hide();
-        this.selectedStatus = this.treatmentPlan?.status ?? null;
         this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
       }
     });
@@ -379,10 +336,6 @@ export class TreatmentPlanDetailComponent {
         this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
       }
     });
-  }
-
-  isStatusChanged(): boolean {
-    return !!this.selectedStatus && !!this.treatmentPlan && this.selectedStatus !== this.treatmentPlan.status;
   }
 
   getStatusLabel(status: TreatmentPlanStatus): string {
