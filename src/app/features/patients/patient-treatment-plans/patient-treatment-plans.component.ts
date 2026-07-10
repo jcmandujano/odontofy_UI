@@ -14,6 +14,7 @@ import { CreateTreatmentPlanRequest, TREATMENT_PLAN_STATUS_LABELS, TreatmentPlan
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-mgmt-dialog/treatment-plan-mgmt-dialog.component';
 
 @Component({
@@ -131,6 +132,40 @@ export class PatientTreatmentPlansComponent {
       id: treatmentPlanId,
       patientId: this.selectedPatientId
     }]);
+  }
+
+  confirmDeleteTreatmentPlan(treatmentPlan: TreatmentPlan): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Eliminar plan de tratamiento',
+        message: `Estas seguro de eliminar "${treatmentPlan.title}"? Tambien se eliminaran sus tratamientos.`,
+        confirmText: 'Eliminar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteTreatmentPlan(treatmentPlan.id);
+      }
+    });
+  }
+
+  deleteTreatmentPlan(treatmentPlanId: number): void {
+    this.spinner.show();
+    this.treatmentPlanService.cancelTreatmentPlan(treatmentPlanId).subscribe({
+      next: response => {
+        this.spinner.hide();
+        this.openSnackbar(response.message || 'Plan de tratamiento eliminado correctamente', 'Ok');
+        const pageToLoad = this.dataSource.length === 1 && this.pageIndex > 0
+          ? this.pageIndex
+          : this.pageIndex + 1;
+        this.loadTreatmentPlans(pageToLoad);
+      },
+      error: error => {
+        this.spinner.hide();
+        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
   }
 
   getStatusLabel(status: TreatmentPlanStatus): string {

@@ -98,7 +98,7 @@ table {
 }
 
 .actions-header-column {
-  width: 8%;
+  width: 10%;
 }
 
 .title-content-column {
@@ -131,6 +131,14 @@ table {
   height: auto;
   margin: 10px;
   cursor: pointer;
+}
+
+.actions-content-column {
+  white-space: nowrap;
+}
+
+.delete-action-icon {
+  color: #EB5757;
 }
 
 .status-badge {

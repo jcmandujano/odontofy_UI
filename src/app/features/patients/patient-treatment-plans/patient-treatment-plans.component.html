@@ -72,6 +72,8 @@
                     <td mat-cell *matCellDef="let element" class="actions-content-column">
                         <mat-icon class="dashboard_logout_icon" fontIcon="visibility" matTooltip="Ver detalle"
                             (click)="goToTreatmentPlanDetail(element.id)"></mat-icon>
+                        <mat-icon class="dashboard_logout_icon delete-action-icon" fontIcon="delete"
+                            matTooltip="Eliminar plan" (click)="confirmDeleteTreatmentPlan(element)"></mat-icon>
                     </td>
                 </ng-container>
 
