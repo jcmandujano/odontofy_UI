@@ -90,6 +90,18 @@
   margin-bottom: 15px;
 }
 
+.section_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 15px;
+}
+
+.section_header .section_title {
+  margin-bottom: 0;
+}
+
 .info-grid,
 .financial-grid {
   display: grid;
@@ -224,8 +236,13 @@
   width: 10%;
 }
 
+.actions-header-column {
+  width: 18%;
+}
+
 .name-content-column,
-.table-content-column {
+.table-content-column,
+.actions-content-column {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
@@ -239,6 +256,19 @@
   color: #7A7A7A;
   font-size: 12px;
   line-height: 18px;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+}
+
+.item-status-select {
+  width: 150px;
+  margin-bottom: -20px;
 }
 
 @media (max-width: 768px) {

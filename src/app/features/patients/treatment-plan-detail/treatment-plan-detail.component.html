@@ -144,7 +144,10 @@
     </section>
 
     <section class="detail-section">
-        <p class="section_title">Items del plan</p>
+        <div class="section_header">
+            <p class="section_title">Items del plan</p>
+            <button mat-fab extended class="logout-navbar-button" (click)="openTreatmentPlanItemDialog()">Agregar tratamiento</button>
+        </div>
         @if (treatmentPlanItems.length > 0) {
         <table mat-table [dataSource]="treatmentPlanItems" class="mat-elevation-z0 info-table">
             <ng-container matColumnDef="name">
@@ -212,6 +215,30 @@
                 <th mat-header-cell *matHeaderCellDef class="date-header-column"> Completado </th>
                 <td mat-cell *matCellDef="let element" class="table-content-column">
                     {{element.completed_at ? (element.completed_at | date) : '--'}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="actions-header-column"> Acciones </th>
+                <td mat-cell *matCellDef="let element" class="actions-content-column">
+                    <div class="item-actions">
+                        <mat-form-field class="item-status-select" appearance="outline">
+                            <mat-label>Estado</mat-label>
+                            <mat-select [value]="getSelectedItemStatus(element)"
+                                [disabled]="isItemProcessing(element.id)"
+                                (selectionChange)="setSelectedItemStatus(element.id, $event.value)">
+                                @for (status of itemStatusOptions; track status) {
+                                <mat-option [value]="status">{{getItemStatusLabel(status)}}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                        <button mat-button color="primary" [disabled]="!isItemStatusChanged(element) || isItemProcessing(element.id)"
+                            (click)="confirmItemStatusUpdate(element)">Actualizar</button>
+                        <button mat-button color="primary" [disabled]="isItemProcessing(element.id)"
+                            (click)="openEditTreatmentPlanItemDialog(element)">Editar</button>
+                        <button mat-button color="warn" [disabled]="isItemProcessing(element.id)"
+                            (click)="confirmDeleteTreatmentPlanItem(element)">Eliminar</button>
+                    </div>
                 </td>
             </ng-container>
 
