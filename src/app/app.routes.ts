@@ -13,6 +13,7 @@ import { PatientPaymentsComponent } from './features/patients/patient-payments/p
 import { InformedConsentsComponent } from './features/patients/informed-consents/informed-consents.component';
 import { OdontogramComponent } from './features/patients/odontogram/odontogram.component';
 import { PatientTreatmentPlansComponent } from './features/patients/patient-treatment-plans/patient-treatment-plans.component';
+import { TreatmentPlanDetailComponent } from './features/patients/treatment-plan-detail/treatment-plan-detail.component';
 import { AgendaComponent } from './features/dentist/agenda/agenda.component';
 import { SettingsComponent } from './features/settings/components/settings/settings.component';
 import { ResetPasswordComponent } from './features/auth/components/reset-password/reset-password.component';
@@ -33,6 +34,7 @@ export const routes: Routes = [
   { path: 'patient-payment', component: PatientPaymentsComponent, canActivate: [AuthGuard] },
   { path: 'informed-consents', component: InformedConsentsComponent, canActivate: [AuthGuard] },
   { path: 'patient-treatment-plans', component: PatientTreatmentPlansComponent, canActivate: [AuthGuard] },
+  { path: 'treatment-plan-detail', component: TreatmentPlanDetailComponent, canActivate: [AuthGuard] },
   { path: 'odontogram', component: OdontogramComponent, canActivate: [AuthGuard] },
   { path: 'schedule', component: AgendaComponent, canActivate: [AuthGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] }

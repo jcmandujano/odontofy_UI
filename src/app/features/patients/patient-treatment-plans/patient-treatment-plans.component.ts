@@ -6,10 +6,11 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { CreateTreatmentPlanRequest, TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
+import { CreateTreatmentPlanRequest, TREATMENT_PLAN_STATUS_LABELS, TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
@@ -25,6 +26,7 @@ import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatm
     MatIconModule,
     MatPaginatorModule,
     MatTableModule,
+    MatTooltipModule,
     NgxSpinnerModule,
     NoDataFoundComponent
   ],
@@ -32,7 +34,7 @@ import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatm
   styleUrl: './patient-treatment-plans.component.scss'
 })
 export class PatientTreatmentPlansComponent {
-  displayedColumns: string[] = ['title', 'status', 'startDate', 'endDate', 'total', 'createdAt'];
+  displayedColumns: string[] = ['title', 'status', 'startDate', 'endDate', 'total', 'createdAt', 'actions'];
   dataSource: TreatmentPlan[] = [];
   selectedPatientId = 0;
   length = 0;
@@ -40,17 +42,11 @@ export class PatientTreatmentPlansComponent {
   pageSize = 10;
   pageEvent: PageEvent = new PageEvent();
 
-  readonly statusLabels: Record<TreatmentPlanStatus, string> = {
-    [TreatmentPlanStatus.DRAFT]: 'Borrador',
-    [TreatmentPlanStatus.PROPOSED]: 'Propuesto',
-    [TreatmentPlanStatus.ACCEPTED]: 'Aceptado',
-    [TreatmentPlanStatus.IN_PROGRESS]: 'En progreso',
-    [TreatmentPlanStatus.COMPLETED]: 'Completado',
-    [TreatmentPlanStatus.CANCELLED]: 'Cancelado',
-  };
+  readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private treatmentPlanService: TreatmentPlanService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
@@ -130,12 +126,19 @@ export class PatientTreatmentPlansComponent {
     });
   }
 
+  goToTreatmentPlanDetail(treatmentPlanId: number): void {
+    this.router.navigate(['treatment-plan-detail', {
+      id: treatmentPlanId,
+      patientId: this.selectedPatientId
+    }]);
+  }
+
   getStatusLabel(status: TreatmentPlanStatus): string {
     return this.statusLabels[status] ?? status;
   }
 
   getStatusClass(status: TreatmentPlanStatus): string {
-    return `status-${status.toLowerCase().replace('_', '-')}`;
+    return `status-${status.toLowerCase().replace(/_/g, '-')}`;
   }
 
   toCurrencyValue(value: number | string): number {

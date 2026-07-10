@@ -26,6 +26,30 @@ export enum TreatmentPlanItemPriority {
     URGENT = 'URGENT',
 }
 
+export const TREATMENT_PLAN_STATUS_LABELS: Record<TreatmentPlanStatus, string> = {
+    [TreatmentPlanStatus.DRAFT]: 'Borrador',
+    [TreatmentPlanStatus.PROPOSED]: 'Propuesto',
+    [TreatmentPlanStatus.ACCEPTED]: 'Aceptado',
+    [TreatmentPlanStatus.IN_PROGRESS]: 'En progreso',
+    [TreatmentPlanStatus.COMPLETED]: 'Completado',
+    [TreatmentPlanStatus.CANCELLED]: 'Cancelado',
+};
+
+export const TREATMENT_PLAN_ITEM_STATUS_LABELS: Record<TreatmentPlanItemStatus, string> = {
+    [TreatmentPlanItemStatus.PENDING]: 'Pendiente',
+    [TreatmentPlanItemStatus.APPROVED]: 'Aprobado',
+    [TreatmentPlanItemStatus.IN_PROGRESS]: 'En progreso',
+    [TreatmentPlanItemStatus.COMPLETED]: 'Completado',
+    [TreatmentPlanItemStatus.CANCELLED]: 'Cancelado',
+};
+
+export const TREATMENT_PLAN_ITEM_PRIORITY_LABELS: Record<TreatmentPlanItemPriority, string> = {
+    [TreatmentPlanItemPriority.LOW]: 'Baja',
+    [TreatmentPlanItemPriority.MEDIUM]: 'Media',
+    [TreatmentPlanItemPriority.HIGH]: 'Alta',
+    [TreatmentPlanItemPriority.URGENT]: 'Urgente',
+};
+
 // La API documentada responde en snake_case. Si la UI usa camelCase, mapear antes de renderizar.
 export interface TreatmentPlan {
     id: number;

@@ -97,6 +97,10 @@ table {
   width: 13%;
 }
 
+.actions-header-column {
+  width: 8%;
+}
+
 .title-content-column {
   font-family: 'Roboto';
   font-style: normal;
@@ -112,13 +116,21 @@ table {
 
 .status-content-column,
 .date-content-column,
-.total-content-column {
+.total-content-column,
+.actions-content-column {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
   color: $main--blue;
+}
+
+.dashboard_logout_icon {
+  width: 20px;
+  height: auto;
+  margin: 10px;
+  cursor: pointer;
 }
 
 .status-badge {

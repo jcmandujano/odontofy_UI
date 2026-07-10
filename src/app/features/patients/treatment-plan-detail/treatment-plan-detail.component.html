@@ -1,0 +1,216 @@
+<app-nav-bar></app-nav-bar>
+<ngx-spinner type="ball-newton-cradle"></ngx-spinner>
+
+<div class="container">
+    <div class="row navigation_row">
+        <div class="col-12">
+            <span class="pacientes_navigation">Inicio > Pacientes > Planes de Tratamiento > Detalle</span>
+        </div>
+    </div>
+
+    <div class="row pacientes_header_row">
+        <div class="col-8">
+            <div class="title_container">
+                <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+                <div>
+                    <span class="pacientes_title">{{treatmentPlan?.title || 'Detalle del plan'}}</span>
+                    @if (treatmentPlan?.status) {
+                    <span class="status-badge header-status" [ngClass]="getStatusClass(treatmentPlan!.status)">
+                        {{getStatusLabel(treatmentPlan!.status)}}
+                    </span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="actions_container">
+                <button mat-fab extended class="logout-navbar-button" (click)="goBack()">Volver</button>
+            </div>
+        </div>
+    </div>
+
+    @if (treatmentPlan) {
+    <section class="detail-section">
+        <p class="section_title">Informacion general</p>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Plan</span>
+                <span class="info-value">{{getDisplayValue(treatmentPlan.title)}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Estado</span>
+                <span class="info-value">{{getStatusLabel(treatmentPlan.status)}}</span>
+            </div>
+        </div>
+    </section>
+
+    @if (hasClinicalInfo()) {
+    <section class="detail-section">
+        <p class="section_title">Informacion clinica</p>
+        <div class="info-grid">
+            @if (treatmentPlan.description) {
+            <div class="info-item wide">
+                <span class="info-label">Descripcion</span>
+                <span class="info-value">{{treatmentPlan.description}}</span>
+            </div>
+            }
+            @if (treatmentPlan.diagnosis) {
+            <div class="info-item wide">
+                <span class="info-label">Diagnostico</span>
+                <span class="info-value">{{treatmentPlan.diagnosis}}</span>
+            </div>
+            }
+            @if (treatmentPlan.patient_complaint) {
+            <div class="info-item wide">
+                <span class="info-label">Motivo de consulta</span>
+                <span class="info-value">{{treatmentPlan.patient_complaint}}</span>
+            </div>
+            }
+            @if (treatmentPlan.clinical_observations) {
+            <div class="info-item wide">
+                <span class="info-label">Observaciones clinicas</span>
+                <span class="info-value">{{treatmentPlan.clinical_observations}}</span>
+            </div>
+            }
+            @if (treatmentPlan.prognosis) {
+            <div class="info-item wide">
+                <span class="info-label">Pronostico</span>
+                <span class="info-value">{{treatmentPlan.prognosis}}</span>
+            </div>
+            }
+        </div>
+    </section>
+    }
+
+    <section class="detail-section">
+        <p class="section_title">Fechas</p>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Inicio estimado</span>
+                <span class="info-value">{{treatmentPlan.estimated_start_date ? (treatmentPlan.estimated_start_date | date) : '--'}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Fin estimado</span>
+                <span class="info-value">{{treatmentPlan.estimated_end_date ? (treatmentPlan.estimated_end_date | date) : '--'}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Aceptado</span>
+                <span class="info-value">{{treatmentPlan.accepted_at ? (treatmentPlan.accepted_at | date) : '--'}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Rechazado / cancelado</span>
+                <span class="info-value">{{treatmentPlan.rejected_at ? (treatmentPlan.rejected_at | date) : '--'}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Creacion</span>
+                <span class="info-value">{{treatmentPlan.created_at ? (treatmentPlan.created_at | date) : '--'}}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Ultima actualizacion</span>
+                <span class="info-value">{{treatmentPlan.updated_at ? (treatmentPlan.updated_at | date) : '--'}}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-section">
+        <p class="section_title">Resumen financiero</p>
+        <div class="financial-grid">
+            <div class="financial-item">
+                <span class="info-label">Subtotal</span>
+                <span class="financial-value">{{toCurrencyValue(treatmentPlan.subtotal) | currency:'MXN':'symbol':'1.2-2'}}</span>
+            </div>
+            <div class="financial-item">
+                <span class="info-label">Descuento</span>
+                <span class="financial-value">{{toCurrencyValue(treatmentPlan.discount) | currency:'MXN':'symbol':'1.2-2'}}</span>
+            </div>
+            <div class="financial-item total">
+                <span class="info-label">Total</span>
+                <span class="financial-value">{{toCurrencyValue(treatmentPlan.total) | currency:'MXN':'symbol':'1.2-2'}}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-section">
+        <p class="section_title">Items del plan</p>
+        @if (treatmentPlanItems.length > 0) {
+        <table mat-table [dataSource]="treatmentPlanItems" class="mat-elevation-z0 info-table">
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="name-header-column"> Item </th>
+                <td mat-cell *matCellDef="let element" class="name-content-column">
+                    <div>{{element.name}}</div>
+                    @if (element.description) {
+                    <span class="item-description">{{element.description}}</span>
+                    }
+                    @if (element.notes) {
+                    <span class="item-description">Notas: {{element.notes}}</span>
+                    }
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="tooth">
+                <th mat-header-cell *matHeaderCellDef class="short-header-column"> Diente </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column"> {{getDisplayValue(element.tooth)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="area">
+                <th mat-header-cell *matHeaderCellDef class="short-header-column"> Area </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column"> {{getDisplayValue(element.area)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef class="short-header-column"> Cant. </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column"> {{getDisplayValue(element.quantity)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="unitPrice">
+                <th mat-header-cell *matHeaderCellDef class="money-header-column"> Precio </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column">
+                    {{toCurrencyValue(element.unit_price) | currency:'MXN':'symbol':'1.2-2'}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="subtotal">
+                <th mat-header-cell *matHeaderCellDef class="money-header-column"> Subtotal </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column">
+                    {{toCurrencyValue(element.subtotal) | currency:'MXN':'symbol':'1.2-2'}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="phase">
+                <th mat-header-cell *matHeaderCellDef class="phase-header-column"> Fase </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column"> {{getDisplayValue(element.phase)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="priority">
+                <th mat-header-cell *matHeaderCellDef class="status-header-column"> Prioridad </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column"> {{getPriorityLabel(element.priority)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="status-header-column"> Estado </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column">
+                    <span class="status-badge" [ngClass]="getStatusClass(element.status)">
+                        {{getItemStatusLabel(element.status)}}
+                    </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="completedAt">
+                <th mat-header-cell *matHeaderCellDef class="date-header-column"> Completado </th>
+                <td mat-cell *matCellDef="let element" class="table-content-column">
+                    {{element.completed_at ? (element.completed_at | date) : '--'}}
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        }
+        @if (treatmentPlanItems.length === 0) {
+        <app-no-data-found [title]="'Este plan todavia no tiene items'"
+            [message]="'Cuando se agreguen procedimientos, apareceran en esta seccion.'">
+        </app-no-data-found>
+        }
+    </section>
+    }
+</div>
