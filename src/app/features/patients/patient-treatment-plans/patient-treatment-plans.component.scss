@@ -39,6 +39,13 @@
   align-items: center;
 }
 
+.nuevo_paciente_button_container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .pacientes_navigation {
   font-family: 'Roboto';
   font-style: normal;

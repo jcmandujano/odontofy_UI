@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,10 +9,11 @@ import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
+import { CreateTreatmentPlanRequest, TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-mgmt-dialog/treatment-plan-mgmt-dialog.component';
 
 @Component({
   selector: 'app-patient-treatment-plans',
@@ -19,6 +21,7 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
     CommonModule,
     NavBarComponent,
     MatButtonModule,
+    MatDialogModule,
     MatIconModule,
     MatPaginatorModule,
     MatTableModule,
@@ -50,6 +53,7 @@ export class PatientTreatmentPlansComponent {
     private route: ActivatedRoute,
     private treatmentPlanService: TreatmentPlanService,
     private snackBar: MatSnackBar,
+    public dialog: MatDialog,
     private spinner: NgxSpinnerService,
     private elementRef: ElementRef,
     private matIconRegistry: MatIconRegistry,
@@ -95,6 +99,35 @@ export class PatientTreatmentPlansComponent {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
     this.loadTreatmentPlans(this.pageIndex + 1);
+  }
+
+  openTreatmentPlanDialog(): void {
+    const dialogRef = this.dialog.open(TreatmentPlanMgmtDialogComponent, {
+      minWidth: '45vw',
+      maxWidth: '720px',
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.createTreatmentPlan(result);
+      }
+    });
+  }
+
+  createTreatmentPlan(payload: CreateTreatmentPlanRequest): void {
+    this.spinner.show();
+    this.treatmentPlanService.createTreatmentPlan(this.selectedPatientId, payload).subscribe({
+      next: response => {
+        this.spinner.hide();
+        this.openSnackbar(response.message || 'Plan de tratamiento creado correctamente', 'Ok');
+        this.loadTreatmentPlans(1);
+      },
+      error: error => {
+        this.spinner.hide();
+        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
   }
 
   getStatusLabel(status: TreatmentPlanStatus): string {

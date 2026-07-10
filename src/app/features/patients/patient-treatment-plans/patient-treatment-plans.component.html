@@ -8,10 +8,15 @@
         </div>
     </div>
     <div class="row pacientes_header_row">
-        <div class="col-12">
+        <div class="col-6">
             <div class="title_container">
                 <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
                 <span class="pacientes_title">Planes de Tratamiento</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="nuevo_paciente_button_container">
+                <button mat-fab extended class="logout-navbar-button" (click)="openTreatmentPlanDialog()">Nuevo plan</button>
             </div>
         </div>
     </div>

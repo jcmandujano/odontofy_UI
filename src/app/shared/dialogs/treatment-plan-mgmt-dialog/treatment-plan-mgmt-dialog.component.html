@@ -1,0 +1,67 @@
+<h2 mat-dialog-title class="dialog-title">Nuevo Plan de Tratamiento</h2>
+
+<mat-dialog-content class="treatment-plan-dialog-content">
+    <form [formGroup]="treatmentPlanForm">
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Titulo</mat-label>
+            <input matInput formControlName="title">
+            @if (treatmentPlanForm.controls['title'].hasError('required') && treatmentPlanForm.controls['title'].touched) {
+            <mat-error>Este campo es obligatorio</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Descripcion</mat-label>
+            <textarea matInput rows="3" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Diagnostico</mat-label>
+            <textarea matInput rows="2" formControlName="diagnosis"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Motivo de consulta</mat-label>
+            <textarea matInput rows="2" formControlName="patientComplaint"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Observaciones clinicas</mat-label>
+            <textarea matInput rows="2" formControlName="clinicalObservations"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Pronostico</mat-label>
+            <textarea matInput rows="2" formControlName="prognosis"></textarea>
+        </mat-form-field>
+
+        <div class="date-row">
+            <mat-form-field class="date-field" appearance="outline">
+                <mat-label>Inicio estimado</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="estimatedStartDate">
+                <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field class="date-field" appearance="outline">
+                <mat-label>Fin estimado</mat-label>
+                <input matInput [matDatepicker]="endPicker" formControlName="estimatedEndDate">
+                <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field class="discount-field" appearance="outline">
+            <mat-label>Descuento</mat-label>
+            <input matInput type="number" min="0" formControlName="discount">
+            @if (treatmentPlanForm.controls['discount'].hasError('min') && treatmentPlanForm.controls['discount'].touched) {
+            <mat-error>El descuento no puede ser negativo</mat-error>
+            }
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()" color="warn">Cancelar</button>
+    <button mat-button (click)="saveTreatmentPlan()" color="primary">Guardar</button>
+</mat-dialog-actions>
