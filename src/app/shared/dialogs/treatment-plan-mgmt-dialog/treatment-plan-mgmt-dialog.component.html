@@ -1,4 +1,4 @@
-<h2 mat-dialog-title class="dialog-title">Nuevo Plan de Tratamiento</h2>
+<h2 mat-dialog-title class="dialog-title">{{dialogTitle}}</h2>
 
 <mat-dialog-content class="treatment-plan-dialog-content">
     <form [formGroup]="treatmentPlanForm">
@@ -48,6 +48,9 @@
                 <input matInput [matDatepicker]="endPicker" formControlName="estimatedEndDate">
                 <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
                 <mat-datepicker #endPicker></mat-datepicker>
+                @if (treatmentPlanForm.hasError('dateRange') && treatmentPlanForm.controls['estimatedEndDate'].touched) {
+                <mat-error>La fecha fin no puede ser anterior a la fecha inicio</mat-error>
+                }
             </mat-form-field>
         </div>
 

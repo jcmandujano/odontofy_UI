@@ -49,6 +49,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .logout-navbar-button {
@@ -57,6 +59,20 @@
   background-color: $second--blue;
   letter-spacing: 0.02em;
   box-shadow: none !important;
+}
+
+.logout-navbar-button:disabled {
+  background-color: #C0D9FF;
+  color: #fff;
+}
+
+.secondary-action {
+  min-width: 116px;
+}
+
+.status-select {
+  width: 170px;
+  margin-bottom: -20px;
 }
 
 .detail-section {

@@ -1,12 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CreateTreatmentPlanRequest } from '../../../core/models/treatment-plan.model';
+import moment from 'moment';
+import { CreateTreatmentPlanRequest, TreatmentPlan, UpdateTreatmentPlanRequest } from '../../../core/models/treatment-plan.model';
+
+export interface TreatmentPlanMgmtDialogData {
+  mode?: 'create' | 'edit';
+  treatmentPlan?: TreatmentPlan;
+}
 
 @Component({
   selector: 'app-treatment-plan-mgmt-dialog',
@@ -24,11 +30,14 @@ import { CreateTreatmentPlanRequest } from '../../../core/models/treatment-plan.
 })
 export class TreatmentPlanMgmtDialogComponent {
   treatmentPlanForm: FormGroup;
+  mode: 'create' | 'edit';
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<TreatmentPlanMgmtDialogComponent>
+    public dialogRef: MatDialogRef<TreatmentPlanMgmtDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: TreatmentPlanMgmtDialogData | null
   ) {
+    this.mode = data?.mode ?? 'create';
     this.treatmentPlanForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
@@ -39,7 +48,11 @@ export class TreatmentPlanMgmtDialogComponent {
       estimatedStartDate: [null],
       estimatedEndDate: [null],
       discount: [null, [Validators.min(0)]],
-    });
+    }, { validators: this.dateRangeValidator() });
+
+    if (data?.treatmentPlan) {
+      this.patchTreatmentPlan(data.treatmentPlan);
+    }
   }
 
   saveTreatmentPlan(): void {
@@ -49,7 +62,7 @@ export class TreatmentPlanMgmtDialogComponent {
     }
 
     const formValue = this.treatmentPlanForm.value;
-    const payload: CreateTreatmentPlanRequest = {
+    const payload: CreateTreatmentPlanRequest | UpdateTreatmentPlanRequest = {
       title: formValue.title.trim(),
       description: this.toNullableString(formValue.description),
       diagnosis: this.toNullableString(formValue.diagnosis),
@@ -71,6 +84,24 @@ export class TreatmentPlanMgmtDialogComponent {
     this.dialogRef.close();
   }
 
+  get dialogTitle(): string {
+    return this.mode === 'edit' ? 'Editar Plan de Tratamiento' : 'Nuevo Plan de Tratamiento';
+  }
+
+  private patchTreatmentPlan(treatmentPlan: TreatmentPlan): void {
+    this.treatmentPlanForm.patchValue({
+      title: treatmentPlan.title,
+      description: treatmentPlan.description,
+      diagnosis: treatmentPlan.diagnosis,
+      patientComplaint: treatmentPlan.patient_complaint,
+      clinicalObservations: treatmentPlan.clinical_observations,
+      prognosis: treatmentPlan.prognosis,
+      estimatedStartDate: this.toDatepickerValue(treatmentPlan.estimated_start_date),
+      estimatedEndDate: this.toDatepickerValue(treatmentPlan.estimated_end_date),
+      discount: treatmentPlan.discount !== null && treatmentPlan.discount !== undefined ? Number(treatmentPlan.discount) : null,
+    });
+  }
+
   private toNullableString(value: string | null | undefined): string | null {
     const normalizedValue = value?.trim();
     return normalizedValue ? normalizedValue : null;
@@ -90,5 +121,37 @@ export class TreatmentPlanMgmtDialogComponent {
     }
 
     return String(value);
+  }
+
+  private toDatepickerValue(value: string | null): any {
+    return value ? moment(value) : null;
+  }
+
+  private dateRangeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const startDate = control.get('estimatedStartDate')?.value;
+      const endDate = control.get('estimatedEndDate')?.value;
+
+      if (!startDate || !endDate) {
+        return null;
+      }
+
+      const normalizedStartDate = this.toComparableDate(startDate);
+      const normalizedEndDate = this.toComparableDate(endDate);
+
+      return normalizedEndDate < normalizedStartDate ? { dateRange: true } : null;
+    };
+  }
+
+  private toComparableDate(value: any): string {
+    if (typeof value.format === 'function') {
+      return value.format('YYYY-MM-DD');
+    }
+
+    if (value instanceof Date) {
+      return value.toISOString().split('T')[0];
+    }
+
+    return String(value).split('T')[0];
   }
 }

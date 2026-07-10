@@ -1,7 +1,10 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -15,18 +18,25 @@ import {
   TreatmentPlanItem,
   TreatmentPlanItemPriority,
   TreatmentPlanItemStatus,
-  TreatmentPlanStatus
+  TreatmentPlanStatus,
+  UpdateTreatmentPlanRequest,
+  UpdateTreatmentPlanStatusRequest
 } from '../../../core/models/treatment-plan.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
+import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-mgmt-dialog/treatment-plan-mgmt-dialog.component';
 
 @Component({
   selector: 'app-treatment-plan-detail',
   imports: [
     CommonModule,
     MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatSelectModule,
     MatTableModule,
     NavBarComponent,
     NgxSpinnerModule,
@@ -39,17 +49,20 @@ export class TreatmentPlanDetailComponent {
   treatmentPlanId = 0;
   patientId = 0;
   treatmentPlan: TreatmentPlan | null = null;
+  selectedStatus: TreatmentPlanStatus | null = null;
   displayedColumns: string[] = ['name', 'tooth', 'area', 'quantity', 'unitPrice', 'subtotal', 'phase', 'priority', 'status', 'completedAt'];
 
   readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
   readonly itemStatusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
   readonly priorityLabels = TREATMENT_PLAN_ITEM_PRIORITY_LABELS;
+  readonly statusOptions = Object.values(TreatmentPlanStatus);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
     private treatmentPlanService: TreatmentPlanService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private spinner: NgxSpinnerService,
     private elementRef: ElementRef,
@@ -80,6 +93,7 @@ export class TreatmentPlanDetailComponent {
     this.treatmentPlanService.getTreatmentPlanDetail(this.treatmentPlanId).subscribe({
       next: response => {
         this.treatmentPlan = response.data;
+        this.selectedStatus = response.data?.status ?? null;
         this.spinner.hide();
       },
       error: error => {
@@ -110,6 +124,85 @@ export class TreatmentPlanDetailComponent {
       this.treatmentPlan?.clinical_observations ||
       this.treatmentPlan?.prognosis
     );
+  }
+
+  openEditTreatmentPlanDialog(): void {
+    if (!this.treatmentPlan) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(TreatmentPlanMgmtDialogComponent, {
+      minWidth: '45vw',
+      maxWidth: '720px',
+      panelClass: 'custom-dialog-container',
+      data: {
+        mode: 'edit',
+        treatmentPlan: this.treatmentPlan
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateTreatmentPlan(result);
+      }
+    });
+  }
+
+  updateTreatmentPlan(payload: UpdateTreatmentPlanRequest): void {
+    this.spinner.show();
+    this.treatmentPlanService.updateTreatmentPlan(this.treatmentPlanId, payload).subscribe({
+      next: response => {
+        this.openSnackbar(response.message || 'Plan de tratamiento actualizado correctamente', 'Ok');
+        this.loadTreatmentPlanDetail();
+      },
+      error: error => {
+        this.spinner.hide();
+        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
+  }
+
+  confirmStatusUpdate(): void {
+    if (!this.selectedStatus || !this.treatmentPlan || this.selectedStatus === this.treatmentPlan.status) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Actualizar estado',
+        message: `¿Seguro que quieres cambiar el estado del plan a ${this.getStatusLabel(this.selectedStatus)}?`,
+        confirmText: 'Actualizar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateTreatmentPlanStatus({
+          status: this.selectedStatus as TreatmentPlanStatus
+        });
+      } else {
+        this.selectedStatus = this.treatmentPlan?.status ?? null;
+      }
+    });
+  }
+
+  updateTreatmentPlanStatus(payload: UpdateTreatmentPlanStatusRequest): void {
+    this.spinner.show();
+    this.treatmentPlanService.updateTreatmentPlanStatus(this.treatmentPlanId, payload).subscribe({
+      next: response => {
+        this.openSnackbar(response.message || 'Estado del plan actualizado correctamente', 'Ok');
+        this.loadTreatmentPlanDetail();
+      },
+      error: error => {
+        this.spinner.hide();
+        this.selectedStatus = this.treatmentPlan?.status ?? null;
+        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
+  }
+
+  isStatusChanged(): boolean {
+    return !!this.selectedStatus && !!this.treatmentPlan && this.selectedStatus !== this.treatmentPlan.status;
   }
 
   getStatusLabel(status: TreatmentPlanStatus): string {

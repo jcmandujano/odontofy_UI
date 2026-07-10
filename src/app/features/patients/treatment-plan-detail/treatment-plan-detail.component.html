@@ -24,6 +24,19 @@
         </div>
         <div class="col-4">
             <div class="actions_container">
+                @if (treatmentPlan) {
+                <button mat-fab extended class="logout-navbar-button secondary-action" (click)="openEditTreatmentPlanDialog()">Editar plan</button>
+                <mat-form-field class="status-select" appearance="outline">
+                    <mat-label>Estado</mat-label>
+                    <mat-select [value]="selectedStatus" (selectionChange)="selectedStatus = $event.value">
+                        @for (status of statusOptions; track status) {
+                        <mat-option [value]="status">{{getStatusLabel(status)}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                <button mat-fab extended class="logout-navbar-button secondary-action" [disabled]="!isStatusChanged()"
+                    (click)="confirmStatusUpdate()">Actualizar estado</button>
+                }
                 <button mat-fab extended class="logout-navbar-button" (click)="goBack()">Volver</button>
             </div>
         </div>
