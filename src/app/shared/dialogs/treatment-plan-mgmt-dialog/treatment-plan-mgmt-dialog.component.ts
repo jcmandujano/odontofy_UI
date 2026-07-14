@@ -6,12 +6,24 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import moment from 'moment';
-import { CreateTreatmentPlanRequest, TreatmentPlan, UpdateTreatmentPlanRequest } from '../../../core/models/treatment-plan.model';
+import {
+  CreateTreatmentPlanRequest,
+  TREATMENT_PLAN_STATUS_LABELS,
+  TreatmentPlan,
+  TreatmentPlanStatus,
+  UpdateTreatmentPlanRequest
+} from '../../../core/models/treatment-plan.model';
 
 export interface TreatmentPlanMgmtDialogData {
   mode?: 'create' | 'edit';
   treatmentPlan?: TreatmentPlan;
+}
+
+export interface TreatmentPlanMgmtDialogResult {
+  treatmentPlan: CreateTreatmentPlanRequest | UpdateTreatmentPlanRequest;
+  status?: TreatmentPlanStatus;
 }
 
 @Component({
@@ -23,6 +35,7 @@ export interface TreatmentPlanMgmtDialogData {
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     ReactiveFormsModule
   ],
   templateUrl: './treatment-plan-mgmt-dialog.component.html',
@@ -31,6 +44,8 @@ export interface TreatmentPlanMgmtDialogData {
 export class TreatmentPlanMgmtDialogComponent {
   treatmentPlanForm: FormGroup;
   mode: 'create' | 'edit';
+  readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
+  readonly statusOptions = Object.values(TreatmentPlanStatus);
 
   constructor(
     private fb: FormBuilder,
@@ -48,6 +63,7 @@ export class TreatmentPlanMgmtDialogComponent {
       estimatedStartDate: [null],
       estimatedEndDate: [null],
       discount: [null, [Validators.min(0)]],
+      status: [data?.treatmentPlan?.status ?? TreatmentPlanStatus.DRAFT],
     }, { validators: this.dateRangeValidator() });
 
     if (data?.treatmentPlan) {
@@ -77,7 +93,15 @@ export class TreatmentPlanMgmtDialogComponent {
       payload.discount = Number(formValue.discount);
     }
 
-    this.dialogRef.close(payload);
+    const result: TreatmentPlanMgmtDialogResult = {
+      treatmentPlan: payload
+    };
+
+    if (this.mode === 'edit') {
+      result.status = formValue.status;
+    }
+
+    this.dialogRef.close(result);
   }
 
   cancel(): void {
@@ -86,6 +110,15 @@ export class TreatmentPlanMgmtDialogComponent {
 
   get dialogTitle(): string {
     return this.mode === 'edit' ? 'Editar Plan de Tratamiento' : 'Nuevo Plan de Tratamiento';
+  }
+
+  get currentStatusLabel(): string {
+    const status = this.data?.treatmentPlan?.status;
+    return status ? this.getStatusLabel(status) : '--';
+  }
+
+  getStatusLabel(status: TreatmentPlanStatus): string {
+    return this.statusLabels[status] ?? status;
   }
 
   private patchTreatmentPlan(treatmentPlan: TreatmentPlan): void {
@@ -99,6 +132,7 @@ export class TreatmentPlanMgmtDialogComponent {
       estimatedStartDate: this.toDatepickerValue(treatmentPlan.estimated_start_date),
       estimatedEndDate: this.toDatepickerValue(treatmentPlan.estimated_end_date),
       discount: treatmentPlan.discount !== null && treatmentPlan.discount !== undefined ? Number(treatmentPlan.discount) : null,
+      status: treatmentPlan.status,
     });
   }
 

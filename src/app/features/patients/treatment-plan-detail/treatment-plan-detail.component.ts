@@ -2,11 +2,10 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -20,9 +19,9 @@ import {
   TreatmentPlanItemPriority,
   TreatmentPlanItemStatus,
   TreatmentPlanStatus,
-  UpdateTreatmentPlanItemRequest,
   UpdateTreatmentPlanItemStatusRequest,
-  UpdateTreatmentPlanRequest
+  UpdateTreatmentPlanRequest,
+  UpdateTreatmentPlanStatusRequest
 } from '../../../core/models/treatment-plan.model';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
@@ -31,7 +30,10 @@ import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.comp
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { TreatmentPlanItemMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-item-mgmt-dialog/treatment-plan-item-mgmt-dialog.component';
-import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-mgmt-dialog/treatment-plan-mgmt-dialog.component';
+import {
+  TreatmentPlanMgmtDialogComponent,
+  TreatmentPlanMgmtDialogResult
+} from '../../../shared/dialogs/treatment-plan-mgmt-dialog/treatment-plan-mgmt-dialog.component';
 
 @Component({
   selector: 'app-treatment-plan-detail',
@@ -39,10 +41,9 @@ import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatm
     CommonModule,
     MatButtonModule,
     MatDialogModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatSelectModule,
     MatTableModule,
+    MatTooltipModule,
     NavBarComponent,
     NgxSpinnerModule,
     NoDataFoundComponent
@@ -55,14 +56,12 @@ export class TreatmentPlanDetailComponent {
   patientId = 0;
   treatmentPlan: TreatmentPlan | null = null;
   conceptList: UserConcept[] = [];
-  selectedItemStatuses: Record<number, TreatmentPlanItemStatus> = {};
   processingItemIds = new Set<number>();
   displayedColumns: string[] = ['name', 'tooth', 'area', 'quantity', 'unitPrice', 'subtotal', 'phase', 'priority', 'status', 'completedAt', 'actions'];
 
   readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
   readonly itemStatusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
   readonly priorityLabels = TREATMENT_PLAN_ITEM_PRIORITY_LABELS;
-  readonly itemStatusOptions = Object.values(TreatmentPlanItemStatus);
 
   constructor(
     private route: ActivatedRoute,
@@ -102,7 +101,6 @@ export class TreatmentPlanDetailComponent {
     this.treatmentPlanService.getTreatmentPlanDetail(this.treatmentPlanId).subscribe({
       next: response => {
         this.treatmentPlan = response.data;
-        this.syncSelectedItemStatuses();
         this.spinner.hide();
       },
       error: error => {
@@ -163,21 +161,46 @@ export class TreatmentPlanDetailComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.updateTreatmentPlan(result);
+        this.updateTreatmentPlanFromDialog(result);
       }
     });
   }
 
-  updateTreatmentPlan(payload: UpdateTreatmentPlanRequest): void {
+  updateTreatmentPlanFromDialog(result: TreatmentPlanMgmtDialogResult): void {
+    const selectedStatus = result.status;
+    const shouldUpdateStatus = !!selectedStatus && !!this.treatmentPlan && selectedStatus !== this.treatmentPlan.status;
+
+    this.updateTreatmentPlan(result.treatmentPlan as UpdateTreatmentPlanRequest, shouldUpdateStatus ? selectedStatus : undefined);
+  }
+
+  updateTreatmentPlan(payload: UpdateTreatmentPlanRequest, nextStatus?: TreatmentPlanStatus): void {
     this.spinner.show();
     this.treatmentPlanService.updateTreatmentPlan(this.treatmentPlanId, payload).subscribe({
       next: response => {
+        if (nextStatus) {
+          this.updateTreatmentPlanStatus({ status: nextStatus });
+          return;
+        }
+
         this.openSnackbar(response.message || 'Plan de tratamiento actualizado correctamente', 'Ok');
         this.loadTreatmentPlanDetail();
       },
       error: error => {
         this.spinner.hide();
         this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
+  }
+
+  updateTreatmentPlanStatus(payload: UpdateTreatmentPlanStatusRequest): void {
+    this.treatmentPlanService.updateTreatmentPlanStatus(this.treatmentPlanId, payload).subscribe({
+      next: response => {
+        this.openSnackbar(response.message || 'Plan de tratamiento actualizado correctamente', 'Ok');
+        this.loadTreatmentPlanDetail();
+      },
+      error: error => {
+        this.spinner.hide();
+        this.openSnackbar(`Ocurrio un error al actualizar el estado: ${this.getErrorMessage(error)}`, 'Ok');
       }
     });
   }
@@ -213,78 +236,26 @@ export class TreatmentPlanDetailComponent {
     });
   }
 
-  openEditTreatmentPlanItemDialog(item: TreatmentPlanItem): void {
+  openEditTreatmentPlanItemStatusDialog(item: TreatmentPlanItem): void {
+    if (this.isItemProcessing(item.id)) {
+      return;
+    }
+
     const dialogRef = this.dialog.open(TreatmentPlanItemMgmtDialogComponent, {
-      minWidth: '45vw',
-      maxWidth: '760px',
+      minWidth: '36vw',
+      maxWidth: '560px',
       panelClass: 'custom-dialog-container',
       data: {
-        conceptList: this.conceptList,
-        mode: 'edit',
+        mode: 'status',
         treatmentPlanItem: item
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.updateTreatmentPlanItem(item.id, result);
+      if (result?.status && result.status !== item.status) {
+        this.updateTreatmentPlanItemStatus(item.id, result);
       }
     });
-  }
-
-  updateTreatmentPlanItem(itemId: number, payload: UpdateTreatmentPlanItemRequest): void {
-    this.setItemProcessing(itemId, true);
-    this.treatmentPlanService.updateTreatmentPlanItem(this.treatmentPlanId, itemId, payload).subscribe({
-      next: response => {
-        this.openSnackbar(response.message || 'Tratamiento actualizado correctamente', 'Ok');
-        this.setItemProcessing(itemId, false);
-        this.loadTreatmentPlanDetail();
-      },
-      error: error => {
-        this.setItemProcessing(itemId, false);
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
-      }
-    });
-  }
-
-  setSelectedItemStatus(itemId: number, status: TreatmentPlanItemStatus): void {
-    this.selectedItemStatuses[itemId] = status;
-  }
-
-  getSelectedItemStatus(item: TreatmentPlanItem): TreatmentPlanItemStatus {
-    return this.selectedItemStatuses[item.id] ?? item.status;
-  }
-
-  isItemStatusChanged(item: TreatmentPlanItem): boolean {
-    return this.getSelectedItemStatus(item) !== item.status;
-  }
-
-  confirmItemStatusUpdate(item: TreatmentPlanItem): void {
-    const selectedStatus = this.getSelectedItemStatus(item);
-    if (selectedStatus === item.status || this.isItemProcessing(item.id)) {
-      return;
-    }
-
-    if (selectedStatus === TreatmentPlanItemStatus.COMPLETED || selectedStatus === TreatmentPlanItemStatus.CANCELLED) {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: {
-          title: 'Actualizar estado',
-          message: `¿Seguro que quieres cambiar el estado de "${item.name}" a ${this.getItemStatusLabel(selectedStatus)}?`,
-          confirmText: 'Actualizar'
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.updateTreatmentPlanItemStatus(item.id, { status: selectedStatus });
-        } else {
-          this.selectedItemStatuses[item.id] = item.status;
-        }
-      });
-      return;
-    }
-
-    this.updateTreatmentPlanItemStatus(item.id, { status: selectedStatus });
   }
 
   updateTreatmentPlanItemStatus(itemId: number, payload: UpdateTreatmentPlanItemStatusRequest): void {
@@ -297,7 +268,6 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.setItemProcessing(itemId, false);
-        this.syncSelectedItemStatuses();
         this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
       }
     });
@@ -373,13 +343,6 @@ export class TreatmentPlanDetailComponent {
       ?? error?.error?.message
       ?? error?.message
       ?? 'Ocurrio un problema al procesar tu solicitud';
-  }
-
-  private syncSelectedItemStatuses(): void {
-    this.selectedItemStatuses = {};
-    this.treatmentPlanItems.forEach(item => {
-      this.selectedItemStatuses[item.id] = item.status;
-    });
   }
 
   isItemProcessing(itemId: number): boolean {

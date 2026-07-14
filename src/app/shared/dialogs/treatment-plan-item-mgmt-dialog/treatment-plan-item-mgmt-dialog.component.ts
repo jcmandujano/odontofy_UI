@@ -10,14 +10,16 @@ import { UserConcept } from '../../../core/models/user-concept.model';
 import {
   CreateTreatmentPlanItemRequest,
   TREATMENT_PLAN_ITEM_PRIORITY_LABELS,
+  TREATMENT_PLAN_ITEM_STATUS_LABELS,
   TreatmentPlanItem,
   TreatmentPlanItemPriority,
+  TreatmentPlanItemStatus,
   UpdateTreatmentPlanItemRequest
 } from '../../../core/models/treatment-plan.model';
 
 export interface TreatmentPlanItemMgmtDialogData {
-  conceptList: UserConcept[];
-  mode?: 'create' | 'edit';
+  conceptList?: UserConcept[];
+  mode?: 'create' | 'edit' | 'status';
   treatmentPlanItem?: TreatmentPlanItem;
 }
 
@@ -38,9 +40,11 @@ export interface TreatmentPlanItemMgmtDialogData {
 export class TreatmentPlanItemMgmtDialogComponent {
   itemForm: FormGroup;
   conceptList: UserConcept[] = [];
-  mode: 'create' | 'edit';
+  mode: 'create' | 'edit' | 'status';
   readonly priorityLabels = TREATMENT_PLAN_ITEM_PRIORITY_LABELS;
+  readonly statusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
   readonly priorityOptions = Object.values(TreatmentPlanItemPriority);
+  readonly statusOptions = Object.values(TreatmentPlanItemStatus);
 
   constructor(
     private fb: FormBuilder,
@@ -60,6 +64,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
       phase: [''],
       priority: [null],
       notes: [''],
+      status: [data?.treatmentPlanItem?.status ?? TreatmentPlanItemStatus.PENDING, Validators.required],
     });
 
     if (data?.treatmentPlanItem) {
@@ -84,6 +89,17 @@ export class TreatmentPlanItemMgmtDialogComponent {
   }
 
   saveItem(): void {
+    if (this.mode === 'status') {
+      const statusControl = this.itemForm.controls['status'];
+      if (statusControl.invalid) {
+        statusControl.markAsTouched();
+        return;
+      }
+
+      this.dialogRef.close({ status: statusControl.value });
+      return;
+    }
+
     if (this.itemForm.invalid) {
       this.itemForm.markAllAsTouched();
       return;
@@ -114,8 +130,21 @@ export class TreatmentPlanItemMgmtDialogComponent {
     return this.priorityLabels[priority] ?? priority;
   }
 
+  getStatusLabel(status: TreatmentPlanItemStatus): string {
+    return this.statusLabels[status] ?? status;
+  }
+
   get dialogTitle(): string {
+    if (this.mode === 'status') {
+      return 'Editar Estado del Tratamiento';
+    }
+
     return this.mode === 'edit' ? 'Editar Tratamiento' : 'Agregar Tratamiento';
+  }
+
+  get currentStatusLabel(): string {
+    const status = this.data?.treatmentPlanItem?.status;
+    return status ? this.getStatusLabel(status) : '--';
   }
 
   getPreviewSubtotal(): number {
@@ -141,6 +170,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
       phase: item.phase,
       priority: item.priority,
       notes: item.notes,
+      status: item.status,
     });
   }
 }

@@ -121,7 +121,7 @@ export class PatientTreatmentPlansComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.createTreatmentPlan(result);
+        this.createTreatmentPlan(result.treatmentPlan);
       }
     });
   }

@@ -2,6 +2,25 @@
 
 <mat-dialog-content class="treatment-plan-item-dialog-content">
     <form [formGroup]="itemForm">
+        @if (mode === 'status') {
+        <div class="status-row">
+            <div class="current-status">
+                <span class="status-label">Estado actual</span>
+                <span class="status-value">{{currentStatusLabel}}</span>
+            </div>
+
+            <mat-form-field class="status-field" appearance="outline">
+                <mat-label>Cambiar estado a</mat-label>
+                <mat-select formControlName="status">
+                    @for (status of statusOptions; track status) {
+                    <mat-option [value]="status">{{getStatusLabel(status)}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        }
+
+        @if (mode !== 'status') {
         <mat-form-field class="full-width" appearance="outline">
             <mat-label>Concepto existente</mat-label>
             <mat-select formControlName="userConceptId" (selectionChange)="onConceptChange($event.value)">
@@ -81,6 +100,7 @@
             <span>Subtotal estimado</span>
             <strong>{{getPreviewSubtotal() | currency:'MXN':'symbol':'1.2-2'}}</strong>
         </div>
+        }
     </form>
 </mat-dialog-content>
 

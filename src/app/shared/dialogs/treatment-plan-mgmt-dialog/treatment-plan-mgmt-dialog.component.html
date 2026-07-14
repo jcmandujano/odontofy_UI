@@ -61,6 +61,24 @@
             <mat-error>El descuento no puede ser negativo</mat-error>
             }
         </mat-form-field>
+
+        @if (mode === 'edit') {
+        <div class="status-row">
+            <div class="current-status">
+                <span class="status-label">Estado actual</span>
+                <span class="status-value">{{currentStatusLabel}}</span>
+            </div>
+
+            <mat-form-field class="status-field" appearance="outline">
+                <mat-label>Cambiar estado a</mat-label>
+                <mat-select formControlName="status">
+                    @for (status of statusOptions; track status) {
+                    <mat-option [value]="status">{{getStatusLabel(status)}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        }
     </form>
 </mat-dialog-content>
 

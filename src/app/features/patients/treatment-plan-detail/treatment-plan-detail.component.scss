@@ -232,7 +232,7 @@
 }
 
 .actions-header-column {
-  width: 18%;
+  width: 8%;
 }
 
 .name-content-column,
@@ -256,14 +256,26 @@
 .item-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
   padding: 6px 0;
 }
 
-.item-status-select {
-  width: 150px;
-  margin-bottom: -20px;
+.item-action-icon {
+  width: 20px;
+  height: auto;
+  cursor: pointer;
+  color: $main--blue;
+}
+
+.delete-action-icon {
+  color: #EB5757;
+}
+
+.disabled-action {
+  color: #C0D9FF;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {

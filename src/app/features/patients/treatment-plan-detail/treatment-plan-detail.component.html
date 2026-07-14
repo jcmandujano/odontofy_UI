@@ -40,10 +40,6 @@
                 <span class="info-label">Plan</span>
                 <span class="info-value">{{getDisplayValue(treatmentPlan.title)}}</span>
             </div>
-            <div class="info-item">
-                <span class="info-label">Estado</span>
-                <span class="info-value">{{getStatusLabel(treatmentPlan.status)}}</span>
-            </div>
         </div>
     </section>
 
@@ -212,22 +208,12 @@
                 <th mat-header-cell *matHeaderCellDef class="actions-header-column"> Acciones </th>
                 <td mat-cell *matCellDef="let element" class="actions-content-column">
                     <div class="item-actions">
-                        <mat-form-field class="item-status-select" appearance="outline">
-                            <mat-label>Estado</mat-label>
-                            <mat-select [value]="getSelectedItemStatus(element)"
-                                [disabled]="isItemProcessing(element.id)"
-                                (selectionChange)="setSelectedItemStatus(element.id, $event.value)">
-                                @for (status of itemStatusOptions; track status) {
-                                <mat-option [value]="status">{{getItemStatusLabel(status)}}</mat-option>
-                                }
-                            </mat-select>
-                        </mat-form-field>
-                        <button mat-button color="primary" [disabled]="!isItemStatusChanged(element) || isItemProcessing(element.id)"
-                            (click)="confirmItemStatusUpdate(element)">Actualizar</button>
-                        <button mat-button color="primary" [disabled]="isItemProcessing(element.id)"
-                            (click)="openEditTreatmentPlanItemDialog(element)">Editar</button>
-                        <button mat-button color="warn" [disabled]="isItemProcessing(element.id)"
-                            (click)="confirmDeleteTreatmentPlanItem(element)">Eliminar</button>
+                        <mat-icon class="item-action-icon" fontIcon="edit" matTooltip="Editar estado"
+                            [class.disabled-action]="isItemProcessing(element.id)"
+                            (click)="openEditTreatmentPlanItemStatusDialog(element)"></mat-icon>
+                        <mat-icon class="item-action-icon delete-action-icon" fontIcon="delete" matTooltip="Eliminar"
+                            [class.disabled-action]="isItemProcessing(element.id)"
+                            (click)="confirmDeleteTreatmentPlanItem(element)"></mat-icon>
                     </div>
                 </td>
             </ng-container>
