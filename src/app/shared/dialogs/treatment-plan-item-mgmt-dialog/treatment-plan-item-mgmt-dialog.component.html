@@ -1,0 +1,110 @@
+<h2 mat-dialog-title class="dialog-title">{{dialogTitle}}</h2>
+
+<mat-dialog-content class="treatment-plan-item-dialog-content">
+    <form [formGroup]="itemForm">
+        @if (mode === 'status') {
+        <div class="status-row">
+            <div class="current-status">
+                <span class="status-label">Estado actual</span>
+                <span class="status-value">{{currentStatusLabel}}</span>
+            </div>
+
+            <mat-form-field class="status-field" appearance="outline">
+                <mat-label>Cambiar estado a</mat-label>
+                <mat-select formControlName="status">
+                    @for (status of statusOptions; track status) {
+                    <mat-option [value]="status">{{getStatusLabel(status)}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        }
+
+        @if (mode !== 'status') {
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Concepto existente</mat-label>
+            <mat-select formControlName="userConceptId" (selectionChange)="onConceptChange($event.value)">
+                <mat-option [value]="null">Captura manual</mat-option>
+                @for (concept of conceptList; track concept.id) {
+                <mat-option [value]="concept.id">{{concept.description}} - {{concept.unit_price | currency:'MXN':'symbol':'1.2-2'}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name">
+            @if (itemForm.controls['name'].hasError('required') && itemForm.controls['name'].touched) {
+            <mat-error>Este campo es obligatorio</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Descripcion</mat-label>
+            <textarea matInput rows="2" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <div class="row-fields">
+            <mat-form-field class="half-width" appearance="outline">
+                <mat-label>Diente</mat-label>
+                <input matInput formControlName="tooth">
+            </mat-form-field>
+
+            <mat-form-field class="half-width" appearance="outline">
+                <mat-label>Area</mat-label>
+                <input matInput formControlName="area">
+            </mat-form-field>
+        </div>
+
+        <div class="row-fields">
+            <mat-form-field class="half-width" appearance="outline">
+                <mat-label>Cantidad</mat-label>
+                <input matInput type="number" min="0.01" formControlName="quantity">
+                @if (itemForm.controls['quantity'].invalid && itemForm.controls['quantity'].touched) {
+                <mat-error>La cantidad debe ser mayor a 0</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="half-width" appearance="outline">
+                <mat-label>Precio unitario</mat-label>
+                <input matInput type="number" min="0" formControlName="unitPrice">
+                @if (itemForm.controls['unitPrice'].invalid && itemForm.controls['unitPrice'].touched) {
+                <mat-error>El precio no puede ser negativo</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="row-fields">
+            <mat-form-field class="half-width" appearance="outline">
+                <mat-label>Fase</mat-label>
+                <input matInput formControlName="phase">
+            </mat-form-field>
+
+            <mat-form-field class="half-width" appearance="outline">
+                <mat-label>Prioridad</mat-label>
+                <mat-select formControlName="priority">
+                    <mat-option [value]="null">Sin prioridad</mat-option>
+                    @for (priority of priorityOptions; track priority) {
+                    <mat-option [value]="priority">{{getPriorityLabel(priority)}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Notas</mat-label>
+            <textarea matInput rows="2" formControlName="notes"></textarea>
+        </mat-form-field>
+
+        <div class="preview-subtotal">
+            <span>Subtotal estimado</span>
+            <strong>{{getPreviewSubtotal() | currency:'MXN':'symbol':'1.2-2'}}</strong>
+        </div>
+        }
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button (click)="cancel()" color="warn">Cancelar</button>
+    <button mat-button (click)="saveItem()" color="primary">Guardar</button>
+</mat-dialog-actions>
