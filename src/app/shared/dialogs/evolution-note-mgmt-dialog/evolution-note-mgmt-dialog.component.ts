@@ -126,7 +126,11 @@ export class EvolutionNoteMgmtDialogComponent {
       return data.note
     }
 
-    return data as EvolutionNote
+    if ('note' in data && typeof data.note === 'string') {
+      return data as EvolutionNote
+    }
+
+    return undefined
   }
 
   private getDialogData(data: EvolutionNoteMgmtDialogData | EvolutionNote | null): EvolutionNoteMgmtDialogData | undefined {
