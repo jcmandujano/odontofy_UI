@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { CreateEvolutionNoteRequest, EvolutionNote } from '../../../core/models/evolution-note.model';
 import {
   TREATMENT_PLAN_ITEM_PRIORITY_LABELS,
   TREATMENT_PLAN_ITEM_STATUS_LABELS,
@@ -23,6 +24,7 @@ import {
   UpdateTreatmentPlanRequest,
   UpdateTreatmentPlanStatusRequest
 } from '../../../core/models/treatment-plan.model';
+import { EvolutionNoteService } from '../../../core/services/evolution-note.service';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { UserConceptsService } from '../../../core/services/user-concepts.service';
@@ -30,6 +32,7 @@ import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.comp
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { TreatmentPlanItemMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-item-mgmt-dialog/treatment-plan-item-mgmt-dialog.component';
+import { EvolutionNoteMgmtDialogComponent } from '../../../shared/dialogs/evolution-note-mgmt-dialog/evolution-note-mgmt-dialog.component';
 import {
   TreatmentPlanMgmtDialogComponent,
   TreatmentPlanMgmtDialogResult
@@ -68,6 +71,7 @@ export class TreatmentPlanDetailComponent {
     private router: Router,
     private location: Location,
     private treatmentPlanService: TreatmentPlanService,
+    private evolutionNoteService: EvolutionNoteService,
     private userConceptsService: UserConceptsService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -308,6 +312,73 @@ export class TreatmentPlanDetailComponent {
     });
   }
 
+  openPlanEvolutionNoteDialog(): void {
+    if (!this.treatmentPlan) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(EvolutionNoteMgmtDialogComponent, {
+      minWidth: '40vw',
+      height: '70vh',
+      panelClass: 'custom-dialog-container',
+      data: {
+        treatmentPlans: [this.treatmentPlan],
+        treatment_plan_id: this.treatmentPlan.id
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.createEvolutionNote({
+          note: result.noteContent,
+          treatment_plan_id: result.treatment_plan_id ?? this.treatmentPlanId,
+          treatment_plan_item_id: result.treatment_plan_item_id ?? null
+        });
+      }
+    });
+  }
+
+  openItemEvolutionNoteDialog(item: TreatmentPlanItem): void {
+    if (!this.treatmentPlan) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(EvolutionNoteMgmtDialogComponent, {
+      minWidth: '40vw',
+      height: '70vh',
+      panelClass: 'custom-dialog-container',
+      data: {
+        treatmentPlans: [this.treatmentPlan],
+        treatment_plan_id: this.treatmentPlan.id,
+        treatment_plan_item_id: item.id
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.createEvolutionNote({
+          note: result.noteContent,
+          treatment_plan_id: result.treatment_plan_id ?? this.treatmentPlanId,
+          treatment_plan_item_id: result.treatment_plan_id ? result.treatment_plan_item_id ?? null : null
+        });
+      }
+    });
+  }
+
+  createEvolutionNote(payload: CreateEvolutionNoteRequest): void {
+    this.spinner.show();
+    this.evolutionNoteService.createNote(this.patientId, payload).subscribe({
+      next: response => {
+        this.openSnackbar(response.message || 'Nota de evolucion creada correctamente', 'Ok');
+        this.loadTreatmentPlanDetail();
+      },
+      error: error => {
+        this.spinner.hide();
+        this.openSnackbar(`Ocurrio un error al crear la nota: ${this.getErrorMessage(error)}`, 'Ok');
+      }
+    });
+  }
+
   getStatusLabel(status: TreatmentPlanStatus): string {
     return this.statusLabels[status] ?? status;
   }
@@ -330,6 +401,20 @@ export class TreatmentPlanDetailComponent {
 
   getDisplayValue(value: string | number | null | undefined): string | number {
     return value !== null && value !== undefined && value !== '' ? value : '--';
+  }
+
+  get planEvolutionNotes(): EvolutionNote[] {
+    return this.treatmentPlan?.evolutionNotes ?? [];
+  }
+
+  getItemEvolutionNotes(item: TreatmentPlanItem): EvolutionNote[] {
+    return item.evolutionNotes ?? [];
+  }
+
+  limpiarHtml(html: string): string {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
   }
 
   openSnackbar(message: string, action: string): void {

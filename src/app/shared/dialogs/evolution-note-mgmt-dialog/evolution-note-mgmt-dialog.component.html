@@ -8,6 +8,33 @@
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+
+    <div class="clinical-context-fields">
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Plan de tratamiento</mat-label>
+        <mat-select [(ngModel)]="selectedTreatmentPlanId" (selectionChange)="onTreatmentPlanChange()">
+          <mat-option [value]="null">Nota general del paciente</mat-option>
+          @for (plan of treatmentPlans; track plan.id) {
+          <mat-option [value]="plan.id">{{plan.title}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (selectedTreatmentPlanId) {
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Procedimiento / item del plan</mat-label>
+        <mat-select [(ngModel)]="selectedTreatmentPlanItemId">
+          <mat-option [value]="null">Avance general del plan</mat-option>
+          @for (item of selectedTreatmentPlanItems; track item.id) {
+          <mat-option [value]="item.id">
+            {{item.name}} @if (item.tooth) { - Diente {{item.tooth}} } @if (item.area) { - {{item.area}} }
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
+    </div>
+
     <quill-editor 
       [(ngModel)]="noteContent"
       [style]="{height: '70%', width: '100%'}" 

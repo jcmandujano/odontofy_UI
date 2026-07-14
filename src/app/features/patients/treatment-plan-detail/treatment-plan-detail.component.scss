@@ -97,6 +97,15 @@
   margin-bottom: 0;
 }
 
+.section_hint {
+  display: block;
+  margin-top: 4px;
+  font-family: 'Roboto';
+  font-size: 13px;
+  line-height: 18px;
+  color: #7A7A7A;
+}
+
 .info-grid,
 .financial-grid {
   display: grid;
@@ -251,6 +260,48 @@
   color: #7A7A7A;
   font-size: 12px;
   line-height: 18px;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-item,
+.empty-inline {
+  border: 1px solid #C0D9FF;
+  background-color: #fff;
+  padding: 12px;
+}
+
+.note-date,
+.clinical-count {
+  display: block;
+  font-family: 'Roboto Condensed';
+  font-size: 13px;
+  line-height: 18px;
+  color: $main--blue;
+  margin-bottom: 4px;
+}
+
+.note-text {
+  display: block;
+  font-family: 'Roboto';
+  font-size: 14px;
+  line-height: 20px;
+  color: #7A7A7A;
+}
+
+.empty-inline {
+  font-family: 'Roboto';
+  font-size: 14px;
+  line-height: 20px;
+  color: #7A7A7A;
+}
+
+.item-evolution-notes {
+  margin-top: 8px;
 }
 
 .item-actions {

@@ -1,4 +1,5 @@
 import { PaginatedResponse } from './api-response.model';
+import { EvolutionNote } from './evolution-note.model';
 
 export type ISODateString = string;
 
@@ -73,6 +74,7 @@ export interface TreatmentPlan {
     created_at?: ISODateString;
     updated_at?: ISODateString;
     TreatmentPlanItems?: TreatmentPlanItem[];
+    evolutionNotes?: EvolutionNote[];
 }
 
 export interface TreatmentPlanItem {
@@ -94,6 +96,7 @@ export interface TreatmentPlanItem {
     completed_at: ISODateString | null;
     created_at?: ISODateString;
     updated_at?: ISODateString;
+    evolutionNotes?: EvolutionNote[];
 }
 
 export interface CreateTreatmentPlanRequest {
