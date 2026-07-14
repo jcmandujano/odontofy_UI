@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { QuillModule } from 'ngx-quill';
+import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 
 export interface EvolutionNoteMgmtDialogData {
   note?: EvolutionNote;
@@ -65,6 +66,7 @@ export class EvolutionNoteMgmtDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<EvolutionNoteMgmtDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EvolutionNoteMgmtDialogData | EvolutionNote | null,
+    private treatmentPlanService: TreatmentPlanService,
   ) {
     const note = this.getDialogNote(data)
     const dialogData = this.getDialogData(data)
@@ -82,6 +84,8 @@ export class EvolutionNoteMgmtDialogComponent {
     if (!this.selectedTreatmentPlanId) {
       this.selectedTreatmentPlanItemId = null
     }
+
+    this.ensureSelectedTreatmentPlanItems()
   }
 
   onSave(): void {
@@ -102,6 +106,7 @@ export class EvolutionNoteMgmtDialogComponent {
 
   onTreatmentPlanChange(): void {
     this.selectedTreatmentPlanItemId = null
+    this.ensureSelectedTreatmentPlanItems()
   }
 
   isoToDate(fechaISO: string) {
@@ -139,5 +144,29 @@ export class EvolutionNoteMgmtDialogComponent {
     }
 
     return data as EvolutionNoteMgmtDialogData
+  }
+
+  private ensureSelectedTreatmentPlanItems(): void {
+    if (!this.selectedTreatmentPlanId) {
+      return
+    }
+
+    const selectedPlan = this.treatmentPlans.find(plan => plan.id === this.selectedTreatmentPlanId)
+    if (selectedPlan?.TreatmentPlanItems) {
+      return
+    }
+
+    this.treatmentPlanService.getTreatmentPlanDetail(this.selectedTreatmentPlanId).subscribe({
+      next: response => {
+        if (response.data) {
+          this.treatmentPlans = this.treatmentPlans.map(plan =>
+            plan.id === response.data!.id ? response.data! : plan
+          )
+        }
+      },
+      error: error => {
+        console.log('ERROR', error)
+      }
+    })
   }
 }

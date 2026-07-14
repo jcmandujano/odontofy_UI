@@ -192,6 +192,7 @@ export class EvolutionNotesComponent {
   onTreatmentPlanFilterChange() {
     this.selectedTreatmentPlanItemId = null
     this.pageIndex = 0
+    this.ensureSelectedTreatmentPlanItems()
     this.listarNotas(1)
   }
 
@@ -307,5 +308,29 @@ export class EvolutionNotesComponent {
       ?? error?.error?.message
       ?? error?.message
       ?? 'Ocurrio un problema al procesar tu solicitud';
+  }
+
+  private ensureSelectedTreatmentPlanItems() {
+    if (!this.selectedTreatmentPlanId) {
+      return
+    }
+
+    const selectedPlan = this.treatmentPlans.find(plan => plan.id === this.selectedTreatmentPlanId)
+    if (selectedPlan?.TreatmentPlanItems) {
+      return
+    }
+
+    this.treatmentPlanService.getTreatmentPlanDetail(this.selectedTreatmentPlanId).subscribe({
+      next: response => {
+        if (response.data) {
+          this.treatmentPlans = this.treatmentPlans.map(plan =>
+            plan.id === response.data!.id ? response.data! : plan
+          )
+        }
+      },
+      error: error => {
+        this.openSnackbar(`Ocurrio un error al cargar procedimientos del plan: ${this.getErrorMessage(error)}`, 'Ok')
+      }
+    })
   }
 }
