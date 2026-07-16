@@ -9,10 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import {
   CreateTreatmentPlanItemRequest,
-  TREATMENT_PLAN_ITEM_PRIORITY_LABELS,
   TREATMENT_PLAN_ITEM_STATUS_LABELS,
   TreatmentPlanItem,
-  TreatmentPlanItemPriority,
   TreatmentPlanItemStatus,
   UpdateTreatmentPlanItemRequest
 } from '../../../core/models/treatment-plan.model';
@@ -41,9 +39,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
   itemForm: FormGroup;
   conceptList: UserConcept[] = [];
   mode: 'create' | 'edit' | 'status';
-  readonly priorityLabels = TREATMENT_PLAN_ITEM_PRIORITY_LABELS;
   readonly statusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
-  readonly priorityOptions = Object.values(TreatmentPlanItemPriority);
   readonly statusOptions = Object.values(TreatmentPlanItemStatus);
 
   constructor(
@@ -58,11 +54,8 @@ export class TreatmentPlanItemMgmtDialogComponent {
       name: ['', Validators.required],
       description: [''],
       tooth: [''],
-      area: [''],
       quantity: [1, [Validators.required, Validators.min(0.01)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
-      phase: [''],
-      priority: [null],
       notes: [''],
       status: [data?.treatmentPlanItem?.status ?? TreatmentPlanItemStatus.PENDING, Validators.required],
     });
@@ -74,6 +67,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
 
   onConceptChange(conceptId: number | null): void {
     if (!conceptId) {
+      this.itemForm.patchValue({ name: '' });
       return;
     }
 
@@ -111,11 +105,8 @@ export class TreatmentPlanItemMgmtDialogComponent {
       name: formValue.name.trim(),
       description: this.toNullableString(formValue.description),
       tooth: this.toNullableString(formValue.tooth),
-      area: this.toNullableString(formValue.area),
       quantity: Number(formValue.quantity),
       unit_price: Number(formValue.unitPrice),
-      phase: this.toNullableString(formValue.phase),
-      priority: formValue.priority || null,
       notes: this.toNullableString(formValue.notes),
     };
 
@@ -126,12 +117,12 @@ export class TreatmentPlanItemMgmtDialogComponent {
     this.dialogRef.close();
   }
 
-  getPriorityLabel(priority: TreatmentPlanItemPriority): string {
-    return this.priorityLabels[priority] ?? priority;
-  }
-
   getStatusLabel(status: TreatmentPlanItemStatus): string {
     return this.statusLabels[status] ?? status;
+  }
+
+  get isManualCapture(): boolean {
+    return !this.itemForm.controls['userConceptId'].value;
   }
 
   get dialogTitle(): string {
@@ -164,11 +155,8 @@ export class TreatmentPlanItemMgmtDialogComponent {
       name: item.name,
       description: item.description,
       tooth: item.tooth,
-      area: item.area,
       quantity: Number(item.quantity),
       unitPrice: Number(item.unit_price),
-      phase: item.phase,
-      priority: item.priority,
       notes: item.notes,
       status: item.status,
     });

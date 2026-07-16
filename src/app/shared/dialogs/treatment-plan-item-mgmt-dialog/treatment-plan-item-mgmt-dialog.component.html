@@ -31,30 +31,25 @@
             </mat-select>
         </mat-form-field>
 
-        <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name">
-            @if (itemForm.controls['name'].hasError('required') && itemForm.controls['name'].touched) {
-            <mat-error>Este campo es obligatorio</mat-error>
-            }
-        </mat-form-field>
+        @if (isManualCapture) {
+            <mat-form-field class="full-width" appearance="outline">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="name">
+                @if (itemForm.controls['name'].hasError('required') && itemForm.controls['name'].touched) {
+                <mat-error>Este campo es obligatorio</mat-error>
+                }
+            </mat-form-field>
+        }
 
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Descripcion</mat-label>
+            <mat-label>Diagnostico</mat-label>
             <textarea matInput rows="2" formControlName="description"></textarea>
         </mat-form-field>
 
-        <div class="row-fields">
-            <mat-form-field class="half-width" appearance="outline">
-                <mat-label>Diente</mat-label>
-                <input matInput formControlName="tooth">
-            </mat-form-field>
-
-            <mat-form-field class="half-width" appearance="outline">
-                <mat-label>Area</mat-label>
-                <input matInput formControlName="area">
-            </mat-form-field>
-        </div>
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Diente</mat-label>
+            <input matInput formControlName="tooth">
+        </mat-form-field>
 
         <div class="row-fields">
             <mat-form-field class="half-width" appearance="outline">
@@ -74,25 +69,8 @@
             </mat-form-field>
         </div>
 
-        <div class="row-fields">
-            <mat-form-field class="half-width" appearance="outline">
-                <mat-label>Fase</mat-label>
-                <input matInput formControlName="phase">
-            </mat-form-field>
-
-            <mat-form-field class="half-width" appearance="outline">
-                <mat-label>Prioridad</mat-label>
-                <mat-select formControlName="priority">
-                    <mat-option [value]="null">Sin prioridad</mat-option>
-                    @for (priority of priorityOptions; track priority) {
-                    <mat-option [value]="priority">{{getPriorityLabel(priority)}}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-        </div>
-
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Notas</mat-label>
+            <mat-label>Observaciones</mat-label>
             <textarea matInput rows="2" formControlName="notes"></textarea>
         </mat-form-field>
 

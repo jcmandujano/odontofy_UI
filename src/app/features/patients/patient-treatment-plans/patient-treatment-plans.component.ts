@@ -116,7 +116,11 @@ export class PatientTreatmentPlansComponent {
     const dialogRef = this.dialog.open(TreatmentPlanMgmtDialogComponent, {
       minWidth: '45vw',
       maxWidth: '720px',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
+      data: {
+        mode: 'create',
+        suggestedTitle: this.getNextTreatmentPlanTitle()
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -234,5 +238,10 @@ export class PatientTreatmentPlansComponent {
     }
 
     return this.allTreatmentPlans.filter(treatmentPlan => treatmentPlan.status === this.selectedStatusFilter);
+  }
+
+  private getNextTreatmentPlanTitle(): string {
+    const nextPlanNumber = this.allTreatmentPlans.length + 1;
+    return `Plan de tratamiento ${String(nextPlanNumber).padStart(4, '0')}`;
   }
 }

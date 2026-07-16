@@ -102,12 +102,6 @@ export interface TreatmentPlanItem {
 export interface CreateTreatmentPlanRequest {
     title: string;
     description?: string | null;
-    diagnosis?: string | null;
-    patient_complaint?: string | null;
-    clinical_observations?: string | null;
-    prognosis?: string | null;
-    estimated_start_date?: ISODateString | null;
-    estimated_end_date?: ISODateString | null;
     acceptance_notes?: string | null;
     discount?: number;
 }
