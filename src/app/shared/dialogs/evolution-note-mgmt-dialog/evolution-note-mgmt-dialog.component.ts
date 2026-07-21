@@ -50,7 +50,8 @@ export class EvolutionNoteMgmtDialogComponent {
   creationDate: Date
   noteContent: string = ''
   treatmentPlans: TreatmentPlan[] = []
-  selectedTreatmentPlanId: number | null = null
+  readonly generalPatientNoteValue = 'GENERAL_PATIENT_NOTE' as const
+  selectedTreatmentPlanId: number | typeof this.generalPatientNoteValue = this.generalPatientNoteValue
   selectedTreatmentPlanItemId: number | null = null
   markTreatmentAsCompleted = false
   quillConfig = {
@@ -76,7 +77,8 @@ export class EvolutionNoteMgmtDialogComponent {
     const note = this.getDialogNote(data)
     const dialogData = this.getDialogData(data)
     this.treatmentPlans = dialogData?.treatmentPlans ?? []
-    this.selectedTreatmentPlanId = dialogData?.treatment_plan_id ?? note?.treatment_plan_id ?? null
+    const treatmentPlanId = dialogData?.treatment_plan_id ?? note?.treatment_plan_id ?? null
+    this.selectedTreatmentPlanId = treatmentPlanId ?? this.generalPatientNoteValue
     this.selectedTreatmentPlanItemId = dialogData?.treatment_plan_item_id ?? note?.treatment_plan_item_id ?? null
 
     if(note){
@@ -86,7 +88,7 @@ export class EvolutionNoteMgmtDialogComponent {
       this.creationDate = new Date()
     }
 
-    if (!this.selectedTreatmentPlanId) {
+    if (this.isGeneralPatientNote) {
       this.selectedTreatmentPlanItemId = null
     }
 
@@ -94,8 +96,10 @@ export class EvolutionNoteMgmtDialogComponent {
   }
 
   onSave(): void {
-    const treatmentPlanId = this.selectedTreatmentPlanId ?? null
-    const treatmentPlanItemId = treatmentPlanId ? this.selectedTreatmentPlanItemId ?? null : null
+    const treatmentPlanId = this.selectedTreatmentPlanId === this.generalPatientNoteValue
+      ? null
+      : this.selectedTreatmentPlanId
+    const treatmentPlanItemId = treatmentPlanId !== null ? this.selectedTreatmentPlanItemId ?? null : null
     const data = {
       creationDate: this.creationDate.toISOString(),
       noteContent: this.noteContent,
@@ -107,8 +111,16 @@ export class EvolutionNoteMgmtDialogComponent {
   }
 
   get selectedTreatmentPlanItems(): TreatmentPlanItem[] {
+    if (this.isGeneralPatientNote) {
+      return []
+    }
+
     const selectedPlan = this.treatmentPlans.find(plan => plan.id === this.selectedTreatmentPlanId)
     return selectedPlan?.TreatmentPlanItems ?? []
+  }
+
+  get isGeneralPatientNote(): boolean {
+    return this.selectedTreatmentPlanId === this.generalPatientNoteValue
   }
 
   onTreatmentPlanChange(): void {
@@ -169,16 +181,17 @@ export class EvolutionNoteMgmtDialogComponent {
   }
 
   private ensureSelectedTreatmentPlanItems(): void {
-    if (!this.selectedTreatmentPlanId) {
+    if (this.selectedTreatmentPlanId === this.generalPatientNoteValue) {
       return
     }
 
-    const selectedPlan = this.treatmentPlans.find(plan => plan.id === this.selectedTreatmentPlanId)
+    const treatmentPlanId = this.selectedTreatmentPlanId
+    const selectedPlan = this.treatmentPlans.find(plan => plan.id === treatmentPlanId)
     if (selectedPlan?.TreatmentPlanItems) {
       return
     }
 
-    this.treatmentPlanService.getTreatmentPlanDetail(this.selectedTreatmentPlanId).subscribe({
+    this.treatmentPlanService.getTreatmentPlanDetail(treatmentPlanId).subscribe({
       next: response => {
         if (response.data) {
           this.treatmentPlans = this.treatmentPlans.map(plan =>
