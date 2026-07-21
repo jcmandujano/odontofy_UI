@@ -139,8 +139,9 @@ table {
   width: 10%;
 }
 
-.context-header-column {
-  width: 25%;
+.plan-header-column,
+.procedure-header-column {
+  width: 19%;
 }
 //fixed width of table columns
 //content column format
@@ -197,28 +198,14 @@ table {
   color: $main--blue;
 }
 
-.context-content-column {
+.plan-content-column,
+.procedure-content-column {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
   font-size: 13px;
   line-height: 18px;
   color: #7A7A7A;
-}
-
-.clinical-context {
-  display: flex;
-  flex-direction: column;
-}
-
-.item-context {
-  margin-top: 6px;
-}
-
-.context-label,
-.general-note-label {
-  font-family: 'Roboto Condensed';
-  color: $main--blue;
 }
 
 .mat-mdc-text-field-wrapper{

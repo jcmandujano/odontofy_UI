@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { TreatmentPlan, TreatmentPlanItem } from '../../../core/models/treatment-plan.model';
+import { TreatmentPlan, TreatmentPlanItem, TreatmentPlanItemStatus } from '../../../core/models/treatment-plan.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -45,7 +45,7 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './evolution-notes.component.scss'
 })
 export class EvolutionNotesComponent {
-  displayedColumns: string[] = ['fecha', 'nota', 'contextoClinico', 'actions'];
+  displayedColumns: string[] = ['fecha', 'nota', 'planTratamiento', 'procedimiento', 'actions'];
   dataSource: EvolutionNote[] = [];
   notasList: EvolutionNote[] = []
   treatmentPlans: TreatmentPlan[] = []
@@ -111,6 +111,7 @@ export class EvolutionNotesComponent {
       this.notasList = response.data?.results ?? []
       this.dataSource = this.notasList
       this.length = response.data?.total ?? 0;
+      this.loadTreatmentPlanDetailsForNotes(this.notasList)
       this.pageIndex = (response.data?.page ?? 1) - 1; // Ajuste base 1 ➜ base 0
       this.spinner.hide()
     }, (error) => {
@@ -123,7 +124,12 @@ export class EvolutionNotesComponent {
   loadTreatmentPlans() {
     this.treatmentPlanService.listTreatmentPlansByPatient(Number(this.pacienteId), 1, 1000).subscribe({
       next: response => {
-        this.treatmentPlans = response.data?.results ?? [];
+        const plans = response.data?.results ?? [];
+        this.treatmentPlans = plans.map(plan => {
+          const currentPlan = this.treatmentPlans.find(treatmentPlan => treatmentPlan.id === plan.id);
+          return currentPlan?.TreatmentPlanItems ? currentPlan : plan;
+        });
+        this.loadTreatmentPlanDetailsForNotes(this.notasList);
       },
       error: error => {
         this.openSnackbar(`Ocurrio un error al cargar planes: ${this.getErrorMessage(error)}`, 'Ok')
@@ -152,8 +158,10 @@ export class EvolutionNotesComponent {
     }
     this.spinner.show()
     this.notasService.createNote(this.pacienteId, newNota).subscribe(data => {
-      this.listarNotas()
-      this.spinner.hide()
+      this.completeTreatmentItemIfRequested(response, () => {
+        this.listarNotas()
+        this.spinner.hide()
+      })
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
@@ -169,8 +177,10 @@ export class EvolutionNotesComponent {
     }
     this.spinner.show()
     this.notasService.updateNote(this.pacienteId, idNota, newNota).subscribe(data => {
-      this.listarNotas()
-      this.spinner.hide()
+      this.completeTreatmentItemIfRequested(response, () => {
+        this.listarNotas()
+        this.spinner.hide()
+      })
     }, (error) => {
       this.spinner.hide()
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
@@ -284,18 +294,22 @@ export class EvolutionNotesComponent {
   }
 
   getTreatmentPlanTitle(note: EvolutionNote): string {
+    if (!note.treatment_plan_id) {
+      return 'Nota general de paciente'
+    }
+
     const treatmentPlan = this.treatmentPlans.find(plan => plan.id === note.treatment_plan_id)
     return treatmentPlan?.title ?? `Plan #${note.treatment_plan_id}`
   }
 
-  getTreatmentPlanItemLabel(note: EvolutionNote): string {
+  getTreatmentPlanItemDescription(note: EvolutionNote): string {
     if (!note.treatment_plan_item_id) {
       return ''
     }
 
     const treatmentPlan = this.treatmentPlans.find(plan => plan.id === note.treatment_plan_id)
     const item = treatmentPlan?.TreatmentPlanItems?.find(planItem => planItem.id === note.treatment_plan_item_id)
-    return item ? this.getItemLabel(item) : `Item #${note.treatment_plan_item_id}`
+    return item?.name ?? ''
   }
 
   getItemLabel(item: TreatmentPlanItem): string {
@@ -315,22 +329,82 @@ export class EvolutionNotesComponent {
       return
     }
 
-    const selectedPlan = this.treatmentPlans.find(plan => plan.id === this.selectedTreatmentPlanId)
-    if (selectedPlan?.TreatmentPlanItems) {
+    this.ensureTreatmentPlanItems(this.selectedTreatmentPlanId)
+  }
+
+  private loadTreatmentPlanDetailsForNotes(notes: EvolutionNote[]): void {
+    const planIds = [...new Set(
+      notes
+        .filter(note => note.treatment_plan_id && note.treatment_plan_item_id)
+        .map(note => note.treatment_plan_id as number)
+    )]
+
+    planIds.forEach(planId => this.ensureTreatmentPlanItems(planId))
+  }
+
+  private ensureTreatmentPlanItems(treatmentPlanId: number): void {
+    const treatmentPlan = this.treatmentPlans.find(plan => plan.id === treatmentPlanId)
+    if (treatmentPlan?.TreatmentPlanItems) {
       return
     }
 
-    this.treatmentPlanService.getTreatmentPlanDetail(this.selectedTreatmentPlanId).subscribe({
+    this.treatmentPlanService.getTreatmentPlanDetail(treatmentPlanId).subscribe({
       next: response => {
         if (response.data) {
-          this.treatmentPlans = this.treatmentPlans.map(plan =>
-            plan.id === response.data!.id ? response.data! : plan
-          )
+          this.upsertTreatmentPlan(response.data)
         }
       },
       error: error => {
         this.openSnackbar(`Ocurrio un error al cargar procedimientos del plan: ${this.getErrorMessage(error)}`, 'Ok')
       }
     })
+  }
+
+  private completeTreatmentItemIfRequested(response: any, onComplete: () => void): void {
+    if (!response.markTreatmentAsCompleted || !response.treatment_plan_id || !response.treatment_plan_item_id) {
+      onComplete()
+      return
+    }
+
+    this.treatmentPlanService.updateTreatmentPlanItemStatus(
+      response.treatment_plan_id,
+      response.treatment_plan_item_id,
+      { status: TreatmentPlanItemStatus.COMPLETED }
+    ).subscribe({
+      next: () => {
+        this.openSnackbar('Nota guardada y tratamiento marcado como completado', 'Ok')
+        this.refreshTreatmentPlanDetail(response.treatment_plan_id)
+        onComplete()
+      },
+      error: error => {
+        this.spinner.hide()
+        this.openSnackbar(`La nota se guardo, pero no se pudo completar el tratamiento: ${this.getErrorMessage(error)}`, 'Ok')
+      }
+    })
+  }
+
+  private refreshTreatmentPlanDetail(treatmentPlanId: number): void {
+    this.treatmentPlanService.getTreatmentPlanDetail(treatmentPlanId).subscribe({
+      next: response => {
+        if (response.data) {
+          this.upsertTreatmentPlan(response.data)
+        }
+      },
+      error: error => {
+        this.openSnackbar(`Ocurrio un error al refrescar el plan: ${this.getErrorMessage(error)}`, 'Ok')
+      }
+    })
+  }
+
+  private upsertTreatmentPlan(treatmentPlan: TreatmentPlan): void {
+    const currentPlanIndex = this.treatmentPlans.findIndex(plan => plan.id === treatmentPlan.id)
+    if (currentPlanIndex === -1) {
+      this.treatmentPlans = [...this.treatmentPlans, treatmentPlan]
+      return
+    }
+
+    this.treatmentPlans = this.treatmentPlans.map(plan =>
+      plan.id === treatmentPlan.id ? treatmentPlan : plan
+    )
   }
 }
