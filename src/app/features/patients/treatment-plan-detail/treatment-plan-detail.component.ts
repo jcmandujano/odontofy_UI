@@ -2,11 +2,10 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import {
@@ -72,15 +71,8 @@ export class TreatmentPlanDetailComponent {
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private spinner: NgxSpinnerService,
-    private elementRef: ElementRef,
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
-  ) {
-    this.matIconRegistry.addSvgIcon(
-      'recetas',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/icons/dashboard_recetas.svg')
-    );
-  }
+    private elementRef: ElementRef
+  ) {}
 
   ngOnInit(): void {
     this.treatmentPlanId = Number(this.route.snapshot.paramMap.get('id'));

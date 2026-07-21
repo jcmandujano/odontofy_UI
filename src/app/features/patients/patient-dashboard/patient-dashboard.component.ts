@@ -1,7 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PacientesService } from '../../../core/services/patient.service';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
@@ -33,51 +32,8 @@ export class PatientDashboardComponent {
     private elementRef: ElementRef,
     private router: Router,
     private route: ActivatedRoute,
-    private matIconRegistry: MatIconRegistry,
     private pacientesService: PacientesService,
-    private snackBar: MatSnackBar,
-    private domSanitizer: DomSanitizer) {
-    this.matIconRegistry.addSvgIcon(
-      "settings",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/settings_dashboard.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "logout",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/logout_dashboard.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "agenda",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_agenda.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "agendaDot",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/agenda_dot.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "iniciaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_init_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "editaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_edit_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "eliminaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_delete_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "finanzas",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_finanzas.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "recetas",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_recetas.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "pacientes",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_user.svg")
-    );
-  }
+    private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.pacienteId = this.route.snapshot.paramMap.get('id');

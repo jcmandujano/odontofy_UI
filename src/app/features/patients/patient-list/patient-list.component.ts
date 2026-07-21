@@ -2,8 +2,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Patient } from '../../../core/models/patient.model';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
 import { PacientesService } from '../../../core/services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -48,31 +47,12 @@ export class PatientListComponent implements AfterViewInit {
   pageSize = 10;
   pageEvent: PageEvent = new PageEvent;
   searchCriteria: string = '';
-  constructor(private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
-    private pacientesService: PacientesService,
+  constructor(private pacientesService: PacientesService,
     private snackBar: MatSnackBar,
     private router: Router,
     public dialog: MatDialog,
     private spinner: NgxSpinnerService,
-    private elementRef: ElementRef) {
-    this.matIconRegistry.addSvgIcon(
-      "pacientes",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_user.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "iniciaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_init_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "editaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_edit_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "eliminaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_delete_cita.svg")
-    );
-  }
+    private elementRef: ElementRef) {}
 
   ngOnInit(): void {
     this.recuperaPacientes()

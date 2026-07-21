@@ -1,9 +1,7 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { forkJoin, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
-import { MatIconRegistry } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
@@ -60,7 +58,6 @@ export class DashboardComponent implements OnInit {
   constructor(private sessionService: SessionStorageService,
     private router: Router,
     private elementRef: ElementRef,
-    private matIconRegistry: MatIconRegistry,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private userConsentService: UserConsentService,
@@ -68,63 +65,8 @@ export class DashboardComponent implements OnInit {
     private patientService: PacientesService,
     private paymentService: PaymentService,
     private spinner: NgxSpinnerService,
-    private domSanitizer: DomSanitizer,
     public authService: AuthService,
-    private userService: UserService) {
-    this.matIconRegistry.addSvgIcon(
-      "agenda",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_agenda.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "finanzas",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_finanzas.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "pacientes",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_user.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "concentimientos",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/vepet_concentimientos.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "ficha_id",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/vepet_ficha_identificacion.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "odontograma",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/vepet_odontograma.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "settings",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/settings_dashboard.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "logout",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/logout_dashboard.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "recetas",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_recetas.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "agendaDot",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_agenda.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "iniciaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_init_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "editaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_edit_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "eliminaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_delete_cita.svg")
-    );
-
-  }
+    private userService: UserService) {}
 
 
   ngOnInit(): void {

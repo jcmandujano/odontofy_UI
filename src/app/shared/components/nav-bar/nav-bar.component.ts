@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatIconModule, MatIconRegistry } from "@angular/material/icon";
-import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconModule } from "@angular/material/icon";
 import { Router } from '@angular/router';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,16 +17,9 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class NavBarComponent implements OnInit {
 
-  constructor(private matIconRegistry: MatIconRegistry,  
-    private domSanitizer: DomSanitizer,
-    private sessionService : SessionStorageService,
+  constructor(private sessionService : SessionStorageService,
     private router: Router
-    ) {
-    this.matIconRegistry.addSvgIcon(
-      "logout",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/logout_dashboard.svg")
-    );
-   }
+    ) {}
 
   ngOnInit(): void {
   }
