@@ -18,6 +18,7 @@ import {
 
 export interface TreatmentPlanMgmtDialogData {
   mode?: 'create' | 'edit';
+  suggestedTitle?: string;
   treatmentPlan?: TreatmentPlan;
 }
 
@@ -54,7 +55,7 @@ export class TreatmentPlanMgmtDialogComponent {
   ) {
     this.mode = data?.mode ?? 'create';
     this.treatmentPlanForm = this.fb.group({
-      title: ['', Validators.required],
+      title: [data?.suggestedTitle ?? '', Validators.required],
       description: [''],
       diagnosis: [''],
       patientComplaint: [''],
@@ -78,16 +79,22 @@ export class TreatmentPlanMgmtDialogComponent {
     }
 
     const formValue = this.treatmentPlanForm.value;
-    const payload: CreateTreatmentPlanRequest | UpdateTreatmentPlanRequest = {
+    const basePayload: CreateTreatmentPlanRequest = {
       title: formValue.title.trim(),
       description: this.toNullableString(formValue.description),
-      diagnosis: this.toNullableString(formValue.diagnosis),
-      patient_complaint: this.toNullableString(formValue.patientComplaint),
-      clinical_observations: this.toNullableString(formValue.clinicalObservations),
-      prognosis: this.toNullableString(formValue.prognosis),
-      estimated_start_date: this.formatDateValue(formValue.estimatedStartDate),
-      estimated_end_date: this.formatDateValue(formValue.estimatedEndDate),
     };
+
+    const payload: CreateTreatmentPlanRequest | UpdateTreatmentPlanRequest = this.mode === 'edit'
+      ? {
+          ...basePayload,
+          diagnosis: this.toNullableString(formValue.diagnosis),
+          patient_complaint: this.toNullableString(formValue.patientComplaint),
+          clinical_observations: this.toNullableString(formValue.clinicalObservations),
+          prognosis: this.toNullableString(formValue.prognosis),
+          estimated_start_date: this.formatDateValue(formValue.estimatedStartDate),
+          estimated_end_date: this.formatDateValue(formValue.estimatedEndDate),
+        }
+      : basePayload;
 
     if (formValue.discount !== null && formValue.discount !== '') {
       payload.discount = Number(formValue.discount);

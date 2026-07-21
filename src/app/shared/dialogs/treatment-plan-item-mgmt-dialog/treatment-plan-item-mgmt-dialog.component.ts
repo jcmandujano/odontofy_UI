@@ -9,10 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import {
   CreateTreatmentPlanItemRequest,
-  TREATMENT_PLAN_ITEM_PRIORITY_LABELS,
   TREATMENT_PLAN_ITEM_STATUS_LABELS,
   TreatmentPlanItem,
-  TreatmentPlanItemPriority,
   TreatmentPlanItemStatus,
   UpdateTreatmentPlanItemRequest
 } from '../../../core/models/treatment-plan.model';
@@ -38,12 +36,11 @@ export interface TreatmentPlanItemMgmtDialogData {
   styleUrl: './treatment-plan-item-mgmt-dialog.component.scss'
 })
 export class TreatmentPlanItemMgmtDialogComponent {
+  readonly manualCaptureValue = 'MANUAL_CAPTURE';
   itemForm: FormGroup;
   conceptList: UserConcept[] = [];
   mode: 'create' | 'edit' | 'status';
-  readonly priorityLabels = TREATMENT_PLAN_ITEM_PRIORITY_LABELS;
   readonly statusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
-  readonly priorityOptions = Object.values(TreatmentPlanItemPriority);
   readonly statusOptions = Object.values(TreatmentPlanItemStatus);
 
   constructor(
@@ -54,15 +51,12 @@ export class TreatmentPlanItemMgmtDialogComponent {
     this.conceptList = data?.conceptList ?? [];
     this.mode = data?.mode ?? 'create';
     this.itemForm = this.fb.group({
-      userConceptId: [null],
+      userConceptId: [this.manualCaptureValue],
       name: ['', Validators.required],
       description: [''],
       tooth: [''],
-      area: [''],
       quantity: [1, [Validators.required, Validators.min(0.01)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
-      phase: [''],
-      priority: [null],
       notes: [''],
       status: [data?.treatmentPlanItem?.status ?? TreatmentPlanItemStatus.PENDING, Validators.required],
     });
@@ -72,12 +66,13 @@ export class TreatmentPlanItemMgmtDialogComponent {
     }
   }
 
-  onConceptChange(conceptId: number | null): void {
-    if (!conceptId) {
+  onConceptChange(conceptId: number | string): void {
+    if (conceptId === this.manualCaptureValue) {
+      this.itemForm.patchValue({ name: '' });
       return;
     }
 
-    const selectedConcept = this.conceptList.find(concept => concept.id === conceptId);
+    const selectedConcept = this.conceptList.find(concept => concept.id === Number(conceptId));
     if (!selectedConcept) {
       return;
     }
@@ -106,16 +101,14 @@ export class TreatmentPlanItemMgmtDialogComponent {
     }
 
     const formValue = this.itemForm.value;
+    const isManualCapture = formValue.userConceptId === this.manualCaptureValue;
     const payload: CreateTreatmentPlanItemRequest | UpdateTreatmentPlanItemRequest = {
-      user_concept_id: formValue.userConceptId || null,
+      user_concept_id: isManualCapture ? null : Number(formValue.userConceptId),
       name: formValue.name.trim(),
       description: this.toNullableString(formValue.description),
       tooth: this.toNullableString(formValue.tooth),
-      area: this.toNullableString(formValue.area),
       quantity: Number(formValue.quantity),
       unit_price: Number(formValue.unitPrice),
-      phase: this.toNullableString(formValue.phase),
-      priority: formValue.priority || null,
       notes: this.toNullableString(formValue.notes),
     };
 
@@ -126,12 +119,12 @@ export class TreatmentPlanItemMgmtDialogComponent {
     this.dialogRef.close();
   }
 
-  getPriorityLabel(priority: TreatmentPlanItemPriority): string {
-    return this.priorityLabels[priority] ?? priority;
-  }
-
   getStatusLabel(status: TreatmentPlanItemStatus): string {
     return this.statusLabels[status] ?? status;
+  }
+
+  get isManualCapture(): boolean {
+    return this.itemForm.controls['userConceptId'].value === this.manualCaptureValue;
   }
 
   get dialogTitle(): string {
@@ -160,15 +153,12 @@ export class TreatmentPlanItemMgmtDialogComponent {
 
   private patchTreatmentPlanItem(item: TreatmentPlanItem): void {
     this.itemForm.patchValue({
-      userConceptId: item.user_concept_id,
+      userConceptId: item.user_concept_id ?? this.manualCaptureValue,
       name: item.name,
       description: item.description,
       tooth: item.tooth,
-      area: item.area,
       quantity: Number(item.quantity),
       unitPrice: Number(item.unit_price),
-      phase: item.phase,
-      priority: item.priority,
       notes: item.notes,
       status: item.status,
     });

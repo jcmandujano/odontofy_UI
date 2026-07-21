@@ -40,74 +40,12 @@
                 <span class="info-label">Plan</span>
                 <span class="info-value">{{getDisplayValue(treatmentPlan.title)}}</span>
             </div>
-        </div>
-    </section>
-
-    @if (hasClinicalInfo()) {
-    <section class="detail-section">
-        <p class="section_title">Informacion clinica</p>
-        <div class="info-grid">
             @if (treatmentPlan.description) {
             <div class="info-item wide">
                 <span class="info-label">Descripcion</span>
                 <span class="info-value">{{treatmentPlan.description}}</span>
             </div>
             }
-            @if (treatmentPlan.diagnosis) {
-            <div class="info-item wide">
-                <span class="info-label">Diagnostico</span>
-                <span class="info-value">{{treatmentPlan.diagnosis}}</span>
-            </div>
-            }
-            @if (treatmentPlan.patient_complaint) {
-            <div class="info-item wide">
-                <span class="info-label">Motivo de consulta</span>
-                <span class="info-value">{{treatmentPlan.patient_complaint}}</span>
-            </div>
-            }
-            @if (treatmentPlan.clinical_observations) {
-            <div class="info-item wide">
-                <span class="info-label">Observaciones clinicas</span>
-                <span class="info-value">{{treatmentPlan.clinical_observations}}</span>
-            </div>
-            }
-            @if (treatmentPlan.prognosis) {
-            <div class="info-item wide">
-                <span class="info-label">Pronostico</span>
-                <span class="info-value">{{treatmentPlan.prognosis}}</span>
-            </div>
-            }
-        </div>
-    </section>
-    }
-
-    <section class="detail-section">
-        <p class="section_title">Fechas</p>
-        <div class="info-grid">
-            <div class="info-item">
-                <span class="info-label">Inicio estimado</span>
-                <span class="info-value">{{treatmentPlan.estimated_start_date ? (treatmentPlan.estimated_start_date | date) : '--'}}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Fin estimado</span>
-                <span class="info-value">{{treatmentPlan.estimated_end_date ? (treatmentPlan.estimated_end_date | date) : '--'}}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Aceptado</span>
-                <span class="info-value">{{treatmentPlan.accepted_at ? (treatmentPlan.accepted_at | date) : '--'}}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Rechazado / cancelado</span>
-                <span class="info-value">{{treatmentPlan.rejected_at ? (treatmentPlan.rejected_at | date) : '--'}}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Creacion</span>
-                <span class="info-value">{{treatmentPlan.created_at ? (treatmentPlan.created_at | date) : '--'}}</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Ultima actualizacion</span>
-                <span class="info-value">{{treatmentPlan.updated_at ? (treatmentPlan.updated_at | date) : '--'}}</span>
-            </div>
         </div>
     </section>
 
@@ -194,13 +132,6 @@
                     <span class="status-badge" [ngClass]="getStatusClass(element.status)">
                         {{getItemStatusLabel(element.status)}}
                     </span>
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="completedAt">
-                <th mat-header-cell *matHeaderCellDef class="date-header-column"> Completado </th>
-                <td mat-cell *matCellDef="let element" class="table-content-column">
-                    {{element.completed_at ? (element.completed_at | date) : '--'}}
                 </td>
             </ng-container>
 

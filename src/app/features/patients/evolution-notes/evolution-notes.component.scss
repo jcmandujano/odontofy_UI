@@ -124,7 +124,7 @@ table {
 }
 
 .name-header-column{
-  width: 57%;
+  width: 42%;
 }
 
 .signin-header-column{
@@ -137,6 +137,10 @@ table {
 
 .nextdate-header-column{
   width: 10%;
+}
+
+.context-header-column {
+  width: 25%;
 }
 //fixed width of table columns
 //content column format
@@ -190,6 +194,30 @@ table {
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
+  color: $main--blue;
+}
+
+.context-content-column {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: #7A7A7A;
+}
+
+.clinical-context {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-context {
+  margin-top: 6px;
+}
+
+.context-label,
+.general-note-label {
+  font-family: 'Roboto Condensed';
   color: $main--blue;
 }
 

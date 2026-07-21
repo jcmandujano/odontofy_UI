@@ -57,7 +57,7 @@ export class TreatmentPlanDetailComponent {
   treatmentPlan: TreatmentPlan | null = null;
   conceptList: UserConcept[] = [];
   processingItemIds = new Set<number>();
-  displayedColumns: string[] = ['name', 'tooth', 'area', 'quantity', 'unitPrice', 'subtotal', 'phase', 'priority', 'status', 'completedAt', 'actions'];
+  displayedColumns: string[] = ['name', 'tooth', 'area', 'quantity', 'unitPrice', 'subtotal', 'phase', 'priority', 'status', 'actions'];
 
   readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
   readonly itemStatusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
@@ -132,16 +132,6 @@ export class TreatmentPlanDetailComponent {
 
   get treatmentPlanItems(): TreatmentPlanItem[] {
     return this.treatmentPlan?.TreatmentPlanItems ?? [];
-  }
-
-  hasClinicalInfo(): boolean {
-    return !!(
-      this.treatmentPlan?.description ||
-      this.treatmentPlan?.diagnosis ||
-      this.treatmentPlan?.patient_complaint ||
-      this.treatmentPlan?.clinical_observations ||
-      this.treatmentPlan?.prognosis
-    );
   }
 
   openEditTreatmentPlanDialog(): void {
