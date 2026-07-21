@@ -22,9 +22,9 @@
 
         @if (mode !== 'status') {
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Concepto existente</mat-label>
+            <mat-label>Elige un concepto</mat-label>
             <mat-select formControlName="userConceptId" (selectionChange)="onConceptChange($event.value)">
-                <mat-option [value]="null">Captura manual</mat-option>
+                <mat-option [value]="manualCaptureValue">Captura manual</mat-option>
                 @for (concept of conceptList; track concept.id) {
                 <mat-option [value]="concept.id">{{concept.description}} - {{concept.unit_price | currency:'MXN':'symbol':'1.2-2'}}</mat-option>
                 }

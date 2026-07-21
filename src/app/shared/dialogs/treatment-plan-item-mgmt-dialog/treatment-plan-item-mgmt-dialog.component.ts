@@ -36,6 +36,7 @@ export interface TreatmentPlanItemMgmtDialogData {
   styleUrl: './treatment-plan-item-mgmt-dialog.component.scss'
 })
 export class TreatmentPlanItemMgmtDialogComponent {
+  readonly manualCaptureValue = 'MANUAL_CAPTURE';
   itemForm: FormGroup;
   conceptList: UserConcept[] = [];
   mode: 'create' | 'edit' | 'status';
@@ -50,7 +51,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
     this.conceptList = data?.conceptList ?? [];
     this.mode = data?.mode ?? 'create';
     this.itemForm = this.fb.group({
-      userConceptId: [null],
+      userConceptId: [this.manualCaptureValue],
       name: ['', Validators.required],
       description: [''],
       tooth: [''],
@@ -65,13 +66,13 @@ export class TreatmentPlanItemMgmtDialogComponent {
     }
   }
 
-  onConceptChange(conceptId: number | null): void {
-    if (!conceptId) {
+  onConceptChange(conceptId: number | string): void {
+    if (conceptId === this.manualCaptureValue) {
       this.itemForm.patchValue({ name: '' });
       return;
     }
 
-    const selectedConcept = this.conceptList.find(concept => concept.id === conceptId);
+    const selectedConcept = this.conceptList.find(concept => concept.id === Number(conceptId));
     if (!selectedConcept) {
       return;
     }
@@ -100,8 +101,9 @@ export class TreatmentPlanItemMgmtDialogComponent {
     }
 
     const formValue = this.itemForm.value;
+    const isManualCapture = formValue.userConceptId === this.manualCaptureValue;
     const payload: CreateTreatmentPlanItemRequest | UpdateTreatmentPlanItemRequest = {
-      user_concept_id: formValue.userConceptId || null,
+      user_concept_id: isManualCapture ? null : Number(formValue.userConceptId),
       name: formValue.name.trim(),
       description: this.toNullableString(formValue.description),
       tooth: this.toNullableString(formValue.tooth),
@@ -122,7 +124,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
   }
 
   get isManualCapture(): boolean {
-    return !this.itemForm.controls['userConceptId'].value;
+    return this.itemForm.controls['userConceptId'].value === this.manualCaptureValue;
   }
 
   get dialogTitle(): string {
@@ -151,7 +153,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
 
   private patchTreatmentPlanItem(item: TreatmentPlanItem): void {
     this.itemForm.patchValue({
-      userConceptId: item.user_concept_id,
+      userConceptId: item.user_concept_id ?? this.manualCaptureValue,
       name: item.name,
       description: item.description,
       tooth: item.tooth,
