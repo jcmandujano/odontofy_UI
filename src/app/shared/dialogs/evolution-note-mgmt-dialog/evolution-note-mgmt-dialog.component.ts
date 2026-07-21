@@ -9,8 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { QuillModule } from 'ngx-quill';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
+import { TreatmentPlanItemStatus } from '../../../core/models/treatment-plan.model';
 
 export interface EvolutionNoteMgmtDialogData {
   note?: EvolutionNote;
@@ -24,6 +26,7 @@ export interface EvolutionNoteMgmtDialogResult {
   noteContent: string;
   treatment_plan_id: number | null;
   treatment_plan_item_id: number | null;
+  markTreatmentAsCompleted: boolean;
 }
 
 @Component({
@@ -37,6 +40,7 @@ export interface EvolutionNoteMgmtDialogResult {
         MatDialogModule,
         MatButtonModule,
         MatSelectModule,
+        MatCheckboxModule,
         QuillModule
     ],
     templateUrl: './evolution-note-mgmt-dialog.component.html',
@@ -48,6 +52,7 @@ export class EvolutionNoteMgmtDialogComponent {
   treatmentPlans: TreatmentPlan[] = []
   selectedTreatmentPlanId: number | null = null
   selectedTreatmentPlanItemId: number | null = null
+  markTreatmentAsCompleted = false
   quillConfig = {
     toolbar: [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],// Tamaño de encabezado
@@ -90,11 +95,13 @@ export class EvolutionNoteMgmtDialogComponent {
 
   onSave(): void {
     const treatmentPlanId = this.selectedTreatmentPlanId ?? null
+    const treatmentPlanItemId = treatmentPlanId ? this.selectedTreatmentPlanItemId ?? null : null
     const data = {
       creationDate: this.creationDate.toISOString(),
       noteContent: this.noteContent,
       treatment_plan_id: treatmentPlanId,
-      treatment_plan_item_id: treatmentPlanId ? this.selectedTreatmentPlanItemId ?? null : null
+      treatment_plan_item_id: treatmentPlanItemId,
+      markTreatmentAsCompleted: !!treatmentPlanItemId && this.markTreatmentAsCompleted
     }
     this.dialogRef.close(data);
   }
@@ -106,7 +113,22 @@ export class EvolutionNoteMgmtDialogComponent {
 
   onTreatmentPlanChange(): void {
     this.selectedTreatmentPlanItemId = null
+    this.markTreatmentAsCompleted = false
     this.ensureSelectedTreatmentPlanItems()
+  }
+
+  onTreatmentPlanItemChange(): void {
+    if (!this.canMarkTreatmentAsCompleted) {
+      this.markTreatmentAsCompleted = false
+    }
+  }
+
+  get selectedTreatmentPlanItem(): TreatmentPlanItem | undefined {
+    return this.selectedTreatmentPlanItems.find(item => item.id === this.selectedTreatmentPlanItemId)
+  }
+
+  get canMarkTreatmentAsCompleted(): boolean {
+    return !!this.selectedTreatmentPlanItem && this.selectedTreatmentPlanItem.status !== TreatmentPlanItemStatus.COMPLETED
   }
 
   isoToDate(fechaISO: string) {

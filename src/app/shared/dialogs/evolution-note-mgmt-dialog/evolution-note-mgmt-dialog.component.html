@@ -23,7 +23,7 @@
       @if (selectedTreatmentPlanId) {
       <mat-form-field class="full-width" appearance="outline">
         <mat-label>Procedimiento / item del plan</mat-label>
-        <mat-select [(ngModel)]="selectedTreatmentPlanItemId">
+        <mat-select [(ngModel)]="selectedTreatmentPlanItemId" (selectionChange)="onTreatmentPlanItemChange()">
           <mat-option [value]="null">Avance general del plan</mat-option>
           @for (item of selectedTreatmentPlanItems; track item.id) {
           <mat-option [value]="item.id">
@@ -32,6 +32,12 @@
           }
         </mat-select>
       </mat-form-field>
+      }
+
+      @if (selectedTreatmentPlanItemId && canMarkTreatmentAsCompleted) {
+      <mat-checkbox [(ngModel)]="markTreatmentAsCompleted" class="completion-checkbox">
+        Marcar tratamiento como completado
+      </mat-checkbox>
       }
     </div>
 
