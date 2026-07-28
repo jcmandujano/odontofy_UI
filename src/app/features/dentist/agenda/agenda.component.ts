@@ -2,7 +2,7 @@ import { Component, ElementRef } from '@angular/core';
 import { CalendarEvent, CalendarModule, CalendarUtils, DateAdapter, CalendarA11y, CalendarDateFormatter, CalendarEventTitleFormatter, CalendarView, DAYS_OF_WEEK, CalendarEventAction, CalendarEventTimesChangedEvent } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { format, isSameDay, isSameMonth } from 'date-fns';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { formatDate, registerLocaleData } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,7 +22,6 @@ import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 import { User } from '../../../core/models/user.model';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { UserService } from '../../../core/services/user.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import {
   startOfMonth, endOfMonth,
   startOfWeek, endOfWeek,
@@ -85,15 +84,8 @@ export class AgendaComponent {
     private appointmentService: AppointmentService,
     private spinner: NgxSpinnerService,
     private sessionService: SessionStorageService,
-    private userService: UserService,
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
-  ) {
-    this.matIconRegistry.addSvgIcon(
-      "calendar",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/google-calendar.png")
-    );
-  }
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();

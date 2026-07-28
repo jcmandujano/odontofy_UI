@@ -1,9 +1,8 @@
 import { Component, ElementRef } from '@angular/core';
 import { CreateEvolutionNoteRequest, EvolutionNote, UpdateEvolutionNoteRequest } from '../../../core/models/evolution-note.model';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { EvolutionNoteService } from '../../../core/services/evolution-note.service';
@@ -58,32 +57,13 @@ export class EvolutionNotesComponent {
   pageIndex = 1;
   pageSize = 10;
   pageEvent: PageEvent = new PageEvent;
-  constructor(private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
-    private notasService: EvolutionNoteService,
+  constructor(private notasService: EvolutionNoteService,
     private treatmentPlanService: TreatmentPlanService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private spinner: NgxSpinnerService,
-    private elementRef: ElementRef) {
-    this.matIconRegistry.addSvgIcon(
-      "pacientes",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_user.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "iniciaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_init_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "editaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_edit_cita.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "eliminaCita",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/dashboard_delete_cita.svg")
-    );
-  }
+    private elementRef: ElementRef) {}
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#ffffff';

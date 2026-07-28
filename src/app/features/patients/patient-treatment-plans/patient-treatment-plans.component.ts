@@ -3,13 +3,12 @@ import { Component, ElementRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { CreateTreatmentPlanRequest, TREATMENT_PLAN_STATUS_LABELS, TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
@@ -62,15 +61,8 @@ export class PatientTreatmentPlansComponent {
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
     private spinner: NgxSpinnerService,
-    private elementRef: ElementRef,
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
-  ) {
-    this.matIconRegistry.addSvgIcon(
-      'recetas',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('/icons/dashboard_recetas.svg')
-    );
-  }
+    private elementRef: ElementRef
+  ) {}
 
   ngOnInit(): void {
     this.selectedPatientId = Number(this.route.snapshot.paramMap.get('id'));

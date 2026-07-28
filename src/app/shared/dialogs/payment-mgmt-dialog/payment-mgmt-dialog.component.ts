@@ -2,9 +2,8 @@ import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Validators, FormBuilder, FormGroup, FormArray, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTable, MatTableModule } from '@angular/material/table';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Concept } from '../../../core/models/concept.model';
 import { Payment } from '../../../core/models/payment.model';
 import { Patient } from '../../../core/models/patient.model';
@@ -71,8 +70,6 @@ export class PaymentMgmtDialogComponent {
     @Inject(MAT_DIALOG_DATA) public dialogData: {patientData: Patient, conceptsData: UserConcept[], paymentData: Payment},
     public dialogRef: MatDialogRef<PaymentMgmtDialogComponent>,
     private fb: FormBuilder,
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
     private currencyPipe: CurrencyPipe,
     private datePipe: DatePipe) {
 
@@ -85,14 +82,6 @@ export class PaymentMgmtDialogComponent {
         concepts: this.fb.array([]) // Initialize an empty FormArray
       });
 
-    this.matIconRegistry.addSvgIcon(
-      "add",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/add.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "remove",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("/icons/remove.svg")
-    );
     this.selectedPatient = this.dialogData.patientData
     this.conceptList = this.dialogData.conceptsData
     this.paymentData = this.dialogData.paymentData
