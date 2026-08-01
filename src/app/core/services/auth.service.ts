@@ -41,4 +41,12 @@ export class AuthService {
     });
   }
 
+  refresh(): Observable<any> {
+    return this.api.post<any>(`${AUTH_API}/auth/refresh`, {});
+  }
+
+  logout(): Observable<any> {
+    return this.api.post<any>(`${AUTH_API}/auth/logout`, {});
+  }
+
 }

@@ -12,17 +12,20 @@ const API_PATH = environment.API_URL;
 export class UserService {
     constructor(private api: ApiService) { }
 
-    listUsers(page = 1, limit = 10) {
-        return this.api.get<PaginatedResponse<User>>(
-            `${API_PATH}/users?page=${page}&limit=${limit}`
-        );
+    getMe() {
+        return this.api.get<User>(`${API_PATH}/me`);
     }
 
-    findUser(id: number) {
-        return this.api.get<User>(`${API_PATH}/users/${id}`);
+    updateMe(user: Partial<User>) {
+        return this.api.put<User>(`${API_PATH}/me`, user);
     }
 
-    updateUser(id: number, user: User) {
-        return this.api.put<User>(`${API_PATH}/users/${id}`, user);
+    // Transitional alias for existing profile consumers; the server ignores the legacy id.
+    updateUser(_id: number, user: Partial<User>) {
+        return this.updateMe(user);
+    }
+
+    getGoogleAuthUrl() {
+        return this.api.get<{ url: string }>(`${API_PATH}/google/init`);
     }
 }
