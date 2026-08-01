@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-nav-bar',
@@ -18,7 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 export class NavBarComponent implements OnInit {
 
   constructor(private sessionService : SessionStorageService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
     ) {}
 
   ngOnInit(): void {
@@ -41,8 +43,7 @@ export class NavBarComponent implements OnInit {
   }
 
   doLogout(){
-    this.sessionService.signOut();
-    this.router.navigate([''])
+    this.authService.logout().subscribe({ complete: () => { this.sessionService.signOut(); this.router.navigate(['/login']); }, error: () => { this.sessionService.signOut(); this.router.navigate(['/login']); } });
   }
 
 }

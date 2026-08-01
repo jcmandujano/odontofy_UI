@@ -287,11 +287,9 @@ export class AgendaComponent {
   syncGoogle() {
     //TODO : Cambiar la URL a la de produccion
     const apiUrl = environment.API_URL;
-    const popup = window.open(
-      `${apiUrl}/google/init?uid=${this.currentUser.id}`,
-      'GoogleAuth',
-      'width=600,height=600'
-    );
+    this.userService.getGoogleAuthUrl().subscribe((response) => {
+      if (response.data?.url) window.open(response.data.url, 'GoogleAuth', 'width=600,height=600');
+    });
 
     // Escuchar mensajes desde la ventana hija
     window.addEventListener('message', (event) => {
@@ -300,14 +298,13 @@ export class AgendaComponent {
 
       if (event.data === 'google_sync_success') {
         // Puedes hacer alguna acción en el frontend, como recargar datos
-        this.retrieveCurrentUser(this.currentUser.id)
+        this.retrieveCurrentUser()
       }
     });
   }
 
-  retrieveCurrentUser(id: number) {
-    console.log('retrieve user with id', id)
-    this.userService.findUser(id).subscribe(response => {
+  retrieveCurrentUser() {
+    this.userService.getMe().subscribe(response => {
       console.log('data', response)
       if (response.data) {
         this.currentUser = response.data;
