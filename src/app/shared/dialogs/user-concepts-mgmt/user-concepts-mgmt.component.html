@@ -8,10 +8,7 @@
         </mat-form-field>
         <mat-form-field class="full-width" appearance="outline">
             <mat-label>Costo unitario</mat-label>
-            <input matInput formControlName="unit_price"
-                [value]="unitPriceFormatted"
-                (focus)="onUnitPriceFocus($event)"
-                (blur)="onUnitPriceBlur($event)">
+            <input matInput appCurrencyInput formControlName="unit_price">
         </mat-form-field>
     </form>
 </mat-dialog-content>

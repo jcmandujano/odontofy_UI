@@ -1,144 +1,184 @@
-<h2 mat-dialog-title class="custom-dialog-title">Nuevo Pago</h2>
+<h2 mat-dialog-title class="custom-dialog-title">{{ dialogTitle }}</h2>
+
 <mat-dialog-content class="payment-dialog-content">
-    <div class="d-flex flex-column">
-        <mat-form-field class="example-full-width" appearance="outline">
-            <mat-label>Fecha:</mat-label>
-            <input matInput placeholder="" [value]="getFechaActual()" disabled>
-        </mat-form-field>
-        <mat-form-field class="example-full-width" appearance="outline">
-            <mat-label>Nombre del Paciente:</mat-label>
-            <input matInput placeholder="" [value]="getPatientFullName()" disabled>
-        </mat-form-field>
+  <div class="payment-context">
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha</mat-label>
+      <input matInput [value]="getDisplayPaymentDate()" disabled>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Paciente</mat-label>
+      <input matInput [value]="getPatientFullName()" disabled>
+    </mat-form-field>
+  </div>
+
+  <form [formGroup]="paymentFormGroup">
+    <div class="table-container">
+      <table mat-table [dataSource]="conceptData" formArrayName="concepts">
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumns"></tr>
+
+        <ng-container matColumnDef="concept">
+          <th mat-header-cell *matHeaderCellDef>Concepto</th>
+          <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline" class="full-width">
+              <input
+                matInput
+                type="text"
+                formControlName="paymentConcept"
+                placeholder="Buscar concepto"
+                autocomplete="off"
+                [matAutocomplete]="conceptAutocomplete"
+                (focus)="showConceptOptions(i)"
+                (input)="filterConcepts(i, $any($event.target).value)">
+              <mat-autocomplete
+                #conceptAutocomplete="matAutocomplete"
+                [displayWith]="displayConcept"
+                (optionSelected)="selectConcept($event, i)">
+                @for (concept of filteredConceptsByRow[i]; track concept.id) {
+                  <mat-option [value]="concept.id">
+                    <span>{{ concept.description }}</span>
+                    <span class="concept-option-price">
+                      {{ concept.unit_price | currency:'MXN':'symbol':'1.2-2' }}
+                    </span>
+                  </mat-option>
+                }
+                @if (filteredConceptsByRow[i].length === 0) {
+                  <mat-option disabled>Sin coincidencias</mat-option>
+                }
+              </mat-autocomplete>
+              <mat-error>
+                Selecciona un concepto valido
+              </mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitPrice">
+          <th mat-header-cell *matHeaderCellDef>Precio</th>
+          <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput appCurrencyInput formControlName="unitPrice" readonly>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="paymentMethod">
+          <th mat-header-cell *matHeaderCellDef>Forma de pago</th>
+          <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-select formControlName="paymentMethod">
+                @for (method of paymentMethodList; track method.id) {
+                  <mat-option [value]="method.id">{{ method.description }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>Selecciona una forma de pago</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Cant.</th>
+          <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput type="number" min="1" step="1" formControlName="quantity">
+              <mat-error>Ingresa una cantidad entera mayor a cero</mat-error>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="subtotal">
+          <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+          <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput appCurrencyInput formControlName="subtotal" readonly>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Agregar concepto"
+              matTooltip="Agregar concepto"
+              (click)="addItem()">
+              <mat-icon svgIcon="add"></mat-icon>
+            </button>
+          </th>
+          <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+            @if (i !== 0) {
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Eliminar concepto"
+                matTooltip="Eliminar concepto"
+                (click)="removeItem(i)">
+                <mat-icon svgIcon="remove"></mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+      </table>
     </div>
-    <form [formGroup]="paymentFormGroup">
-      <div class="table-container">
-        <table mat-table class="mat-elevation-z0" [dataSource]="conceptData" formArrayName="concepts">
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; let i = index; columns:   displayedColumns"></tr>
-          
-          <!-- concept column-->
-          <ng-container matColumnDef="concept">
-            <th mat-header-cell *matHeaderCellDef>Concepto</th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-              <mat-form-field appearance="outline"  class="full-width">
-                <mat-label></mat-label>
-                <mat-select formControlName="paymentConcept" (selectionChange)="calculatePricesRow($event.value, i, conceptElement)">
-                  <mat-option *ngFor="let concept of conceptList" [value]="concept.id">
-                    {{concept.description}}
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="paymentFormGroup?.get('concepts')?.get(i.toString())?.get('paymentConcept')?.hasError('required')">
-                  Este campo es obligatorio
-                </mat-error>
-              </mat-form-field>
-            </td>
-          </ng-container>
 
-            <!-- Unit Prize -->
-            <ng-container matColumnDef="unitPrize">
-            <th mat-header-cell *matHeaderCellDef>Precio</th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-              <mat-form-field appearance="outline" class="full-width">
-                <input matInput  
-                  required 
-                  formControlName="unitPrize"
-                  [readonly]="true"/>
-              </mat-form-field>
-            </td>
-          </ng-container>
+    <div class="payment-summary">
+      <div class="summary-row total-discount-row">
+        <mat-form-field appearance="outline" class="summary-field">
+          <mat-label>Total</mat-label>
+          <input matInput appCurrencyInput formControlName="subtotal" readonly>
+        </mat-form-field>
 
-          <!-- Payment Method -->
-          <ng-container matColumnDef="paymentMethod">
-            <th mat-header-cell *matHeaderCellDef>Forma de Pago</th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label></mat-label>
-                <mat-select formControlName="paymentMethod">
-                  <mat-option *ngFor="let method of paymentMethodList" [value]="method.id">
-                    {{method.description}}
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="paymentFormGroup?.get('concepts')?.get(i.toString())?.get('paymentMethod')?.hasError('required')">
-                  Este campo es obligatorio
-                </mat-error>
-              </mat-form-field>
-            </td>
-          </ng-container>
+        <div class="discount-option">
+          <mat-checkbox
+            formControlName="applyDiscount"
+            (change)="toggleDiscount($event.checked)">
+            Descuento
+          </mat-checkbox>
 
-          <!-- Subtotal -->
-          <ng-container matColumnDef="subtotal">
-            <th mat-header-cell *matHeaderCellDef>Subtotal</th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-              <mat-form-field appearance="outline" class="full-width">
-                <input matInput required formControlName="subtotal" [readonly]="true"/>
-              </mat-form-field>
-            </td>
-          </ng-container>
-    
-          <!-- quantity -->
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>#</th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-              <mat-form-field appearance="outline" class="full-width">
-                <input matInput type="text" required formControlName="quantity" (input)="calculateSubtotal(i)"/>
-              </mat-form-field>
-            </td>
-          </ng-container>
-
-          <!-- discount -->
-          <ng-container matColumnDef="discount">
-            <th mat-header-cell *matHeaderCellDef>Descuento</th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-                <!-- we add a check, if is marked we enable discount input-->
-                <div class="d-flex align-items-center justify-content-center">
-                   <mat-checkbox></mat-checkbox>
-                 <mat-form-field appearance="outline" class="full-width">
-                <input matInput type="text" required formControlName="discount"/>
-              </mat-form-field>
-                </div>
-                
-            </td>
-          </ng-container>
-
-            <!-- actrions column -->
-            <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef>
-              <mat-icon class="add_icon" svgIcon="add" (click)="addItem()"></mat-icon>
-            </th>
-            <td mat-cell [formGroupName]="i" *matCellDef="let conceptElement ; let i = index">
-              <mat-icon *ngIf=" i !== 0" class="add_icon" svgIcon="remove" (click)="removeItem(i)"></mat-icon>
-            </td>
-          </ng-container>
-        </table>
+          @if (paymentFormGroup.get('applyDiscount')?.value) {
+            <mat-form-field appearance="outline" class="summary-field discount-field">
+              <input
+                matInput
+                appCurrencyInput
+                formControlName="discount"
+                aria-label="Monto del descuento">
+              <mat-error>El descuento no puede ser negativo</mat-error>
+            </mat-form-field>
+          }
+        </div>
       </div>
-      
-      <div class="d-flex justify-content-center">
-          <mat-form-field class="payment-dialog-resume-controls" appearance="outline">
-              <mat-label>Total: </mat-label>
-              <!-- <input matInput  [value]="getTotal()" (input)="calculateDebt()" appCurrencyMask> -->
-              <input matInput formControlName="total" [readonly]="true">
+
+      @if (paymentFormGroup.get('applyDiscount')?.value) {
+        <div class="summary-row grand-total-row">
+          <mat-form-field appearance="outline" class="summary-field">
+            <mat-label>Gran total</mat-label>
+            <input matInput appCurrencyInput formControlName="total" readonly>
           </mat-form-field>
+        </div>
+      }
+
+      <div class="summary-row">
+        <mat-form-field appearance="outline" class="summary-field">
+          <mat-label>Ingreso</mat-label>
+          <input matInput appCurrencyInput formControlName="income">
+          <mat-error>El ingreso no puede ser negativo</mat-error>
+        </mat-form-field>
       </div>
-      <div class="d-flex justify-content-center">
-          <mat-form-field class="payment-dialog-resume-controls" appearance="outline">
-              <mat-label>Ingreso:</mat-label>
-              <!-- <input matInput  [(ngModel)]="income" (input)="calculateDebt()" appCurrencyMask> -->
-              <input matInput formControlName="income" 
-              (focus)="onIncomeFocus($event)"
-              (blur)="onIncomeBlur($event)"
-              >
-          </mat-form-field>
+
+      <div class="summary-row debt-row">
+        <mat-form-field appearance="outline" class="summary-field">
+          <mat-label>Adeudo</mat-label>
+          <input matInput appCurrencyInput formControlName="debt" readonly>
+        </mat-form-field>
       </div>
-      <div class="d-flex justify-content-center">
-          <mat-form-field class="payment-dialog-resume-controls" appearance="outline">
-              <mat-label>Adeudo:</mat-label>
-              <!-- <input matInput  [(ngModel)]="debt" appCurrencyMask> -->
-              <input matInput formControlName="debt" [readonly]="true">
-          </mat-form-field>
-      </div>
-    </form>
+    </div>
+  </form>
 </mat-dialog-content>
-<mat-dialog-actions>
+
+<mat-dialog-actions align="end">
   <button mat-button [mat-dialog-close]="false" color="warn">Cancelar</button>
   <button mat-button (click)="savePayment()">Guardar</button>
 </mat-dialog-actions>

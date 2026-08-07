@@ -2,7 +2,7 @@ export class UserConcept{
     id!: number;
     user_id!: number;
     concept_id!: number;
-    description!: String;
+    description!: string;
     unit_price!: number;
     is_custom!: boolean;
     createdAt!: Date;
