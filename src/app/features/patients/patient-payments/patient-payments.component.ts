@@ -8,7 +8,10 @@ import { PacientesService } from '../../../core/services/patient.service';
 import { PaymentService } from '../../../core/services/payment.service';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { Patient } from '../../../core/models/patient.model';
-import { PaymentMgmtDialogComponent } from '../../../shared/dialogs/payment-mgmt-dialog/payment-mgmt-dialog.component';
+import {
+  PaymentDialogResult,
+  PaymentMgmtDialogComponent,
+} from '../../../shared/dialogs/payment-mgmt-dialog/payment-mgmt-dialog.component';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,14 +48,14 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
   styleUrl: './patient-payments.component.scss'
 })
 export class PatientPaymentsComponent {
-  displayedColumns: string[] = ['conceptos', 'fecha', 'total', 'ingreso', 'adeudo', 'actions'];
+  displayedColumns: string[] = ['conceptos', 'fecha', 'total', 'descuento', 'ingreso', 'adeudo', 'actions'];
   dataSource: Payment[] = []
   patient: Patient | null = null;
   conceptList: UserConcept[] = []
   displayJointConcepts = ''
   selectedPatientId: number = 0
   length = 0;
-  pageIndex = 1;
+  pageIndex = 0;
   pageSize = 10;
   pageEvent: PageEvent = new PageEvent;
   constructor(private elementRef: ElementRef,
@@ -72,7 +75,7 @@ export class PatientPaymentsComponent {
     }
   }
 
-  retrievePatientPaymentData(page: number = 0) {
+  retrievePatientPaymentData(page: number = 1) {
     this.spinner.show()
     forkJoin([
       this.pacientesService.findPatient(this.selectedPatientId),
@@ -90,13 +93,7 @@ export class PatientPaymentsComponent {
       error => {
         // Manejar errores para ambas llamadas
         this.spinner.hide();
-        console.error('Error en llamadas:', error);
-        const errorMessage =
-          error && error.error && error.error.error && error.error.error.message
-            ? error.error.error.message
-            : 'Error desconocido';
-
-        this.openSnackbar(`Ocurrió un error: ${errorMessage}`, 'Ok');
+        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
       }
     );
   }
@@ -114,7 +111,9 @@ export class PatientPaymentsComponent {
     }
 
     const dialogRef = this.dialog.open(PaymentMgmtDialogComponent, {
-      minWidth: '70vw',
+      width: '96vw',
+      maxWidth: '1100px',
+      maxHeight: '90vh',
       data: {
         patientData: this.patient,
         conceptsData: this.conceptList,
@@ -124,7 +123,7 @@ export class PatientPaymentsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const paymentData = result
+        const paymentData = result as PaymentDialogResult;
         if (payment) {
           //si la informacion de payment existe, quiere decir que es un actualizar
           this.updatePayment(payment.id, paymentData)
@@ -137,13 +136,12 @@ export class PatientPaymentsComponent {
     });
   }
 
-  createNewPayment(paymentData: any) {
+  createNewPayment(paymentData: PaymentDialogResult) {
     const paymentInstance = new Payment({
-      payment_date: new Date(paymentData.paymentDate),
+      payment_date: paymentData.paymentDate,
       income: paymentData.income,
-      debt: paymentData.debt,
-      total: paymentData.total,
-      concepts: paymentData.concepts.map((concept: any) => ({
+      discount: paymentData.discount,
+      concepts: paymentData.concepts.map((concept) => ({
         conceptId: concept.paymentConcept,
         paymentMethod: concept.paymentMethod,
         quantity: concept.quantity
@@ -152,21 +150,18 @@ export class PatientPaymentsComponent {
     this.spinner.show()
     this.paymentService.createPayment(this.selectedPatientId, paymentInstance).subscribe(response => {
       this.reloadPaymentsData()
-      this.spinner.hide()
     }, (error) => {
       this.spinner.hide()
-      console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
     })
   }
 
-  updatePayment(paymentId: number, paymentData: any) {
+  updatePayment(paymentId: number, paymentData: PaymentDialogResult) {
     const paymentInstance = new Payment({
-      payment_date: new Date(paymentData.paymentDate),
+      payment_date: paymentData.paymentDate,
       income: paymentData.income,
-      debt: paymentData.debt,
-      total: paymentData.total,
-      concepts: paymentData.concepts.map((concept: any) => ({
+      discount: paymentData.discount,
+      concepts: paymentData.concepts.map((concept) => ({
         id: concept.id,
         conceptId: concept.paymentConcept,
         paymentMethod: concept.paymentMethod,
@@ -176,11 +171,9 @@ export class PatientPaymentsComponent {
     this.spinner.show()
     this.paymentService.updatePayment(paymentId, this.selectedPatientId, paymentInstance).subscribe(response => {
       this.reloadPaymentsData()
-      this.spinner.hide()
     }, (error) => {
       this.spinner.hide()
-      console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
     })
   }
 
@@ -196,21 +189,18 @@ export class PatientPaymentsComponent {
       if (result) {
         this.spinner.show()
         this.paymentService.deletePayment(this.selectedPatientId, paymentId).subscribe(response => {
-          this.spinner.hide()
           this.openSnackbar(response.message, 'Ok')
           this.reloadPaymentsData()
         }, (error) => {
           this.spinner.hide()
-          const errorMsg = error.error.error.message ? error.error.error.message : 'Ocurrio un problema al procesar tu solicitud'
-          console.log('ERROR', errorMsg)
-          this.openSnackbar(`Ocurrio un error: ${errorMsg}`, 'Ok')
+          this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
         })
 
       }
     });
   }
 
-  reloadPaymentsData(page: number = 0) {
+  reloadPaymentsData(page: number = 1) {
     this.spinner.show()
     this.paymentService.listPayments(this.selectedPatientId, page, this.pageSize).subscribe(response => {
       this.spinner.hide()
@@ -219,8 +209,7 @@ export class PatientPaymentsComponent {
       this.pageIndex = (response.data?.page ?? 1) - 1;
     }, (error) => {
       this.spinner.hide()
-      console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
     })
   }
 
@@ -237,5 +226,18 @@ export class PatientPaymentsComponent {
     this.snackBar.open(message, action, {
       duration: 3000
     });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    const apiError = error as {
+      error?: {
+        message?: string;
+        error?: { message?: string };
+      };
+    };
+
+    return apiError?.error?.message
+      ?? apiError?.error?.error?.message
+      ?? 'Ocurrio un problema al procesar tu solicitud';
   }
 }

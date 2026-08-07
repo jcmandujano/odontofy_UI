@@ -4,7 +4,9 @@ export class Payment{
     id!: number;
     user_id!: number;
     patientId!: number;
-    payment_date!: Date;
+    payment_date!: string;
+    subtotal!: number;
+    discount!: number;
     income!: number;
     debt!: number;
     total!: number;
@@ -19,10 +21,10 @@ export class Payment{
             if (data.concepts) {
                 this.concepts = data.concepts.map(concept => new PaymentConcept(concept));
                 // Generar displayConcepts con las descripciones separadas por comas
-                this.displayConcepts = this.concepts.map(concept => concept.description).join(", ");
+                this.displayConcepts = this.concepts.map(concept => concept.description).filter(Boolean).join(", ");
             } else {
                 this.displayConcepts = ""; // Si no hay conceptos, dejar vacío
             }
         }
     }
-}    
+}

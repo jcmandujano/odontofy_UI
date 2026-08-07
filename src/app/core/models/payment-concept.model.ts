@@ -1,10 +1,11 @@
 export class PaymentConcept{ 
-    id!: number;
-    paymentId!: number;
+    id?: number;
+    paymentId?: number;
     conceptId!: number;
     paymentMethod!:string;
     quantity!: number;
-    description!: string;
+    description?: string;
+    unitPrice?: number;
 
     constructor(data?: Partial<PaymentConcept>) {
         if (data) {
