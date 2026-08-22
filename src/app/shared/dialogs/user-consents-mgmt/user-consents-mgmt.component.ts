@@ -38,7 +38,6 @@ export class UserConsentsMgmtComponent {
       // Add the form controls here
       name: [data?.name || '', Validators.required],
       description: [data?.description || '', Validators.required],
-      file_url: [data?.description || '', Validators.required],
     });
   } 
 
@@ -55,7 +54,7 @@ export class UserConsentsMgmtComponent {
     const payloadResponse = {
       name: this.userConsentsForm.get('name')?.value,
       description: this.userConsentsForm.get('description')?.value,
-      file_url: 'https://example.com/signed-consent.pdf'
+      file: this.files[0]
     }
     
     this.dialogRef.close(payloadResponse);

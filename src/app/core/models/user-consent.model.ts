@@ -4,7 +4,7 @@ export class UserInformedConsent{
     indormed_consent_id!: number;
     name!: string;
     description!: String;
-    file_url!: number;
+    file_url!: string | null;
     createdAt!: Date;
     updatedAt!: Date;
 
@@ -12,5 +12,6 @@ export class UserInformedConsent{
         this.id = 0
         this.name = ''
         this.description = ''
+        this.file_url = null
     }
 }

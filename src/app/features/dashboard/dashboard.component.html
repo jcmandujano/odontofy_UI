@@ -6,9 +6,9 @@
         <div class="col-12">
             <h1 class="dashboard-title-name">
                 {{
-                    (currentUser?.name ?? '') + ' ' +
-                    (currentUser?.middle_name ?? '') + ' ' +
-                    (currentUser?.last_name ?? '')
+                    (currentUser.name ?? '') + ' ' +
+                    (currentUser.middle_name ?? '') + ' ' +
+                    (currentUser.last_name ?? '')
                     | titlecase
                 }}
             </h1>

@@ -34,7 +34,7 @@ export class PrintConsentDialogComponent {
 
   onSave(): void {
       const data = {
-        filename: this.informedConsent.getRawValue()
+        templateId: Number(this.informedConsent.getRawValue())
       }
       this.dialogRef.close(data);
     }

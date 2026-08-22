@@ -286,14 +286,14 @@ export class AgendaComponent {
 
   syncGoogle() {
     //TODO : Cambiar la URL a la de produccion
-    const apiUrl = environment.API_URL;
+    const apiOrigin = new URL(environment.API_URL, window.location.origin).origin;
     this.userService.getGoogleAuthUrl().subscribe((response) => {
       if (response.data?.url) window.open(response.data.url, 'GoogleAuth', 'width=600,height=600');
     });
 
     // Escuchar mensajes desde la ventana hija
     window.addEventListener('message', (event) => {
-      if (event.origin !== apiUrl) return; // seguridad
+      if (event.origin !== apiOrigin) return; // seguridad
       console.log('Mensaje recibido:', event.data);
 
       if (event.data === 'google_sync_success') {

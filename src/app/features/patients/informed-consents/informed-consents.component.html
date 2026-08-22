@@ -42,6 +42,7 @@
                     <td mat-cell *matCellDef="let element" class="nextdate-content-column">
                         <div class="dashboard_list_container">
                             <div class="dashboard_list_actons">
+                                <mat-icon class="dashboard_logout_icon" (click)="openSignedDocument(element)">visibility</mat-icon>
                                 <mat-icon class="dashboard_logout_icon" (click)="deleteSignedConsent(element.id)"
                                     svgIcon="eliminaCita"></mat-icon>
                             </div>

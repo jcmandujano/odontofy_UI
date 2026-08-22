@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "check": "npm run typecheck && npm run test:ci && npm run build"
   },
   "private": true,
   "dependencies": {

@@ -21,7 +21,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Patient } from '../../core/models/patient.model';
 import { PaymentService } from '../../core/services/payment.service';
 import { PaymentBalance } from '../../core/models/payment-balance.model';
-import { NoDataFoundComponent } from '../../shared/components/no-data-found/no-data-found.component';
 import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.component';
 import { UserService } from '../../core/services/user.service';
@@ -38,7 +37,6 @@ import { endOfWeek, startOfWeek } from 'date-fns';
     MatCardModule,
     MatListModule,
     CommonModule,
-    NoDataFoundComponent,
     NgxSpinnerModule,
     NavBarComponent
   ],
@@ -140,10 +138,12 @@ export class DashboardComponent implements OnInit {
       show_finance_stats: showFinanceData
     } as unknown as User
     this.spinner.show()
-    this.userService.updateUser(this.currentUser.id, financeOptions).subscribe(data => {
+    this.userService.updateUser(this.currentUser.id, financeOptions).subscribe(response => {
       this.spinner.hide()
-      this.sessionService.saveUser(data)
-      console.log('Se guardaron las opciones de finanzas', data)
+      if (response.data) {
+        this.currentUser = response.data
+        this.sessionService.saveUser(response.data)
+      }
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)

@@ -5,7 +5,8 @@ export class SignedConsent {
     patient_id!: number;
     doctor_id!: number;
     signed_date?: string;
-    file_url?: string;
+    file_url?: string | null;
+    status?: string;
     createdAt?: string;
     updatedAt?: string;
 

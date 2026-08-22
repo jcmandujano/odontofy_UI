@@ -26,6 +26,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'confirm-account', component: ConfirmAccountComponent },
+  { path: 'verify-account', redirectTo: 'confirm-account', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'patient-list', component: PatientListComponent, canActivate: [AuthGuard] },
   { path: 'patient-file', component: PatientFileComponent, canActivate: [AuthGuard] },

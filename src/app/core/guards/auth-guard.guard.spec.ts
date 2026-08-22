@@ -1,17 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { SessionStorageService } from '../services/session-storage.service';
+import { AuthGuard } from './auth-guard.guard';
 
-import { authGuardGuard } from './auth-guard.guard';
+describe('AuthGuard', () => {
+  it('allows navigation when an access token is already in memory', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        AuthGuard,
+        { provide: SessionStorageService, useValue: { getToken: () => 'token' } },
+        { provide: AuthService, useValue: {} },
+        { provide: Router, useValue: {} }
+      ]
+    });
 
-describe('authGuardGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => authGuardGuard(...guardParameters));
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-  });
-
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+    const result = TestBed.inject(AuthGuard).canActivate({} as never, {} as never);
+    expect(result).toBeTrue();
   });
 });
