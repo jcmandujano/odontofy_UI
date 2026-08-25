@@ -24,6 +24,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserConsentService } from '../../../core/services/user-consents.service';
 import { UserInformedConsent } from '../../../core/models/user-consent.model';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
+import { FileService } from '../../../core/services/file.service';
 
 @Component({
   selector: 'app-informed-consents',
@@ -84,6 +85,7 @@ export class InformedConsentsComponent {
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private fileService: FileService,
   ) {
     // Inicializar el usuario actual a partir de la sesión almacenada
     this.currentUser = this.sessionService.getUser();
@@ -187,7 +189,7 @@ export class InformedConsentsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.downloadPdf(result.filename);
+        this.downloadPdf(result.templateId);
       }
     });
   }
@@ -215,9 +217,7 @@ export class InformedConsentsComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const newSignedConsentPayload = { ...result, doctor_id: this.currentUser.id };
-        console.log('newSignedConsentPayload', newSignedConsentPayload)
-        this.createSignedConsent(newSignedConsentPayload)
+        this.createSignedConsent(result)
       }
     });
   }
@@ -260,11 +260,31 @@ export class InformedConsentsComponent {
    * Este método deberá ser actualizado cuando se implemente la funcionalidad de descarga real.
    * @param filename Nombre del archivo PDF a descargar.
    */
-  private downloadPdf(filename: string): void {
-    const link = document.createElement('a');
-    link.href = '/static/informed-consents-demo/dummy_doc.pdf';
-    link.download = filename;
-    link.click();
+  private downloadPdf(templateId: number): void {
+    const template = this.informedConsentList.find(item => item.id === templateId);
+    if (!template?.file_url) {
+      this.openSnackbar('Esta plantilla no tiene un PDF adjunto', 'Ok');
+      return;
+    }
+    this.fileService.access(template.file_url).subscribe({
+      next: response => {
+        if (response.data?.url) window.open(response.data.url, '_blank', 'noopener,noreferrer');
+      },
+      error: error => this.handleError(error)
+    });
+  }
+
+  openSignedDocument(consent: SignedConsent): void {
+    if (!consent.file_url) {
+      this.openSnackbar('Este consentimiento aun no tiene un PDF firmado', 'Ok');
+      return;
+    }
+    this.fileService.access(consent.file_url).subscribe({
+      next: response => {
+        if (response.data?.url) window.open(response.data.url, '_blank', 'noopener,noreferrer');
+      },
+      error: error => this.handleError(error)
+    });
   }
 
   /**
@@ -273,7 +293,9 @@ export class InformedConsentsComponent {
    */
   private handleError(error: any): void {
     this.spinner = false;
-    console.error('ERROR', error.error.error.message);
+    const message = error?.error?.errors?.[0]?.message ?? error?.error?.message ?? 'Ocurrio un error';
+    console.error('ERROR', message);
+    this.openSnackbar(message, 'Ok');
     // Descomentar la siguiente línea para mostrar una notificación de error
     // this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok');
   }

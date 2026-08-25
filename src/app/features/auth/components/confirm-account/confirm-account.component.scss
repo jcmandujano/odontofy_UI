@@ -1,0 +1,54 @@
+main {
+  align-items: center;
+  background: #f6f8fb;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.account-panel {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-width: 520px;
+  padding: 48px 40px;
+  text-align: center;
+  width: 100%;
+}
+
+.logo {
+  height: auto;
+  margin-bottom: 40px;
+  max-width: 180px;
+}
+
+.status-icon {
+  color: #c62828;
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+
+  &.success {
+    color: #2e7d32;
+  }
+}
+
+h1 {
+  font-size: 28px;
+  margin: 24px 0 12px;
+}
+
+p {
+  color: #59636f;
+  margin: 0 0 32px;
+}
+
+@media (max-width: 600px) {
+  .account-panel {
+    padding: 40px 24px;
+  }
+}

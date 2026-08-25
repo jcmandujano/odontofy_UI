@@ -1,1 +1,22 @@
-<p>confirm-account works!</p>
+<main>
+  <section class="account-panel" aria-live="polite">
+    <img class="logo" src="/img/logo.png" alt="Odontofy">
+
+    @if (status === 'loading') {
+      <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+    } @else {
+      <mat-icon class="status-icon" [class.success]="status === 'success'">
+        {{ status === 'success' ? 'check_circle' : 'error' }}
+      </mat-icon>
+    }
+
+    <h1>{{ status === 'success' ? 'Cuenta confirmada' : status === 'error' ? 'No pudimos confirmar tu cuenta' : 'Confirmando cuenta' }}</h1>
+    <p>{{ message }}</p>
+
+    @if (status !== 'loading') {
+      <button mat-flat-button color="primary" type="button" (click)="goToLogin()">
+        Ir a iniciar sesion
+      </button>
+    }
+  </section>
+</main>

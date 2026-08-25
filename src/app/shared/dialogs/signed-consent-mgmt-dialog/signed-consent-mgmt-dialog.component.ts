@@ -53,10 +53,11 @@ export class SignedConsentMgmtDialogComponent {
   }
   
   onSave(): void { 
+    if (!this.informedConsent.value) return;
     const payloadResponse = {
-      consent_id: this.informedConsent.value,
-      patient_id: this.currentPatient.id,
-      file_url: 'https://example.com/signed-consent.pdf'
+      templateId: Number(this.informedConsent.value),
+      signatoryName: this.buildPatientFullName(this.currentPatient).trim(),
+      file: this.files[0]
     }
     
     this.dialogRef.close(payloadResponse);

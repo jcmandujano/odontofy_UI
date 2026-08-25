@@ -80,10 +80,7 @@ export class SignupComponent implements OnInit {
     this.signupForm.markAllAsTouched()
     if (this.signupForm.valid) {
       this.spinner = true
-      this.authService.register(this.buildSignupData(this.signupForm.value)).subscribe(data => {
-        this.userdata = data;
-        const pass = this.signupForm.value.password || ''
-        //this.doLogin(data.user.email, pass) // comentado por que ahora tiene que verificar su cuenta
+      this.authService.register(this.buildSignupData(this.signupForm.value)).subscribe(() => {
         this.openSnackbar('Registro exitoso, por favor verifica tu correo para activar tu cuenta', 'Ok')
         this.spinner = false
         this.isRegistrationComplete = true
@@ -94,10 +91,12 @@ export class SignupComponent implements OnInit {
   }
 
   doLogin(username: string, password: string) {
-    this.authService.login(username, password).subscribe(data => {
-      this.userdata = data.user;
-      this.storeSession(data)
-      this.router.navigate(['/dashboard'])
+    this.authService.login(username, password).subscribe(response => {
+      if (response.data) {
+        this.userdata = response.data.user;
+        this.storeSession(response.data)
+        this.router.navigate(['/dashboard'])
+      }
     }, (error) => {
       console.log('ERRORRRRR', error.error.error.message)
       this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')

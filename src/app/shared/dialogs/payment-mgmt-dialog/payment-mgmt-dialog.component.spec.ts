@@ -1,6 +1,7 @@
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Patient } from '../../../core/models/patient.model';
 import { UserConcept } from '../../../core/models/user-concept.model';
@@ -33,7 +34,7 @@ describe('PaymentMgmtDialogComponent', () => {
     ]);
 
     await TestBed.configureTestingModule({
-      imports: [PaymentMgmtDialogComponent, NoopAnimationsModule],
+      imports: [PaymentMgmtDialogComponent, MatIconTestingModule, NoopAnimationsModule],
       providers: [
         { provide: MatDialogRef, useValue: dialogRef },
         {

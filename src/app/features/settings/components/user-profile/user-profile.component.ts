@@ -67,10 +67,13 @@ export class UserProfileComponent {
   updateProfile(){
     if(this.userProfileForm.valid){
       this.spinner.show()
-      const updatedUser = this.userProfileForm.value
+      const updatedUser = { ...this.userProfileForm.value }
       delete updatedUser.email
-      this.userService.updateUser(this.currentUser.id, this.userProfileForm.value).subscribe(data=>{
-        this.sessionService.saveUser(data)
+      this.userService.updateUser(this.currentUser.id, updatedUser).subscribe(response=>{
+        if (response.data) {
+          this.currentUser = response.data
+          this.sessionService.saveUser(response.data)
+        }
         this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
         this.spinner.hide()
       },(error)=>{

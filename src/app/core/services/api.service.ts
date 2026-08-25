@@ -1,44 +1,48 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../models/api-response.model';
 
-@Injectable({
-    providedIn: 'root',
-})
+type ParamValue = string | number | boolean | readonly (string | number | boolean)[];
+
+export interface ApiRequestOptions {
+    body?: unknown;
+    context?: HttpContext;
+    headers?: HttpHeaders | Record<string, string | string[]>;
+    params?: HttpParams | Record<string, ParamValue>;
+}
+
+@Injectable({ providedIn: 'root' })
 export class ApiService {
     constructor(private http: HttpClient) { }
 
-    get<T>(url: string): Observable<ApiResponse<T>> {
-        return this.http.get<ApiResponse<T>>(url, { withCredentials: true }).pipe(
-            catchError((error) => {
-                // Aquí podrías hacer algo con el error globalmente
-                return throwError(() => error);
-            })
-        );
+    get<T>(path: string, options: ApiRequestOptions = {}): Observable<ApiResponse<T>> {
+        return this.http.get<ApiResponse<T>>(this.url(path), this.options(options));
     }
 
-    post<T>(url: string, body: any): Observable<ApiResponse<T>> {
-        return this.http.post<ApiResponse<T>>(url, body, { withCredentials: true }).pipe(
-            catchError((error) => throwError(() => error))
-        );
+    post<T>(path: string, body: unknown, options: ApiRequestOptions = {}): Observable<ApiResponse<T>> {
+        return this.http.post<ApiResponse<T>>(this.url(path), body, this.options(options));
     }
 
-    put<T>(url: string, body: any): Observable<ApiResponse<T>> {
-        return this.http.put<ApiResponse<T>>(url, body, { withCredentials: true }).pipe(
-            catchError((error) => throwError(() => error))
-        );
+    put<T>(path: string, body: unknown, options: ApiRequestOptions = {}): Observable<ApiResponse<T>> {
+        return this.http.put<ApiResponse<T>>(this.url(path), body, this.options(options));
     }
 
-    delete<T>(url: string): Observable<ApiResponse<T>> {
-        return this.http.delete<ApiResponse<T>>(url, { withCredentials: true }).pipe(
-            catchError((error) => throwError(() => error))
-        );
+    delete<T>(path: string, options: ApiRequestOptions = {}): Observable<ApiResponse<T>> {
+        return this.http.delete<ApiResponse<T>>(this.url(path), this.options(options));
     }
 
-    patch<T>(url: string, body: any): Observable<ApiResponse<T>> {
-        return this.http.patch<ApiResponse<T>>(url, body, { withCredentials: true }).pipe(
-            catchError((error) => throwError(() => error))
-        );
+    patch<T>(path: string, body: unknown, options: ApiRequestOptions = {}): Observable<ApiResponse<T>> {
+        return this.http.patch<ApiResponse<T>>(this.url(path), body, this.options(options));
+    }
+
+    private options(options: ApiRequestOptions) {
+        return { ...options, withCredentials: true };
+    }
+
+    private url(path: string): string {
+        const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+        return `${environment.API_URL}${normalizedPath}`;
     }
 }
