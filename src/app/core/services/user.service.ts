@@ -10,6 +10,10 @@ import { ApiService } from './api.service';
 export class UserService {
     constructor(private api: ApiService) { }
 
+    getApiOrigin(): string {
+        return this.api.origin();
+    }
+
     getMe() {
         return this.api.get<ApiV1User>('/me').pipe(
             map(response => mapApiResponse(response, toUiUser))

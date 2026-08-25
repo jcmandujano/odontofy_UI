@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Inject } from '@angular/core';
 import { EvolutionNote } from '../../../core/models/evolution-note.model';
 import { TreatmentPlan, TreatmentPlanItem } from '../../../core/models/treatment-plan.model';
@@ -32,17 +32,16 @@ export interface EvolutionNoteMgmtDialogResult {
 @Component({
     selector: 'app-evolution-note-mgmt-dialog',
     imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatDatepickerModule,
-        MatInputModule,
-        FormsModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatSelectModule,
-        MatCheckboxModule,
-        QuillModule
-    ],
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatInputModule,
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    QuillModule
+],
     templateUrl: './evolution-note-mgmt-dialog.component.html',
     styleUrl: './evolution-note-mgmt-dialog.component.scss'
 })

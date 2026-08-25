@@ -17,6 +17,10 @@ export interface ApiRequestOptions {
 export class ApiService {
     constructor(private http: HttpClient) { }
 
+    origin(): string {
+        return new URL(environment.API_URL, window.location.origin).origin;
+    }
+
     get<T>(path: string, options: ApiRequestOptions = {}): Observable<ApiResponse<T>> {
         return this.http.get<ApiResponse<T>>(this.url(path), this.options(options));
     }

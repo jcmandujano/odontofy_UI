@@ -49,9 +49,9 @@ export class CurrencyInputDirective implements ControlValueAccessor {
     private readonly renderer: Renderer2
   ) {}
 
-  @HostListener('input', ['$event.target.value'])
-  handleInput(value: string): void {
-    this.value = parseCurrencyValue(value);
+  @HostListener('input')
+  handleInput(): void {
+    this.value = parseCurrencyValue(this.elementRef.nativeElement.value);
     this.onChange(this.value);
   }
 

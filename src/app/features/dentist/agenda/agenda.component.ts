@@ -27,7 +27,6 @@ import {
   startOfWeek, endOfWeek,
   startOfDay, endOfDay
 } from 'date-fns';
-import { environment } from '../../../../environments/environment';
 registerLocaleData(localeEs);
 
 const colors: Record<string, EventColor> = {
@@ -286,7 +285,7 @@ export class AgendaComponent {
 
   syncGoogle() {
     //TODO : Cambiar la URL a la de produccion
-    const apiOrigin = new URL(environment.API_URL, window.location.origin).origin;
+    const apiOrigin = this.userService.getApiOrigin();
     this.userService.getGoogleAuthUrl().subscribe((response) => {
       if (response.data?.url) window.open(response.data.url, 'GoogleAuth', 'width=600,height=600');
     });
