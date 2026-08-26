@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +30,6 @@ export interface TreatmentPlanMgmtDialogResult {
 @Component({
   selector: 'app-treatment-plan-mgmt-dialog',
   imports: [
-    CommonModule,
     MatButtonModule,
     MatDatepickerModule,
     MatDialogModule,
@@ -38,7 +37,7 @@ export interface TreatmentPlanMgmtDialogResult {
     MatInputModule,
     MatSelectModule,
     ReactiveFormsModule
-  ],
+],
   templateUrl: './treatment-plan-mgmt-dialog.component.html',
   styleUrl: './treatment-plan-mgmt-dialog.component.scss'
 })
