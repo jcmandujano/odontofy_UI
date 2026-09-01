@@ -1,98 +1,107 @@
 @if (spinner) {
-<div class="progress-loader">
-  <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
-</div>
+  <div class="progress-loader">
+    <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
+  </div>
 }
+
 <main>
   <section class="login_row">
     <section class="login_form_column">
       <div class="custom">
         <section class="login_form_logo">
-          <img src="/img/logo.png" (click)="gotoHome()" alt="">
+          <button type="button" class="logo-button" (click)="gotoHome()" aria-label="Ir al inicio">
+            <img src="/img/logo.png" alt="Odontofy">
+          </button>
         </section>
-        @if(!isRegistrationComplete){
-        <div class="login_form_container center_container">
-          <form [formGroup]="signupForm">
-            <div class="login_form_container_welcome">
-              <h1 class="login_form_title">Cuéntanos sobre ti</h1>
-              <p class="subtitle">
-                Por favor proporciónanos tus datos para<br>
-                poder brindarte una solución a tu medida
-              </p>
-            </div>
-            <div class="login_form_container_form">
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-label>Nombre</mat-label>
-                <input matInput formControlName="nombre">
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-label>Apellido Paterno</mat-label>
-                <input matInput formControlName="apellido_pat">
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-label>Apellido Materno</mat-label>
-                <input matInput formControlName="apellido_mat">
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-label>Fecha de Nacimiento</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="fechaNac">
-                <mat-hint>DD/MM/YYYY</mat-hint>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-icon class="prefix_form_color" matPrefix> call</mat-icon>
-                <mat-label>Teléfono</mat-label>
-                <span matPrefix>&nbsp;+52&nbsp;</span>
-                <input matInput mask="(000) 000-0000" formControlName="telefono">
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
-                <mat-label>Correo</mat-label>
-                <input matInput formControlName="email">
-              </mat-form-field>
-              <br>
-              <mat-form-field class="login_form_control" appearance="outline">
-                <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
-                <mat-label>Contraseña</mat-label>
-                <input matInput formControlName="password" type="password">
-              </mat-form-field>
-            </div>
-            <div class="login_form_container_actions">
-              <button class="button button--confirm" (click)="doSignUp()">Enviar</button><br>
-              <p class="options_text" routerLink="/login">¿Ya tienes cuenta?</p>
-            </div>
-            <div class="login_form_containe_legal">
-              <div class="row">
-                <div class="col-6">
-                  <p class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</p>
-                </div>
-                <div class="col-6">
-                  <p class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</p>
+
+        @if (!isRegistrationComplete) {
+          <div class="login_form_container center_container">
+            <form [formGroup]="signupForm" (ngSubmit)="doSignUp()">
+              <div class="login_form_container_welcome">
+                <h1 class="login_form_title">Cuéntanos sobre ti</h1>
+                <p class="subtitle">Completa tus datos para realizar tu registro en Odontofy.</p>
+              </div>
+
+              <div class="login_form_container_form">
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-label>Nombre</mat-label>
+                  <input matInput formControlName="nombre" autocomplete="given-name" maxlength="100">
+                </mat-form-field>
+
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-label>Apellido paterno</mat-label>
+                  <input matInput formControlName="apellido_pat" autocomplete="family-name" maxlength="100">
+                </mat-form-field>
+
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-label>Apellido materno</mat-label>
+                  <input matInput formControlName="apellido_mat" autocomplete="additional-name" maxlength="100">
+                </mat-form-field>
+
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-label>Fecha de nacimiento</mat-label>
+                  <input matInput [matDatepicker]="picker" [min]="minimumBirthDate" [max]="maximumBirthDate" formControlName="fechaNac" autocomplete="bday" inputmode="numeric" placeholder="DD/MM/AAAA">
+                  <mat-hint>DD/MM/AAAA</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-icon class="prefix_form_color" matPrefix>call</mat-icon>
+                  <mat-label>Teléfono</mat-label>
+                  <span matPrefix>&nbsp;+52&nbsp;</span>
+                  <input matInput type="tel" mask="(000) 000-0000" formControlName="telefono" autocomplete="tel-national">
+                </mat-form-field>
+
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-icon class="prefix_form_color" matPrefix>mail</mat-icon>
+                  <mat-label>Correo electrónico</mat-label>
+                  <input matInput type="email" formControlName="email" autocomplete="email" maxlength="254">
+                </mat-form-field>
+
+                <mat-form-field class="login_form_control" appearance="outline">
+                  <mat-icon class="prefix_form_color" matPrefix>keyboard</mat-icon>
+                  <mat-label>Contraseña</mat-label>
+                  <button type="button" class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide" aria-label="Mostrar u ocultar contraseña">
+                    <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                  <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" autocomplete="new-password" maxlength="72">
+                  <mat-hint>Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <mat-checkbox class="legal-consent" formControlName="acceptedTerms">
+                Acepto los términos y condiciones y el aviso de privacidad.
+              </mat-checkbox>
+
+              <div class="login_form_container_actions">
+                <button type="submit" class="button button--confirm">Crear cuenta</button>
+                <p class="options_text" routerLink="/login">¿Ya tienes una cuenta? Inicia sesión</p>
+              </div>
+
+              <div class="login_form_containe_legal">
+                <div class="row">
+                  <div class="col-6">
+                    <p class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</p>
+                  </div>
+                  <div class="col-6">
+                    <p class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
-        </div>
-        }
-        @if(isRegistrationComplete){
-        <div class="confirm-account center_container">
-          <h1 class="login_form_title">¡Cuenta creada con éxito!</h1>
-          <p class="subtitle">
-            Hemos registrado tus datos correctamente.
-            En unos momen tos recibirás un correo electrónico con un enlace para confirmar tu cuenta.
-            Si no lo ves en tu bandeja de entrada, revisa también tu carpeta de spam o correo no deseado.
-          </p>
-          <button class="button button--confirm" (click)="gotoLogin()">Ir a Iniciar Sesión</button>
-        </div>
+            </form>
+          </div>
         }
 
-
+        @if (isRegistrationComplete) {
+          <div class="confirm-account center_container">
+            <h1 class="login_form_title">¡Cuenta creada con éxito!</h1>
+            <p class="subtitle">
+              Hemos registrado tus datos correctamente. En unos momentos recibirás un correo electrónico con un enlace para confirmar tu cuenta. Si no lo ves en tu bandeja de entrada, revisa también tu carpeta de spam o correo no deseado.
+            </p>
+            <button type="button" class="button button--confirm" (click)="gotoLogin()">Ir a iniciar sesión</button>
+          </div>
+        }
       </div>
     </section>
     <section class="extra_info_column"></section>

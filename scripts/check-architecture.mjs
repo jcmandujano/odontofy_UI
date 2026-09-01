@@ -9,6 +9,10 @@ const httpBoundaryFiles = new Set([
   'src/app/core/interceptors/interceptor.service.ts',
   'src/app/core/services/api.service.ts',
 ]);
+const environmentAccessFiles = new Set([
+  ...httpBoundaryFiles,
+  'src/app/core/services/feature-flags.service.ts',
+]);
 
 const normalize = (value) => value.split(path.sep).join('/');
 const relative = (value) => normalize(path.relative(root, value));
@@ -52,10 +56,10 @@ for (const file of sourceFiles(appRoot)) {
 
       if (
         specifier.includes('environments/environment')
-        && !httpBoundaryFiles.has(fileRelative)
+        && !environmentAccessFiles.has(fileRelative)
         && !isSpec
       ) {
-        report(file, node, 'environment.API_URL is restricted to the HTTP boundary', sourceFile);
+        report(file, node, 'environment access is restricted to configuration boundaries', sourceFile);
       }
 
       if (

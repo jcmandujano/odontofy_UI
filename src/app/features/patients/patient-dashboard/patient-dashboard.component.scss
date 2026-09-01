@@ -59,8 +59,29 @@
     color: #7A7A7A;
   }
 
-.menu_row{
+.menu_grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 30px;
     margin: 25px 15px;
+}
+
+.menu_grid .custom_card_header {
+    height: 100%;
+}
+
+.menu_grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 767px) {
+    .menu_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .menu_grid > :last-child:nth-child(odd) {
+        grid-column: auto;
+    }
 }
 
 .finanzas_container{

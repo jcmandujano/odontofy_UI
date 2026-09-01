@@ -3,35 +3,37 @@
   <section class="login_row">
     <section class="login_form_column">
       <section class="login_form_logo">
-        <img src="/img/logo.png" (click)="gotoHome()" alt="">
+        <button type="button" class="logo-button" (click)="gotoHome()" aria-label="Ir al inicio">
+          <img src="/img/logo.png" alt="Odontofy">
+        </button>
       </section>
       <div class="login_form_container center_container">
-        <form [formGroup]="loginForm">
+        <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
           <div class="login_form_container_welcome">
             <h1 class="login_form_title">Bienvenido</h1>
-            <p class="subtitle">Por favor proporciona tus datos de acceso</p>
+            <p class="subtitle">Ingresa tus datos de acceso.</p>
           </div>
           <div class="login_form_container_form">
             <mat-form-field class="login_form_control" appearance="outline">
               <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
-              <mat-label>Escribe tu correo</mat-label>
-              <input type="email" matInput formControlName="username">
+              <mat-label>Correo electrónico</mat-label>
+              <input type="email" matInput formControlName="username" autocomplete="email">
             </mat-form-field>
             <br>
             <mat-form-field class="login_form_control" appearance="outline">
               <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
-              <mat-label>Escribe tu contraseña</mat-label>
-              <button class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide">
+              <mat-label>Contraseña</mat-label>
+              <button type="button" class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide" aria-label="Mostrar u ocultar contraseña">
                 <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              <input matInput formControlName="password" [type]="hide ? 'password' : 'text'">
+              <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" autocomplete="current-password">
             </mat-form-field>
             <br>
           </div>
           <div class="login_form_container_actions">
-            <button class="button button--confirm" (click)="doLogin()">Login</button><br>
+            <button type="submit" class="button button--confirm">Iniciar sesión</button>
             <p class="options_text" routerLink="/forgot-password">Recuperar mi contraseña</p>
-            <p class="options_text" routerLink="/register">Registrate</p>
+            <p class="options_text" routerLink="/register">Regístrate</p>
           </div>
           <div class="login_form_containe_legal">
             <div class="row">

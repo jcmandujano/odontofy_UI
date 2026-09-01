@@ -1,82 +1,64 @@
 main {
-    height: 100vh;
-    display: flex;
-    align-items: stretch;
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .login_row {
     display: flex;
-    width: 100%;
+    min-height: inherit;
 }
 
 .login_form_column {
-    flex: 3 1 60%;
     display: flex;
-    flex-direction: column;
+    flex: 3 1 60%;
+    min-width: 0;
     background-color: white;
 }
 
 .extra_info_column {
     flex: 2 1 40%;
-    background-image: url('/img/dummy.jpg.png');
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
-
-.center_container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 20px;
-    width: 100%;
-}
-
-.confirm-account {
-    height: 90%;
-    align-items: center;
-}
-
-/* Responsive padding adaptativo */
-@media (min-width: 768px) {
-    .center_container {
-        padding: 0 60px;
-    }
-}
-
-@media (min-width: 1024px) {
-    .center_container {
-        padding: 0 120px;
-    }
-}
-
-@media (min-width: 1440px) {
-    .center_container {
-        padding: 0 200px;
-    }
-}
-
-/* Responsive: esconder imagen en pantallas chicas */
-@media (max-width: 768px) {
-    .extra_info_column {
-        display: none;
-    }
-
-    .login_form_column {
-        flex: 1 1 100%;
-        padding: 20px;
-    }
+    background: url('/img/dummy.jpg.png') center / cover no-repeat;
 }
 
 .custom {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
     overflow: auto;
-    height: 100%;
 }
 
-.login_form_container {
+.login_form_logo {
+    padding: 16px 24px 0;
+}
+
+.logo-button {
+    display: inline-flex;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.logo-button img {
+    display: block;
+    max-width: 132px;
+    height: auto;
+}
+
+.login_form_container,
+.confirm-account {
     display: flex;
+    flex: 1;
+    align-items: center;
     justify-content: center;
+    padding: 28px clamp(24px, 8vw, 200px) 36px;
     text-align: center;
+}
+
+form,
+.confirm-account > * {
+    width: min(100%, 440px);
 }
 
 h1 {
@@ -84,91 +66,137 @@ h1 {
 }
 
 .login_form_title {
-    font-size: 45px;
+    margin: 0 0 10px;
+    font-size: clamp(2rem, 5vw, 2.375rem);
+    line-height: 1.15;
 }
 
-.login_form_container_welcome {
-    margin-bottom: 40px;
+.login_form_container_welcome,
+.login_form_container_form {
+    margin-bottom: 24px;
 }
 
 .subtitle {
-    font-size: 17px;
-    margin-bottom: 30px;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
 .login_form_control {
     width: 100%;
-    margin-bottom: 15px;
-}
-
-.login_form_container_actions {
-    margin-bottom: 40px;
-}
-
-.button {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
 }
 
 .login_form_pass_toggle {
-    background: transparent;
-    border: 0;
-    color: #c0d9ff !important;
-}
-
-::ng-deep .mat-focused .mat-form-field-label {
     color: #407dda !important;
 }
 
-::ng-deep.mat-form-field-underline {
-    background-color: #407dda !important;
-}
-
-::ng-deep.mat-form-field-ripple {
-    background-color: #407dda !important;
-}
-
-mat-label {
+mat-label,
+.prefix_form_color {
     color: #407dda;
-    padding-left: 15px;
-}
-
-.mat-input-element {
-    margin-top: 5px;
 }
 
 .prefix_form_color {
-    color: #407dda !important;
-    margin: 0px 20 !important;
+    margin-right: 12px;
 }
 
-.login_form_logo {
-    margin-top: 15px;
-    margin-left: 15px;
+.login_form_container_actions {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+}
+
+.legal-consent {
+    display: block;
+    margin: 0 auto 24px;
+    max-width: 440px;
+    color: #666;
+    font-size: .875rem;
+    text-align: left;
+}
+
+.login_form_container_actions .button,
+.confirm-account .button {
+    width: min(100%, 260px);
+    min-height: 44px;
+    margin: 0;
+}
+
+.options_text {
+    margin: 0;
+    color: #407dda;
+    font-size: .9375rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.options_text:hover,
+.options_text:focus-visible {
+    text-decoration: underline;
 }
 
 .login_form_containe_legal {
-    margin-top: auto;
-    font-size: 13px;
+    margin-top: 28px;
+}
+
+.login_form_containe_legal .row {
     display: flex;
     justify-content: center;
-    padding: 0 20px;
+    gap: 8px 20px;
+    flex-wrap: wrap;
+}
+
+.login_form_containe_legal .col-6 {
+    flex: 0 1 auto;
 }
 
 .legal_text {
-    font-size: 17px;
-    color: #b8b8b8;
+    margin: 0;
+    color: #888;
+    font-size: .8125rem;
     text-decoration: underline;
     cursor: pointer;
 }
 
-.options_text {
-    font-size: 18px;
-    font-weight: 500;
-    color: #407dda;
-    margin-bottom: 20px;
-    cursor: pointer;
+.confirm-account {
+    flex-direction: column;
+    gap: 24px;
 }
 
-input {
-    margin-left: 10px;
+@media (max-width: 767px) {
+    .extra_info_column {
+        display: none;
+    }
+
+    .login_form_container,
+    .confirm-account {
+        align-items: flex-start;
+        padding: 40px 24px;
+    }
+}
+
+@media (max-width: 380px), (max-height: 650px) {
+    .login_form_logo {
+        padding-top: 12px;
+    }
+
+    .login_form_container,
+    .confirm-account {
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+
+    .login_form_container_welcome,
+    .login_form_container_form {
+        margin-bottom: 16px;
+    }
+
+    .login_form_container_actions,
+    .confirm-account {
+        gap: 12px;
+    }
+
+    .login_form_containe_legal {
+        margin-top: 20px;
+    }
 }
