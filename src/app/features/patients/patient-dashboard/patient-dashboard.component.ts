@@ -9,6 +9,7 @@ import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.comp
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -23,6 +24,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './patient-dashboard.component.scss'
 })
 export class PatientDashboardComponent {
+  readonly showPatientOdontogram = environment.features.patientOdontogram;
   pacienteId: any
   paciente: Patient | undefined
   spinner = false
