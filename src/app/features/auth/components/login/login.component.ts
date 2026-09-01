@@ -52,13 +52,17 @@ export class LoginComponent {
   }
 
   doLogin() {
-    this.spinner.show();
     this.loginForm.markAllAsTouched();
 
-    if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.value;
+    if (!this.loginForm.valid) {
+      this.validateForm();
+      return;
+    }
 
-      this.authService.login(username!, password!).subscribe({
+    this.spinner.show();
+    const { username, password } = this.loginForm.value;
+
+    this.authService.login(username!, password!).subscribe({
         next: (response) => {
           this.spinner.hide();
 
@@ -71,32 +75,29 @@ export class LoginComponent {
             this.storeSession({ user, token }); // asegúrate que este método use los datos correctos
             this.router.navigate(['/dashboard']);
           } else {
-            this.openSnackbar('Credenciales inválidas', 'Ok');
+            this.openSnackbar('Las credenciales no son válidas.', 'Aceptar');
           }
         },
         error: (error) => {
           this.spinner.hide();
 
           const msg = error?.error?.message || 'Ocurrió un error inesperado';
-          this.openSnackbar(`Error: ${msg}`, 'Ok');
+          this.openSnackbar(msg, 'Aceptar');
         }
-      });
-    } else {
-      this.validateForm();
-    }
+    });
   }
 
   validateForm() {
-    if (this.loginForm.controls.username.errors?.['pattern']) {
-      this.openSnackbar('Por favor ingresa un correo valido', 'Ok')
+    if (this.loginForm.controls.username.errors?.['email']) {
+      this.openSnackbar('Ingresa un correo electrónico válido.', 'Aceptar')
       return
     }
     if (this.loginForm.controls.username.status === 'INVALID') {
-      this.openSnackbar('Por favor ingresa tu correo', 'Ok')
+      this.openSnackbar('Ingresa tu correo electrónico.', 'Aceptar')
       return
     }
     else if (this.loginForm.controls.password.status === 'INVALID') {
-      this.openSnackbar('Por favor ingresa tu contraseña', 'Ok')
+      this.openSnackbar('Ingresa tu contraseña.', 'Aceptar')
       return
     }
   }
