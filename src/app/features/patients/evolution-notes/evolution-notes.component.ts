@@ -102,7 +102,7 @@ export class EvolutionNotesComponent {
   }
 
   loadTreatmentPlans() {
-    this.treatmentPlanService.listTreatmentPlansByPatient(Number(this.pacienteId), 1, 1000).subscribe({
+    this.treatmentPlanService.listTreatmentPlansByPatient(Number(this.pacienteId), 1, 100).subscribe({
       next: response => {
         const plans = response.data?.results ?? [];
         this.treatmentPlans = plans.map(plan => {

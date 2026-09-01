@@ -25,7 +25,7 @@ export class PacientesService {
 
     listPatients(page = 1, limit = 10, search = '') {
         return this.api.get<ApiV1Patient[]>('/patients', {
-            params: { page, pageSize: limit, ...(search.trim() && { search: search.trim() }) }
+            params: { page: Math.max(1, page), pageSize: limit, ...(search.trim() && { search: search.trim() }) }
         }).pipe(map(response => mapPaginatedApiResponse(response, toUiPatient)));
     }
 

@@ -52,7 +52,7 @@ export class PatientTreatmentPlansComponent {
 
   readonly statusLabels = TREATMENT_PLAN_STATUS_LABELS;
   readonly statusOptions = Object.values(TreatmentPlanStatus);
-  private readonly treatmentPlansFetchLimit = 1000;
+  private readonly treatmentPlansFetchLimit = 100;
 
   constructor(
     private route: ActivatedRoute,

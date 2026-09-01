@@ -80,8 +80,8 @@ export class SignupComponent implements OnInit {
     this.signupForm.markAllAsTouched()
     if (this.signupForm.valid) {
       this.spinner = true
-      this.authService.register(this.buildSignupData(this.signupForm.value)).subscribe(() => {
-        this.openSnackbar('Registro exitoso, por favor verifica tu correo para activar tu cuenta', 'Ok')
+      this.authService.register(this.buildSignupData(this.signupForm.value)).subscribe(response => {
+        this.openSnackbar(response.message, 'Ok')
         this.spinner = false
         this.isRegistrationComplete = true
       })
