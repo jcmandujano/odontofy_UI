@@ -102,6 +102,14 @@ describe('API v1 contract adapters', () => {
     expect(patient?.debt).toBe(125.5);
   });
 
+  it('normalizes the first patient page to the API base', () => {
+    TestBed.inject(PacientesService).listPatients(0).subscribe();
+
+    const request = http.expectOne(`${environment.API_URL}/patients?page=1&pageSize=10`);
+    expect(request.request.params.get('page')).toBe('1');
+    request.flush(envelope([], { pagination: { page: 1, pageSize: 10, total: 0, totalPages: 0 } }));
+  });
+
   it('creates billing records with exact decimals and an idempotency key', () => {
     const payment = new Payment({
       payment_date: '2026-08-22',

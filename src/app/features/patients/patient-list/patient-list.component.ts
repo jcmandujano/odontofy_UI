@@ -17,6 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-patient-list',
@@ -43,7 +44,7 @@ export class PatientListComponent implements AfterViewInit {
   dataSource = new MatTableDataSource<Patient>();
   pacientesList: Patient[] = []
   length = 0;
-  pageIndex = 1;
+  pageIndex = 0;
   pageSize = 10;
   pageEvent: PageEvent = new PageEvent;
   searchCriteria: string = '';
@@ -59,9 +60,11 @@ export class PatientListComponent implements AfterViewInit {
   }
 
 
-  recuperaPacientes(page: number = 0) {
+  recuperaPacientes(page: number = 1) {
     this.spinner.show()
-    this.pacientesService.listPatients(page, this.pageSize, this.searchCriteria).subscribe(response => {
+    this.pacientesService.listPatients(page, this.pageSize, this.searchCriteria).pipe(
+      finalize(() => this.spinner.hide())
+    ).subscribe(response => {
       this.pacientesList = (response.data?.results ?? []).map(Patient.fromJson);
       this.dataSource.data = this.pacientesList
       this.length = response.data?.total ?? 0;
