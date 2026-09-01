@@ -9,7 +9,7 @@ import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.comp
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
-import { environment } from '../../../../environments/environment';
+import { FeatureFlagsService } from '../../../core/services/feature-flags.service';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -24,7 +24,7 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './patient-dashboard.component.scss'
 })
 export class PatientDashboardComponent {
-  readonly showPatientOdontogram = environment.features.patientOdontogram;
+  readonly showPatientOdontogram: boolean;
   pacienteId: any
   paciente: Patient | undefined
   spinner = false
@@ -35,7 +35,10 @@ export class PatientDashboardComponent {
     private router: Router,
     private route: ActivatedRoute,
     private pacientesService: PacientesService,
-    private snackBar: MatSnackBar) {}
+    private snackBar: MatSnackBar,
+    featureFlags: FeatureFlagsService) {
+    this.showPatientOdontogram = featureFlags.patientOdontogram;
+  }
 
   ngOnInit(): void {
     this.pacienteId = this.route.snapshot.paramMap.get('id');
