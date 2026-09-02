@@ -1,3 +1,5 @@
+import { routes, type VercelConfig } from '@vercel/config/v1';
+
 const apiOrigin = process.env.ODONTOFY_API_ORIGIN?.replace(/\/$/, '');
 
 if (!apiOrigin) {
@@ -6,11 +8,8 @@ if (!apiOrigin) {
   );
 }
 
-export const config = {
+export const config: VercelConfig = {
   rewrites: [
-    {
-      source: '/api/v1/:path*',
-      destination: `${apiOrigin}/api/v1/:path*`,
-    },
+    routes.rewrite('/api/v1/:path*', `${apiOrigin}/api/v1/:path*`),
   ],
 };
