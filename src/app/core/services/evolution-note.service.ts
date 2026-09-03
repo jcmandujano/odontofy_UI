@@ -51,13 +51,13 @@ export class EvolutionNoteService {
     updateNote(patientId: number, noteId: number, note: UpdateEvolutionNoteRequest) {
         return this.api.patch<ApiEvolutionNote>(`/patients/${patientId}/evolution-notes/${noteId}`, {
             ...noteRequest(note),
-            changeReason: 'Correccion solicitada desde el expediente clinico'
+            changeReason: 'Corrección solicitada desde el expediente clínico'
         }).pipe(map(response => mapApiResponse(response, toUiNote)));
     }
 
     deleteNote(patientId: number, noteId: number) {
         return this.api.delete<ApiEvolutionNote>(`/patients/${patientId}/evolution-notes/${noteId}`, {
-            body: { changeReason: 'Archivado solicitado desde el expediente clinico' }
+            body: { changeReason: 'Archivado solicitado desde el expediente clínico' }
         }).pipe(map(response => mapApiResponse(response, toUiNote)));
     }
 }

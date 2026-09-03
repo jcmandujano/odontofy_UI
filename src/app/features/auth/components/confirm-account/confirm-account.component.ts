@@ -27,7 +27,7 @@ export class ConfirmAccountComponent implements OnInit {
 
     if (!Number.isInteger(userId) || userId <= 0 || !/^[a-f0-9]{64}$/.test(token)) {
       this.status = 'error';
-      this.message = 'El enlace de confirmacion no es valido.';
+      this.message = 'El enlace de confirmación no es válido.';
       return;
     }
 
@@ -38,7 +38,7 @@ export class ConfirmAccountComponent implements OnInit {
       },
       error: () => {
         this.status = 'error';
-        this.message = 'El enlace no es valido o ya vencio.';
+        this.message = 'El enlace no es válido o ya venció.';
       }
     });
   }

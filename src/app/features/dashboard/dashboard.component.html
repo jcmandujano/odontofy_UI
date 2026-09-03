@@ -12,7 +12,7 @@
         | titlecase
         }}
       </h1>
-      <p class="welcome-letter">Bienvenido ¿Que necesitas hacer hoy?</p>
+      <p class="welcome-letter">¡Te damos la bienvenida! ¿Qué necesitas hacer hoy?</p>
     </div>
   </div>
   <div class="row">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="custom_actions">
                   <button class="dashboard_button card_button" (click)="goToAgenda()"><span>Nueva
-                  Cita</span></button>
+                  cita</span></button>
                 </div>
               </div>
             </mat-card-header>
@@ -65,7 +65,7 @@
               @if (!appointmentList || appointmentList.length === 0) {
                 <div class="no-data-found d-flex justify-content-center align-items-center">
                   <p class="slogan">
-                    No tienes eventos proximos agendados
+                    No tienes eventos próximos agendados.
                   </p>
                 </div>
               }
@@ -106,8 +106,8 @@
                       <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
                     </div>
                     <div class="custom_title">
-                      <p class="custom_card_title">Consentimientos Informados</p>
-                      <span class="custom-card-subtitle">Gestiona tu catalogo de consentimientos
+                      <p class="custom_card_title">Consentimientos informados</p>
+                      <span class="custom-card-subtitle">Gestiona tu catálogo de consentimientos
                       informados para tus pacientes.</span>
                     </div>
                     <div class="custom_actions">
@@ -183,7 +183,7 @@
                       }
                     </div>
                     <div class="finance_money_container">
-                      <p class="dashboard_finanzas_table_title">Adeudo Total</p>
+                      <p class="dashboard_finanzas_table_title">Adeudo total</p>
                       @if (showFinanceData) {
                         <p class="dashboard_finanzas_table_adeudo">
                         {{paymentBalance.totalDebt | currency}}</p>

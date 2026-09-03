@@ -202,7 +202,7 @@ export class InformedConsentsComponent {
 
     //if there is no informed consents we show a message and return
     if (this.informedConsentList.length === 0) {
-      this.openSnackbar('No hay consentimientos informados disponibles. Por favor, crea un consentimiento en tus configuraciones antes de generarle uno a un paciente.', 'Ok');
+      this.openSnackbar('No hay consentimientos informados disponibles. Por favor, crea un consentimiento en tus configuraciones antes de generar uno para un paciente.', 'Aceptar');
       return;
     }
     
@@ -225,7 +225,7 @@ export class InformedConsentsComponent {
   createSignedConsent(payload: any) {
     this.signedConsentService.createSignedConsent(this.selectedPatientId, payload).subscribe({
       next: data => {
-        this.openSnackbar(`Se ha guardado la información correctamente`, 'Ok')
+        this.openSnackbar('La información se guardó correctamente', 'Aceptar')
         this.loadConsents()
       },
       error: err => this.handleError(err) // Manejo de errores
@@ -235,7 +235,7 @@ export class InformedConsentsComponent {
   deleteSignedConsent(SignedConsentId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Consentimiento Informado',
+        title: 'Eliminar consentimiento informado',
         message: '¿Seguro que quieres eliminar este consentimiento?',
       }
     });
@@ -244,7 +244,7 @@ export class InformedConsentsComponent {
       if (result) {
         this.signedConsentService.deleteSignedConsent(this.selectedPatientId, SignedConsentId).subscribe({
           next: data => {
-            this.openSnackbar(`Se ha guardado la información correctamente`, 'Ok')
+            this.openSnackbar('La información se guardó correctamente', 'Aceptar')
             this.loadConsents()
           },
           error: err => this.handleError(err) // Manejo de errores
@@ -276,7 +276,7 @@ export class InformedConsentsComponent {
 
   openSignedDocument(consent: SignedConsent): void {
     if (!consent.file_url) {
-      this.openSnackbar('Este consentimiento aun no tiene un PDF firmado', 'Ok');
+      this.openSnackbar('Este consentimiento aún no tiene un PDF firmado', 'Aceptar');
       return;
     }
     this.fileService.access(consent.file_url).subscribe({
@@ -293,11 +293,11 @@ export class InformedConsentsComponent {
    */
   private handleError(error: any): void {
     this.spinner = false;
-    const message = error?.error?.errors?.[0]?.message ?? error?.error?.message ?? 'Ocurrio un error';
+    const message = error?.error?.errors?.[0]?.message ?? error?.error?.message ?? 'Ocurrió un error';
     console.error('ERROR', message);
     this.openSnackbar(message, 'Ok');
     // Descomentar la siguiente línea para mostrar una notificación de error
-    // this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok');
+    // this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar');
   }
 
   openSnackbar(message: string, action: string) {

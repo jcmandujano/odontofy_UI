@@ -59,7 +59,7 @@ export class PatientFileComponent {
       }, (error) => {
         this.spinner = false
         console.log('ERROR', error.error.message)
-        this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
       })
     }
   }
@@ -104,13 +104,13 @@ export class PatientFileComponent {
     this.spinner = true
     this.patient = this.crearPacientesForm.value
     this.pacientesService.createPatient(this.patient).subscribe(data => {
-      this.openSnackbar('Se guardo la informacion correctamente', 'Ok')
+      this.openSnackbar('La información se guardó correctamente', 'Aceptar')
       this.router.navigate(['/patient-list'])
       this.spinner = false
     }, (error) => {
       this.spinner = false
       console.log('ERROR', error)
-      this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
     })
   }
 
@@ -119,12 +119,12 @@ export class PatientFileComponent {
       this.spinner = true
       this.patient = this.crearPacientesForm.value
       this.pacientesService.updatePatient(this.pacienteId, this.patient).subscribe(data => {
-        this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
+        this.openSnackbar('La información se actualizó correctamente', 'Aceptar')
         this.spinner = false
       }, (error) => {
         this.spinner = false
         console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
       })
     }
   }
@@ -155,7 +155,7 @@ export class PatientFileComponent {
       return 'Debes ingresar el email';
     }
 
-    return this.crearPacientesForm.controls['email'].hasError('email') ? 'No es un email valido' : '';
+    return this.crearPacientesForm.controls['email'].hasError('email') ? 'El correo electrónico no es válido' : '';
   }
 
   //mostramos el error de telefono por valido o por formato
@@ -164,7 +164,7 @@ export class PatientFileComponent {
       return 'Debes ingresar el email';
     }
 
-    return this.crearPacientesForm.controls['phone'].hasError('pattern') ? 'No es un telefono valido' : '';
+    return this.crearPacientesForm.controls['phone'].hasError('pattern') ? 'El teléfono no es válido' : '';
   }
 
   private showFirstValidationError(): void {

@@ -1,17 +1,17 @@
-<h2 mat-dialog-title class="dialog-title">Nueva Cita</h2>
+<h2 mat-dialog-title class="dialog-title">Nueva cita</h2>
 <mat-dialog-content class="custom-content">
     <form [formGroup]="appointmentForm">
         <mat-form-field class="full-width" appearance="outline">
             <mat-label>Paciente</mat-label>
             <mat-select formControlName="patient">
-                <mat-option [value]="0">Nuevo Paciente</mat-option>
+                <mat-option [value]="0">Nuevo paciente</mat-option>
               @for (patient of patientsList; track patient) {
                 <mat-option [value]="patient.id">{{getFullName(patient)}}</mat-option>
               }
             </mat-select>
         </mat-form-field>
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Motivo de la Cita</mat-label>
+    <mat-label>Motivo de la cita</mat-label>
             <input matInput formControlName="reason" placeholder="Escribe el motivo de la cita">
         </mat-form-field>
         <div class="row">
@@ -28,13 +28,13 @@
         <div class="row">
             <div class="col-6">
                 <mat-form-field class="full-width" appearance="outline">
-                    <mat-label>Hora de Inicio</mat-label>
+      <mat-label>Hora de inicio</mat-label>
                     <input matInput formControlName="appointmentPickerTime" type="time">
                 </mat-form-field>
             </div>
             <div class="col-6">
                 <mat-form-field class="full-width" appearance="outline">
-                    <mat-label>Hora de Fin</mat-label>
+      <mat-label>Hora de fin</mat-label>
                     <input matInput formControlName="appointmentPickerEndTime" type="time">
                 </mat-form-field>
             </div>

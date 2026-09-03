@@ -115,7 +115,7 @@ export class TreatmentPlanMgmtDialogComponent {
   }
 
   get dialogTitle(): string {
-    return this.mode === 'edit' ? 'Editar Plan de Tratamiento' : 'Nuevo Plan de Tratamiento';
+    return this.mode === 'edit' ? 'Editar plan de tratamiento' : 'Nuevo plan de tratamiento';
   }
 
   get currentStatusLabel(): string {

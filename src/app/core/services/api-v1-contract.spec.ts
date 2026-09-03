@@ -151,7 +151,7 @@ describe('API v1 contract adapters', () => {
     const request = http.expectOne(`${environment.API_URL}/patients/4/evolution-notes/8`);
     expect(request.request.method).toBe('DELETE');
     expect(request.request.body).toEqual({
-      changeReason: 'Archivado solicitado desde el expediente clinico'
+      changeReason: 'Archivado solicitado desde el expediente clínico'
     });
     request.flush(envelope({
       id: 8,

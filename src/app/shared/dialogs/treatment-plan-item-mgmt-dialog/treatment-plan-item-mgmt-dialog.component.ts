@@ -129,10 +129,10 @@ export class TreatmentPlanItemMgmtDialogComponent {
 
   get dialogTitle(): string {
     if (this.mode === 'status') {
-      return 'Editar Estado del Tratamiento';
+      return 'Editar estado del tratamiento';
     }
 
-    return this.mode === 'edit' ? 'Editar Tratamiento' : 'Agregar Tratamiento';
+    return this.mode === 'edit' ? 'Editar tratamiento' : 'Agregar tratamiento';
   }
 
   get currentStatusLabel(): string {

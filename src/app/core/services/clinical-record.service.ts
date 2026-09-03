@@ -49,7 +49,7 @@ export class ClinicalRecordService {
         notes: text(personal[legacyKey]?.comentarios)
       })),
       otherNotes: text(personal['otros']?.comentarios),
-      changeReason: 'Actualizacion solicitada desde el expediente del paciente'
+      changeReason: 'Actualización solicitada desde el expediente del paciente'
     });
   }
 

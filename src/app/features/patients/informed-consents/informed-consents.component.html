@@ -7,22 +7,22 @@
 <div class="container">
   <div class="row navigation_row">
     <div class="col-12">
-      <span class="pacientes_navigation">Inicio > Pacientes > Consentimientos Informados</span>
+      <span class="pacientes_navigation">Inicio > Pacientes > Consentimientos informados</span>
     </div>
   </div>
   <div class="row pacientes_header_row">
     <div class="col-6">
       <div class="title_container">
         <mat-icon svgIcon="concentimientos" class="dashboard_agenda_icon"></mat-icon>
-        <span class="pacientes_title">Consentimientos Informados</span>
+        <span class="pacientes_title">Consentimientos informados</span>
       </div>
     </div>
     <div class="col-6">
       <div class="nuevo_paciente_button_container">
         <button mat-fab extended class="logout-navbar-button print-consent-btn" [disableRipple]="true"
-        (click)="launchPrintConsentDialog()">Imprimir Consentimiento</button>
+        (click)="launchPrintConsentDialog()">Imprimir consentimiento</button>
         <button mat-fab extended class="logout-navbar-button" [disableRipple]="true"
-        (click)="launchAddSignedConsentDialog()">Agregar Consentimiento</button>
+        (click)="launchAddSignedConsentDialog()">Agregar consentimiento</button>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@
       @if (dataSource && dataSource.data.length > 0) {
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
           <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef class="signin-header-column"> Fecha de creacion </th>
+            <th mat-header-cell *matHeaderCellDef class="signin-header-column"> Fecha de creación </th>
             <td mat-cell *matCellDef="let element" class="signin-content-column"> {{element.signed_date | date
             }} </td>
           </ng-container>
@@ -58,7 +58,7 @@
       }
       @if (!dataSource || dataSource.data.length === 0) {
         <app-no-data-found [title]="'Este paciente no tiene consentimientos informados'"
-          [message]="'Haz click en el boton Agregar consentimiento para comenzar a generarlos.'">
+          [message]="'Haz clic en el botón «Agregar consentimiento» para registrar el primero.'">
         </app-no-data-found>
       }
     </div>

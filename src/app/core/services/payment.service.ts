@@ -66,13 +66,13 @@ export class PaymentService {
     updatePayment(paymentId: number, patientId: number, payment: Payment) {
         return this.api.put<ApiBillingRecord>(`/patients/${patientId}/billing-records/${paymentId}/correction`, {
             ...paymentRequest(payment),
-            changeReason: 'Correccion solicitada desde la pantalla de pagos'
+            changeReason: 'Corrección solicitada desde la pantalla de pagos'
         }).pipe(map(response => mapApiResponse(response, toUiPayment)));
     }
 
     deletePayment(patientId: number, paymentId: number) {
         return this.api.post<ApiBillingRecord>(`/patients/${patientId}/billing-records/${paymentId}/cancellation`, {
-            changeReason: 'Cancelacion solicitada desde la pantalla de pagos'
+            changeReason: 'Cancelación solicitada desde la pantalla de pagos'
         }).pipe(map(response => mapApiResponse(response, toUiPayment)));
     }
 }

@@ -93,7 +93,7 @@ export class PatientPaymentsComponent {
       error => {
         // Manejar errores para ambas llamadas
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     );
   }
@@ -152,7 +152,7 @@ export class PatientPaymentsComponent {
       this.reloadPaymentsData()
     }, (error) => {
       this.spinner.hide()
-      this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')
     })
   }
 
@@ -173,14 +173,14 @@ export class PatientPaymentsComponent {
       this.reloadPaymentsData()
     }, (error) => {
       this.spinner.hide()
-      this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')
     })
   }
 
   deletePayment(paymentId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Pago',
+        title: 'Eliminar pago',
         message: '¿Seguro que quieres eliminar este pago?'
       }
     });
@@ -193,7 +193,7 @@ export class PatientPaymentsComponent {
           this.reloadPaymentsData()
         }, (error) => {
           this.spinner.hide()
-          this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
+          this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')
         })
 
       }
@@ -209,7 +209,7 @@ export class PatientPaymentsComponent {
       this.pageIndex = (response.data?.page ?? 1) - 1;
     }, (error) => {
       this.spinner.hide()
-      this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')
     })
   }
 
@@ -238,6 +238,6 @@ export class PatientPaymentsComponent {
 
     return apiError?.error?.message
       ?? apiError?.error?.error?.message
-      ?? 'Ocurrio un problema al procesar tu solicitud';
+      ?? 'Ocurrió un problema al procesar tu solicitud';
   }
 }

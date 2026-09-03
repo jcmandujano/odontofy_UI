@@ -94,7 +94,7 @@ export class UserConsentsComponent {
   deleteConsent(id: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Consentimiento Informado',
+        title: 'Eliminar consentimiento informado',
         message: '¿Seguro que quieres eliminar este consentimiento?',
       }
     });

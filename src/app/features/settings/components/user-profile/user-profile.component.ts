@@ -74,12 +74,12 @@ export class UserProfileComponent {
           this.currentUser = response.data
           this.sessionService.saveUser(response.data)
         }
-        this.openSnackbar('Se actualizó la informacion correctamente', 'Ok')
+        this.openSnackbar('La información se actualizó correctamente', 'Aceptar')
         this.spinner.hide()
       },(error)=>{
         this.spinner.hide()
         console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
       })
       }
     
@@ -107,7 +107,7 @@ export class UserProfileComponent {
       return 'Debes ingresar el email';
     }
 
-    return this.userProfileForm.controls['phone'].hasError('pattern') ? 'No es un telefono valido' : '';
+    return this.userProfileForm.controls['phone'].hasError('pattern') ? 'El teléfono no es válido' : '';
   }
 
   openSnackbar(message: string, action: string) {

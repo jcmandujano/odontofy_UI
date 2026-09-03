@@ -52,7 +52,7 @@ export class PatientDashboardComponent {
       }, (error) => {
         this.spinner = false
         console.log('ERROR', error.error.error.message)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
       })
     }
   }

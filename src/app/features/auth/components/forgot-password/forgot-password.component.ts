@@ -49,7 +49,7 @@ export class ForgotPasswordComponent {
                 next: (res) => {
                     console.log(res);
                     const msg = res.data;
-                    this.openSnackbar(msg ? msg : 'Se proceso correctamente tu solicitud', 'Cerrar');
+                    this.openSnackbar(msg ? msg : 'Tu solicitud se procesó correctamente', 'Cerrar');
                     this.spinner.hide();
                 }
                 , error: (err) => {

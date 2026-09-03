@@ -4,19 +4,19 @@
 <div class="container">
   <div class="row navigation_row">
     <div class="col-12">
-      <span class="pacientes_navigation">Inicio > Pacientes > Notas de Evolucion</span>
+      <span class="pacientes_navigation">Inicio > Pacientes > Notas de evolución</span>
     </div>
   </div>
   <div class="row pacientes_header_row">
     <div class="col-6">
       <div class="title_container">
         <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
-        <span class="pacientes_title">Notas de Evolucion</span>
+        <span class="pacientes_title">Notas de evolución</span>
       </div>
     </div>
     <div class="col-6">
       <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button"
-      (click)="creaNotaDialog()">Agregar Nota</button> </div>
+      (click)="creaNotaDialog()">Agregar nota</button> </div>
     </div>
   </div>
   <div class="row filters_row">
@@ -25,7 +25,7 @@
         <mat-label>Buscar...</mat-label>
         <input matInput placeholder="" [(ngModel)]="searchCriteria" (keyup.enter)="onSearch()">
         @if (searchCriteria) {
-          <button class="clearCriteria" matSuffix mat-icon-button aria-label="Clear" (click)="clearCriteria()">
+          <button class="clearCriteria" matSuffix mat-icon-button aria-label="Limpiar búsqueda" (click)="clearCriteria()">
             <mat-icon>close</mat-icon>
           </button>
         }
@@ -47,7 +47,7 @@
   </div>
   <div class="col-4">
     <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
-      <mat-label>Procedimiento / item</mat-label>
+      <mat-label>Procedimiento / ítem</mat-label>
       <mat-select [(ngModel)]="selectedTreatmentPlanItemId" [disabled]="!selectedTreatmentPlanId" (selectionChange)="onTreatmentPlanItemFilterChange()">
         <mat-option [value]="null">Todos los avances del plan</mat-option>
         @for (item of selectedTreatmentPlanItems; track item.id) {
@@ -103,7 +103,7 @@
     }
     @if (!dataSource || dataSource.length === 0) {
       <app-no-data-found [title]="'Este paciente no tiene notas de evolución'"
-        [message]="'Haz click en el boton Agregar Nota para comenzar a generarlas.'">
+        [message]="'Haz clic en el botón «Agregar nota» para registrar la primera.'">
       </app-no-data-found>
     }
   </div>
