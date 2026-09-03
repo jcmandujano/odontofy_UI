@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { formatDate, registerLocaleData } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { EventColor } from 'calendar-utils';
 import { from, Subject } from 'rxjs';
@@ -46,6 +47,7 @@ const colors: Record<string, EventColor> = {
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
+    MatTooltipModule,
     NgxSpinnerModule
   ],
   templateUrl: './agenda.component.html',
