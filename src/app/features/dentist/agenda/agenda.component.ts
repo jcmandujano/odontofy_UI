@@ -22,6 +22,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 import { User } from '../../../core/models/user.model';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { UserService } from '../../../core/services/user.service';
+import { ActivatedRoute } from '@angular/router';
 import {
   startOfMonth, endOfMonth,
   startOfWeek, endOfWeek,
@@ -74,6 +75,7 @@ export class AgendaComponent {
   isUserSyncGoogle: boolean = false;
   fromDate: string | null = null;
   toDate: string | null = null;
+  selectedAppointmentRef: string | null = null;
 
   constructor(
     private elementRef: ElementRef,
@@ -83,12 +85,14 @@ export class AgendaComponent {
     private appointmentService: AppointmentService,
     private spinner: NgxSpinnerService,
     private sessionService: SessionStorageService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();
     this.isUserSyncGoogle = this.currentUser.is_google_synced ?? false;
+    this.applyAppointmentNavigation();
     this.retrievePatients()
     // Aquí calculas el rango inicial del mes actual (porque view = Month al inicio)
     const range = this.getViewRange();
@@ -172,9 +176,34 @@ export class AgendaComponent {
         color: { ...colors['blue'] },
         //if appointment's id is null, means comes from google so we dont asign actions
         actions: appointment.id ? this.buildEventActions(appointment.patient_id) : [],
-        cssClass: 'action-icons'
+        cssClass: this.isSelectedAppointment(appointment)
+          ? 'action-icons selected-calendar-event'
+          : 'action-icons'
       } as CalendarEvent;
     });
+  }
+
+  private applyAppointmentNavigation(): void {
+    const dateParam = this.route.snapshot.queryParamMap.get('date');
+    this.selectedAppointmentRef = this.route.snapshot.queryParamMap.get('appointmentRef');
+
+    if (!dateParam) return;
+
+    const appointmentDate = new Date(dateParam);
+    if (Number.isNaN(appointmentDate.getTime())) return;
+
+    this.viewDate = appointmentDate;
+    this.view = CalendarView.Day;
+  }
+
+  private isSelectedAppointment(appointment: Appointment): boolean {
+    if (!this.selectedAppointmentRef) return false;
+
+    const appointmentRef = appointment.id > 0
+      ? `local:${appointment.id}`
+      : `external:${appointment.google_event_id}`;
+
+    return appointmentRef === this.selectedAppointmentRef;
   }
 
   launchAppointmentDialog(appointmentEvent?: CalendarEvent): void {

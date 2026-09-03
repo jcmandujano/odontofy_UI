@@ -44,8 +44,8 @@
                       role="button"
                       tabindex="0"
                       [attr.aria-label]="'Abrir agenda para la cita de ' + (event.patientFullName || 'paciente')"
-                      (click)="goToAgenda()"
-                      (keydown)="handleAppointmentRowKeydown($event)">
+                      (click)="goToAgenda(event)"
+                      (keydown)="handleAppointmentRowKeydown($event, event)">
                       <div class="dashboard_list_container">
                         <div>
                           <mat-icon class="dashboard_agenda_dot" svgIcon="agendaDot"></mat-icon>

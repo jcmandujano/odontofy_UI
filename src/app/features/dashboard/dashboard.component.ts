@@ -107,14 +107,28 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['patient-list'])
   }
 
-  goToAgenda() {
-    this.router.navigate(['schedule'])
+  goToAgenda(appointment?: Appointment) {
+    if (!appointment) {
+      this.router.navigate(['schedule']);
+      return;
+    }
+
+    const appointmentRef = appointment.id > 0
+      ? `local:${appointment.id}`
+      : `external:${appointment.google_event_id}`;
+
+    this.router.navigate(['schedule'], {
+      queryParams: {
+        date: appointment.appointment_datetime,
+        appointmentRef
+      }
+    });
   }
 
-  handleAppointmentRowKeydown(event: KeyboardEvent): void {
+  handleAppointmentRowKeydown(event: KeyboardEvent, appointment: Appointment): void {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      this.goToAgenda();
+      this.goToAgenda(appointment);
     }
   }
 

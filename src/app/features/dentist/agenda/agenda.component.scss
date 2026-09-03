@@ -95,6 +95,13 @@
   margin: 0 5px !important;
 }
 
+:host ::ng-deep .selected-calendar-event {
+  outline: 3px solid #407DDA;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(64, 125, 218, 0.2);
+  z-index: 2;
+}
+
 .sync-calendar{
   margin-right: 10px;
 }
