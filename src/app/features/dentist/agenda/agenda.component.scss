@@ -91,8 +91,147 @@
     margin-bottom: 50px;
 }
 
-.action-icons a {
-  margin: 0 5px !important;
+.month-event-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.month-event-action {
+  --mat-button-outlined-label-text-color: #fff;
+  --mat-button-outlined-outline-color: rgba(255, 255, 255, 0.7);
+  min-width: auto;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.7);
+  font-family: 'Roboto';
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 32px;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+:host ::ng-deep .month-event-action .mdc-button__label,
+:host ::ng-deep .month-event-action .mdc-button__label span {
+  color: #fff;
+}
+
+.month-event-action mat-icon {
+  width: 17px;
+  height: 17px;
+  margin-right: 6px;
+}
+
+:host ::ng-deep .month-event-action mat-icon path {
+  stroke: #fff;
+}
+
+.month-event-action--edit:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+  border-color: #fff;
+  box-shadow: 0 3px 10px rgba(16, 53, 108, 0.3);
+}
+
+.month-event-action--delete:hover {
+  background-color: rgba(235, 87, 87, 0.75);
+  border-color: #fff;
+  box-shadow: 0 3px 10px rgba(91, 24, 24, 0.3);
+}
+
+:host ::ng-deep .cal-month-view .cal-open-day-events {
+  color: #fff;
+  background: linear-gradient(135deg, $primary--blue 0%, #315FA8 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 8px 24px rgba(32, 76, 143, 0.2);
+}
+
+:host ::ng-deep .cal-month-view .cal-open-day-events > .action-icons {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 4px 0;
+}
+
+:host ::ng-deep .cal-month-view .cal-open-day-events .cal-event {
+  flex: 0 0 auto;
+  background-color: #fff !important;
+  margin-right: 10px;
+}
+
+:host ::ng-deep .cal-month-view .cal-open-day-events > .action-icons + .action-icons {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+:host ::ng-deep .cal-month-view .cal-open-day-events > .action-icons mwl-calendar-event-title {
+  flex: 1;
+  min-width: 0;
+}
+
+:host ::ng-deep .cal-month-view .cal-open-day-events .cal-event-title {
+  color: #fff;
+}
+
+.timed-event-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin: 1px 1px 1px 4px;
+}
+
+.timed-event-action {
+  --mdc-icon-button-state-layer-size: 24px;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  background-color: #fff;
+  border: 1px solid rgba(64, 125, 218, 0.2);
+  box-shadow: 0 2px 6px rgba(32, 76, 143, 0.18);
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.timed-event-action mat-icon {
+  display: flex;
+  width: 13px;
+  height: 13px;
+  line-height: 13px;
+}
+
+:host ::ng-deep .timed-event-action mat-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+:host ::ng-deep .timed-event-action .mat-mdc-button-touch-target {
+  width: 24px;
+  height: 24px;
+}
+
+.timed-event-action:hover {
+  transform: translateY(-1px);
+}
+
+.timed-event-action--edit:hover {
+  background-color: #EDF4FF;
+  border-color: $second--blue;
+}
+
+.timed-event-action--delete:hover {
+  background-color: #FFF0F0;
+  border-color: rgba($warn--primary, 0.65);
+}
+
+:host ::ng-deep .cal-week-view .cal-event mwl-calendar-event-actions {
+  float: right;
+}
+
+:host ::ng-deep .selected-calendar-event {
+  outline: 3px solid #407DDA;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(64, 125, 218, 0.2);
+  z-index: 2;
 }
 
 .sync-calendar{
@@ -123,4 +262,25 @@
   width: 20px;
   height: 20px;
   margin-right: 10px;
+}
+
+@media (max-width: 900px) {
+  .month-event-actions {
+    gap: 6px;
+    margin-left: 8px;
+  }
+
+  .month-event-action {
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
+  }
+
+  .month-event-action mat-icon {
+    margin-right: 0;
+  }
+
+  .month-event-action span {
+    display: none;
+  }
 }

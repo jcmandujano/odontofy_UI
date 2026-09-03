@@ -13,6 +13,7 @@ import { FeatureFlagsService } from '../../../core/services/feature-flags.servic
 
 @Component({
   selector: 'app-patient-dashboard',
+  standalone: true,
   imports: [
     NavBarComponent,
     MatProgressSpinnerModule,

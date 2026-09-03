@@ -4,7 +4,6 @@
         <mat-form-field class="full-width" appearance="outline">
             <mat-label>Paciente</mat-label>
             <mat-select formControlName="patient">
-                <mat-option [value]="0">Nuevo paciente</mat-option>
               @for (patient of patientsList; track patient) {
                 <mat-option [value]="patient.id">{{getFullName(patient)}}</mat-option>
               }
@@ -34,8 +33,11 @@
             </div>
             <div class="col-6">
                 <mat-form-field class="full-width" appearance="outline">
-      <mat-label>Hora de fin</mat-label>
+                    <mat-label>Hora de fin</mat-label>
                     <input matInput formControlName="appointmentPickerEndTime" type="time">
+                    @if (appointmentForm.get('appointmentPickerEndTime')?.hasError('endBeforeStart')) {
+                      <mat-error>La hora de fin debe ser posterior a la hora de inicio.</mat-error>
+                    }
                 </mat-form-field>
             </div>
         </div>

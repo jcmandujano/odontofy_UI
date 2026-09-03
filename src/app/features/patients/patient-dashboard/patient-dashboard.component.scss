@@ -1,144 +1,238 @@
 @use "../../../../vars.scss" as *;
 
-.navigation_row{
-    margin-top: 15px;
-    margin-bottom: 50px;
+:host {
+  display: block;
+  min-width: 0;
 }
 
-.pacientes_navigation{
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 21px;
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.02em;
-    color: $primary--blue;
+.patient-dashboard {
+  padding-bottom: 40px;
 }
 
-.custom_card_header{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.navigation_row {
+  margin-block: 15px clamp(28px, 5vw, 50px);
 }
 
-.dashboard_agenda_icon{
-    width: 50px;
-    height: auto;
-    margin: 0px 20px;
-    fill: #407DDA;
+.pacientes_navigation {
+  display: flex;
+  align-items: center;
+  color: $primary--blue;
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 21px;
+  overflow-wrap: anywhere;
 }
 
-.custom_title{
-    cursor: pointer;
-    text-align: start;
-    align-items: center;
-    flex-grow: 1;
+.patient-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
 }
 
-.custom_card_title{
-    font-family: 'Roboto Condensed';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 26px;
-    line-height: 30px;
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.01em;
-    color: #407DDA;
-    margin: 0;
-  }
-  
-  .custom-card-subtitle{
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 20px;
-    color: #7A7A7A;
-  }
+.custom_card_header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.custom_icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.dashboard_agenda_icon {
+  width: 50px;
+  height: 50px;
+  fill: $primary--blue;
+}
+
+.patient-identity,
+.patient-name-container,
+.custom_title {
+  min-width: 0;
+}
+
+.custom_title {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.custom_card_title {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: $primary--blue;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: clamp(21px, 2.3vw, 26px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.patient-name {
+  flex-wrap: wrap;
+}
+
+.custom-card-subtitle {
+  margin-top: 4px;
+  color: $gray--text;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
 
 .menu_grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px 30px;
-    margin: 25px 15px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 28px;
 }
 
-.menu_grid .custom_card_header {
-    height: 100%;
+.dashboard-menu-card {
+  width: 100%;
+  min-height: 104px;
+  padding: 18px;
+  border: 1px solid rgba($primary--blue, 0.16);
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.dashboard-menu-card:hover {
+  border-color: rgba($primary--blue, 0.42);
+  box-shadow: 0 6px 18px rgba($primary--blue, 0.1);
+}
+
+.dashboard-menu-card:focus-visible {
+  outline: 3px solid rgba($primary--blue, 0.3);
+  outline-offset: 2px;
+}
+
+.dashboard-menu-card:active {
+  transform: translateY(1px);
 }
 
 .menu_grid > :last-child:nth-child(odd) {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
-@media (max-width: 767px) {
-    .menu_grid {
-        grid-template-columns: 1fr;
-    }
-
-    .menu_grid > :last-child:nth-child(odd) {
-        grid-column: auto;
-    }
+.finanzas_container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
 }
 
-.finanzas_container{
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    height: 100%;
+.patient-balance {
+  min-width: 140px;
+  text-align: right;
 }
 
-.dashboard_finanzas_table_title{
-    font-family: 'Roboto Condensed';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 24px;
-    letter-spacing: 0.01em;
-    /* main-blue */
-    color: #407DDA; 
-  }
-  
-  .dashboard_finanzas_table_total{
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 30px;
-    color: #407DDA;
-  }
-  
-  .dashboard_finanzas_table_ingreso{
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 30px;
-    color: #6FCF97;
-  }
-  
-  .dashboard_finanzas_table_adeudo{
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 30px;
-    color: #EB5757;
-  }
-
-  .alergy-icon{
-    //warning icon eith yellow color
-    color: #F2C94C;
-    margin: 4px 15px;
-  }
-
-.balance-debt-color{
-    color: #EB5757;
+.dashboard_finanzas_table_title,
+.dashboard_finanzas_table_adeudo {
+  margin: 0;
 }
 
-.balance-income-color{
-    color: #6FCF97;
+.dashboard_finanzas_table_title {
+  color: $primary--blue;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 24px;
+}
+
+.dashboard_finanzas_table_adeudo {
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 30px;
+}
+
+.alergy-icon {
+  margin-left: 10px;
+  color: #f2c94c;
+  flex: 0 0 auto;
+}
+
+.balance-debt-color {
+  color: $warn--primary;
+}
+
+.balance-income-color {
+  color: #6fcf97;
+}
+
+@media (max-width: 767.98px) {
+  .menu_grid {
+    grid-template-columns: 1fr;
+  }
+
+  .menu_grid > :last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .patient-dashboard {
+    padding-inline: 16px;
+  }
+
+  .navigation_row {
+    margin-bottom: 24px;
+  }
+
+  .pacientes_navigation {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .patient-summary {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .patient-balance {
+    justify-content: flex-start;
+    padding-left: 58px;
+    text-align: left;
+  }
+
+  .custom_card_header {
+    gap: 14px;
+  }
+
+  .dashboard_agenda_icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .custom-card-subtitle {
+    font-size: 14px;
+  }
+
+  .dashboard-menu-card {
+    min-height: 92px;
+    padding: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-menu-card {
+    transition: none;
+  }
 }

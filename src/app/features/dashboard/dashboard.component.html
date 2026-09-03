@@ -39,7 +39,13 @@
               @if (appointmentList && appointmentList.length > 0) {
                 <mat-list role="list">
                   @for (event of appointmentList; track event) {
-                    <mat-list-item>
+                    <mat-list-item
+                      class="dashboard_appointment_row"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="'Abrir agenda para la cita de ' + (event.patientFullName || 'paciente')"
+                      (click)="goToAgenda(event)"
+                      (keydown)="handleAppointmentRowKeydown($event, event)">
                       <div class="dashboard_list_container">
                         <div>
                           <mat-icon class="dashboard_agenda_dot" svgIcon="agendaDot"></mat-icon>
@@ -48,12 +54,6 @@
                             <span class="hour">{{event.appointment_time | slice:0:5 }} </span> -->
                             <span class="date_name">{{event.patientFullName}} </span>
                           </span>
-                        </div>
-                        <div class="dashboard_list_actons">
-                          <mat-icon class="dashboard_logout_icon" svgIcon="editaCita"
-                          (click)="goToAgenda()"></mat-icon>
-                          <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita"
-                          (click)="goToAgenda()"></mat-icon>
                         </div>
                       </div>
 
