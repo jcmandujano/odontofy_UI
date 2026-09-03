@@ -40,7 +40,6 @@ export class AppointmentMgmtDialogComponent {
   selectedTime: string = '12:00';
   selectedEndTime: string = '13:00';
   appointmentForm: FormGroup = new FormGroup({});
-  selectedPatient: number = 0;
   quillConfig = this.buildQuillConfig();
   constructor(
     public dialogRef: MatDialogRef<AppointmentMgmtDialogComponent>,
@@ -53,8 +52,8 @@ export class AppointmentMgmtDialogComponent {
       appointmentDate: [new Date(), Validators.required],
       appointmentPickerTime: [this.selectedTime, Validators.required], //used only for time picker format 'hh:mm'
       appointmentPickerEndTime: [this.selectedEndTime, Validators.required], //used only for time picker format 'hh:mm'
-      appointmentTime: [null], //used to store full datetime
-      appointmentEndTime: [null], //used to store full datetime
+      appointmentTime: [null, Validators.required], //used to store full datetime
+      appointmentEndTime: [null, Validators.required], //used to store full datetime
       appointmentNote: ['']
     });
 
@@ -87,19 +86,22 @@ export class AppointmentMgmtDialogComponent {
 
   ngOnInit(): void {
     //when date changes
-    this.appointmentForm.get('appointmentTime')?.valueChanges.subscribe(time => {
+    this.appointmentForm.get('appointmentDate')?.valueChanges.subscribe(() => {
       this.updateAppointmentDateTime();
     });
 
     // when start time changes
-    this.appointmentForm.get('appointmentPickerTime')?.valueChanges.subscribe(time => {
-      this.updateAppointmentDateTime();
+    this.appointmentForm.get('appointmentPickerTime')?.valueChanges.subscribe(() => {
+      this.updateAppointmentDateTime(true);
     });
 
     //when end time changes
-    this.appointmentForm.get('appointmentPickerEndTime')?.valueChanges.subscribe(date => {
+    this.appointmentForm.get('appointmentPickerEndTime')?.valueChanges.subscribe(() => {
       this.updateAppointmentDateTime();
     });
+
+    // Initialize the full datetimes even when the user keeps the default values.
+    this.updateAppointmentDateTime();
   }
 
   //used for displaying full name in patient picker
@@ -109,7 +111,11 @@ export class AppointmentMgmtDialogComponent {
 
 
   onSave(): void {
-    if (this.appointmentForm.invalid) return;
+    this.updateAppointmentDateTime();
+    if (this.appointmentForm.invalid) {
+      this.appointmentForm.markAllAsTouched();
+      return;
+    }
     this.dialogRef.close(this.appointmentForm.value);
   }
 
@@ -127,7 +133,7 @@ export class AppointmentMgmtDialogComponent {
   }
 
   // Update appointment start and end DateTime based on selected date and times
-  private updateAppointmentDateTime(): void {
+  private updateAppointmentDateTime(adjustEndTime = false): void {
     const date: Date = this.appointmentForm.get('appointmentDate')?.value;
     const startTime: string = this.appointmentForm.get('appointmentPickerTime')?.value;
     const endTime: string = this.appointmentForm.get('appointmentPickerEndTime')?.value;
@@ -135,22 +141,37 @@ export class AppointmentMgmtDialogComponent {
     if (!date || !startTime || !endTime) return;
 
     const startDateTime = this.combineDateAndTime(date, startTime);    
-    const endDateTime = this.combineDateAndTime(date, endTime);
+    const endDateTime = adjustEndTime
+      ? new Date(startDateTime.getTime() + 60 * 60 * 1000)
+      : this.combineDateAndTime(date, endTime);
 
-    //we always add one hour to end time on start time change
-    endDateTime.setHours(startDateTime.getHours() + 1);
-    const appointmentEndDateTime = this.getTimeFromISO(endDateTime.toISOString());
-
-    //patch the end time picker if start time changed
-    this.appointmentForm.patchValue({
-      appointmentPickerEndTime: appointmentEndDateTime
-    }, { emitEvent: false });
+    if (adjustEndTime) {
+      this.appointmentForm.patchValue({
+        appointmentPickerEndTime: this.getTimeFromISO(endDateTime.toISOString())
+      }, { emitEvent: false });
+    }
 
     // Si quieres guardarlo dentro del form:
     this.appointmentForm.patchValue({
       appointmentTime: startDateTime,
       appointmentEndTime: endDateTime
     }, { emitEvent: false });
+
+    this.updateEndTimeValidity(startDateTime, endDateTime);
+  }
+
+  private updateEndTimeValidity(startDateTime: Date, endDateTime: Date): void {
+    const endTimeControl = this.appointmentForm.get('appointmentPickerEndTime');
+    if (!endTimeControl) return;
+
+    const currentErrors = { ...(endTimeControl.errors ?? {}) };
+    delete currentErrors['endBeforeStart'];
+
+    if (endDateTime.getTime() <= startDateTime.getTime()) {
+      currentErrors['endBeforeStart'] = true;
+    }
+
+    endTimeControl.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
   }
 
 

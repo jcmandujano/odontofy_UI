@@ -99,8 +99,8 @@
 }
 
 .month-event-action {
-  --mdc-outlined-button-label-text-color: #fff;
-  --mdc-outlined-button-outline-color: rgba(255, 255, 255, 0.7);
+  --mat-button-outlined-label-text-color: #fff;
+  --mat-button-outlined-outline-color: rgba(255, 255, 255, 0.7);
   min-width: auto;
   height: 34px;
   padding: 0 12px;
@@ -113,6 +113,11 @@
   font-weight: 500;
   line-height: 32px;
   transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+:host ::ng-deep .month-event-action .mdc-button__label,
+:host ::ng-deep .month-event-action .mdc-button__label span {
+  color: #fff;
 }
 
 .month-event-action mat-icon {
