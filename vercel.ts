@@ -9,7 +9,11 @@ if (!apiOrigin) {
 }
 
 export const config: VercelConfig = {
+  framework: 'angular',
+  buildCommand: 'npm run build',
+  outputDirectory: 'dist/odontofy/browser',
   rewrites: [
     routes.rewrite('/api/v1/:path*', `${apiOrigin}/api/v1/:path*`),
+    routes.rewrite('/:path*', '/index.html'),
   ],
 };
