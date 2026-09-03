@@ -1,12 +1,23 @@
-    <mat-toolbar class="main-toolbar">
-        <img src="/img/logo.png" alt="" (click)="goToDashboard()">
-        <span class="spacer"></span>
-        <span class="spacer"></span>
-    <span class="menu-item" (click)="goToDashboard()">Inicio</span>
-    <span class="menu-item" (click)="goToPatients()">Pacientes</span>
-    <span class="menu-item" (click)="goToAgenda()">Agenda</span>
-    <span class="menu-item" (click)="goToConfig()">Configuraciones</span>
-    <button mat-mini-fab class="logout-navbar-button" (click)="doLogout()">
-        <mat-icon>logout</mat-icon>
-    </button>
-    </mat-toolbar>
+<mat-toolbar class="main-toolbar">
+  <button type="button" class="brand-button" (click)="goToDashboard()" aria-label="Ir al inicio">
+    <img src="/img/logo.png" alt="Odontofy">
+  </button>
+
+  <span class="spacer"></span>
+
+  <nav class="main-menu" aria-label="Navegación principal">
+    <button type="button" class="menu-item" (click)="goToDashboard()">Inicio</button>
+    <button type="button" class="menu-item" (click)="goToPatients()">Pacientes</button>
+    <button type="button" class="menu-item" (click)="goToAgenda()">Agenda</button>
+    <button type="button" class="menu-item" (click)="goToConfig()">Configuraciones</button>
+  </nav>
+
+  <button
+    mat-mini-fab
+    class="logout-navbar-button"
+    type="button"
+    aria-label="Cerrar sesión"
+    (click)="doLogout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

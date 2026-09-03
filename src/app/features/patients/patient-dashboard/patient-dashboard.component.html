@@ -1,24 +1,109 @@
 <app-nav-bar></app-nav-bar>
+
 @if (spinner) {
-  <div class="progress-loader"><mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner></div>
+  <div class="progress-loader">
+    <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
+  </div>
 }
 
-<div class="container">
-  <div class="row navigation_row"><div class="col-12"><span class="pacientes_navigation">Inicio &gt; Pacientes &gt; Expediente</span></div></div>
-
-  <div class="row">
-    <div class="col-6"><div class="custom_card_header"><div class="custom_icon"><mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon></div><div><p class="custom_card_title">{{ paciente?.name }} {{ paciente?.middle_name }} {{ paciente?.last_name }} @if (antecedentes) {<mat-icon class="alergy-icon" aria-label="Antecedentes del paciente" fontIcon="warning" [matTooltip]="antecedentes"></mat-icon>}</p></div></div></div>
-    <div class="col-5"><div class="finanzas_container"><div><p class="dashboard_finanzas_table_title">Balance</p><p class="dashboard_finanzas_table_adeudo" [ngClass]="patientBalance > 0 ? 'balance-income-color' : 'balance-debt-color'">{{ patientBalance | currency:'':'symbol':'1.2-2' }}</p></div></div></div>
+<main class="container patient-dashboard">
+  <div class="navigation_row">
+    <span class="pacientes_navigation">Inicio &gt; Pacientes &gt; Expediente</span>
   </div>
 
-  <div class="menu_grid">
-    <div class="custom_card_header"><div class="custom_icon"><mat-icon svgIcon="ficha_id" class="dashboard_agenda_icon"></mat-icon></div><div class="custom_title" (click)="goToExpediente()"><p class="custom_card_title">Ficha de identificación</p><span class="custom-card-subtitle">Consulta y modifica los datos</span></div></div>
-    <div class="custom_card_header"><div class="custom_icon"><mat-icon svgIcon="concentimientos" class="dashboard_agenda_icon"></mat-icon></div><div class="custom_title" (click)="goToConsentimientos()"><p class="custom_card_title">Consentimientos</p><span class="custom-card-subtitle">Imprime y almacena consentimientos personalizados</span></div></div>
-    <div class="custom_card_header"><div class="custom_icon"><mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon></div><div class="custom_title" (click)="goToNotasEvolucion()"><p class="custom_card_title">Notas de evolución</p><span class="custom-card-subtitle">Agrega una nueva o revisa el historial</span></div></div>
-    <div class="custom_card_header"><div class="custom_icon"><mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon></div><div class="custom_title" (click)="goToTreatmentPlans()"><p class="custom_card_title">Planes de tratamiento</p><span class="custom-card-subtitle">Consulta las propuestas clínicas y económicas del paciente</span></div></div>
-    <div class="custom_card_header"><div class="custom_icon"><mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon></div><div class="custom_title" (click)="goToHistorialPagos()"><p class="custom_card_title">Historial de pagos</p><span class="custom-card-subtitle">Resumen de pagos del usuario</span></div></div>
+  <section class="patient-summary" aria-label="Resumen del paciente">
+    <div class="custom_card_header patient-identity">
+      <div class="custom_icon">
+        <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
+      </div>
+      <div class="patient-name-container">
+        <p class="custom_card_title patient-name">
+          {{ paciente?.name }} {{ paciente?.middle_name }} {{ paciente?.last_name }}
+          @if (antecedentes) {
+            <mat-icon
+              class="alergy-icon"
+              aria-label="Antecedentes del paciente"
+              fontIcon="warning"
+              [matTooltip]="antecedentes">
+            </mat-icon>
+          }
+        </p>
+      </div>
+    </div>
+
+    <div class="finanzas_container patient-balance">
+      <div>
+        <p class="dashboard_finanzas_table_title">Balance</p>
+        <p
+          class="dashboard_finanzas_table_adeudo"
+          [ngClass]="patientBalance > 0 ? 'balance-income-color' : 'balance-debt-color'">
+          {{ patientBalance | currency:'':'symbol':'1.2-2' }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="menu_grid" aria-label="Secciones del expediente">
+    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToExpediente()">
+      <span class="custom_icon">
+        <mat-icon svgIcon="ficha_id" class="dashboard_agenda_icon"></mat-icon>
+      </span>
+      <span class="custom_title">
+        <span class="custom_card_title">Ficha de identificación</span>
+        <span class="custom-card-subtitle">Consulta y modifica los datos</span>
+      </span>
+    </button>
+
+    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToConsentimientos()">
+      <span class="custom_icon">
+        <mat-icon svgIcon="concentimientos" class="dashboard_agenda_icon"></mat-icon>
+      </span>
+      <span class="custom_title">
+        <span class="custom_card_title">Consentimientos</span>
+        <span class="custom-card-subtitle">Imprime y almacena consentimientos personalizados</span>
+      </span>
+    </button>
+
+    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToNotasEvolucion()">
+      <span class="custom_icon">
+        <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+      </span>
+      <span class="custom_title">
+        <span class="custom_card_title">Notas de evolución</span>
+        <span class="custom-card-subtitle">Agrega una nueva o revisa el historial</span>
+      </span>
+    </button>
+
+    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToTreatmentPlans()">
+      <span class="custom_icon">
+        <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+      </span>
+      <span class="custom_title">
+        <span class="custom_card_title">Planes de tratamiento</span>
+        <span class="custom-card-subtitle">Consulta las propuestas clínicas y económicas del paciente</span>
+      </span>
+    </button>
+
+    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToHistorialPagos()">
+      <span class="custom_icon">
+        <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
+      </span>
+      <span class="custom_title">
+        <span class="custom_card_title">Historial de pagos</span>
+        <span class="custom-card-subtitle">Resumen de pagos del paciente</span>
+      </span>
+    </button>
+
     @if (showPatientOdontogram) {
-      <div class="custom_card_header"><div class="custom_icon"><mat-icon color="primary" svgIcon="odontograma" class="dashboard_agenda_icon"></mat-icon></div><div class="custom_title" (click)="goToOdontograma()"><p class="custom_card_title">Odontograma</p><span class="custom-card-subtitle">Consulta y modifica el odontograma de este paciente</span></div></div>
+      <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToOdontograma()">
+        <span class="custom_icon">
+          <mat-icon color="primary" svgIcon="odontograma" class="dashboard_agenda_icon"></mat-icon>
+        </span>
+        <span class="custom_title">
+          <span class="custom_card_title">Odontograma</span>
+          <span class="custom-card-subtitle">Consulta y modifica el odontograma de este paciente</span>
+        </span>
+      </button>
     }
-  </div>
-</div>
+  </nav>
+</main>
