@@ -111,6 +111,13 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['schedule'])
   }
 
+  handleAppointmentRowKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.goToAgenda();
+    }
+  }
+
   retrieveAppointments(fromDate?: string, toDate?: string): Observable<Appointment[]> {
     return this.appointmentService.listAppointments(fromDate, toDate).pipe(
       map(response => response.data ?? []),

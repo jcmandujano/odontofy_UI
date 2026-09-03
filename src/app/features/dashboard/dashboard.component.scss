@@ -115,13 +115,6 @@
   top: -2px;
 }
 
-.dashboard_logout_icon {
-  width: 20px;
-  height: auto;
-  margin: 10px;
-  cursor: pointer;
-}
-
 .dashboard_agenda_actions {
   width: 70px;
   height: auto;
@@ -230,6 +223,21 @@ mat-list-item {
   justify-content: space-between;
 }
 
+.dashboard_appointment_row {
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.dashboard_appointment_row:hover,
+.dashboard_appointment_row:focus-visible {
+  background: rgba(217, 232, 255, 0.75);
+}
+
+.dashboard_appointment_row:focus-visible {
+  outline: 2px solid #407DDA;
+  outline-offset: 2px;
+}
+
 mat-list {
   padding: 10px 20px;
 }
@@ -331,11 +339,7 @@ mat-list {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.dashboard_list_actons {
-  display: flex;
-  align-items: center;
+  width: 100%;
 }
 
 .pacientes_list_btn {
