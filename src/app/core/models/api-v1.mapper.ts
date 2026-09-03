@@ -36,7 +36,8 @@ export const toUiPatient = (value: ApiV1Patient): Patient => Object.assign(new P
   personal_medical_history: value.personalMedicalHistory ?? {},
   email: value.email ?? '',
   status: value.active,
-  debt: Number(value.currentBalance ?? 0)
+  debt: Number(value.currentBalance ?? 0),
+  createdAt: new Date(value.createdAt)
 });
 
 export const toApiPatient = (value: Partial<Patient>) => ({

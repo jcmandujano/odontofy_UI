@@ -20,6 +20,7 @@ export class Patient {
     public email!: string
     public status!: boolean
     public debt!: number
+    public createdAt?: Date
 
     constructor(){
         this.name = ''
@@ -50,6 +51,7 @@ export class Patient {
         // Transformaciones específicas
         p.debt = Number(data.debt ?? 0);
         p.date_of_birth = data.date_of_birth ? new Date(data.date_of_birth) : new Date();
+        p.createdAt = data.createdAt ? new Date(data.createdAt) : undefined;
         p.status = Boolean(data.status);
     
         return p;
