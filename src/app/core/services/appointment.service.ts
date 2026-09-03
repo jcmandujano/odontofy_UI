@@ -71,13 +71,16 @@ interface ApiExternalCalendarEvent {
     allDay: boolean;
 }
 
-const toUiExternalAppointment = (value: ApiExternalCalendarEvent): Appointment => new Appointment(
-    0,
-    0,
-    value.startsAt!,
-    value.endsAt!,
-    '',
-    value.summary ?? 'Evento de Google Calendar',
-    value.id,
-    'EXTERNAL'
+const toUiExternalAppointment = (value: ApiExternalCalendarEvent): Appointment => Object.assign(
+    new Appointment(
+        0,
+        0,
+        value.startsAt!,
+        value.endsAt!,
+        '',
+        value.summary ?? 'Evento de Google Calendar',
+        value.id,
+        'EXTERNAL'
+    ),
+    { patientFullName: value.summary ?? 'Evento de Google Calendar' }
 );

@@ -58,15 +58,22 @@ export const toApiPatient = (value: Partial<Patient>) => ({
   ...(value.email !== undefined && { email: value.email || null })
 });
 
-export const toUiAppointment = (value: ApiV1Appointment): Appointment => new Appointment(
-  value.id,
-  value.patientId ?? 0,
-  value.startsAt,
-  value.endsAt,
-  value.note ?? '',
-  value.reason ?? '',
-  '',
-  value.status
+export const toUiAppointment = (value: ApiV1Appointment): Appointment => Object.assign(
+  new Appointment(
+    value.id,
+    value.patientId ?? 0,
+    value.startsAt,
+    value.endsAt,
+    value.note ?? '',
+    value.reason ?? '',
+    '',
+    value.status
+  ),
+  {
+    patientFullName: value.patient
+      ? `${value.patient.name} ${value.patient.lastName}`.trim()
+      : ''
+  }
 );
 
 export const toApiAppointment = (value: Appointment) => ({

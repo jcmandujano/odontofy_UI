@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { forkJoin, map, Observable, tap } from 'rxjs';
+import { catchError, finalize, forkJoin, map, Observable, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -74,23 +74,19 @@ export class DashboardComponent implements OnInit {
     this.fromDate = startOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
     this.toDate = endOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
 
-    const metodos$ = [
+    const dashboardRequests$ = [
       this.loadInformedConsents(),
       this.retrievePatients(),
-      this.retrieveAppointments( this.fromDate, this.toDate),
+      this.retrieveAppointments(this.fromDate, this.toDate),
       this.retrievePaymentBalance()
-    ].filter(m => m);
+    ];
 
-    forkJoin(metodos$).subscribe({
-      next: () => {
-        console.log('Todos los métodos ejecutados');
-        this.spinner.hide();
-      },
+    forkJoin(dashboardRequests$).pipe(
+      finalize(() => this.spinner.hide())
+    ).subscribe({
       error: (err: any) => {
         console.error('Error ejecutando métodos:', err);
-        this.spinner.hide();
-      },
-      complete: () => this.spinner.hide()
+      }
     });
   }
 
@@ -115,22 +111,26 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['schedule'])
   }
 
-  retrieveAppointments(fromDate?: string, toDate?: string) {
-    this.appointmentService.listAppointments(fromDate, toDate).subscribe(response => {
-      console.log('APPOINTMENTS', response)
-    }, (error) => {
-      console.log('ERROR', error)
-      this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
-    })
+  retrieveAppointments(fromDate?: string, toDate?: string): Observable<Appointment[]> {
+    return this.appointmentService.listAppointments(fromDate, toDate).pipe(
+      map(response => response.data ?? []),
+      tap(appointments => this.appointmentList = appointments),
+      catchError(error => {
+        this.handleError(error);
+        return of([]);
+      })
+    );
   }
 
-  retrievePatients() {
-    this.patientService.listPatients().subscribe(response => {
-      this.patientsList = response.data?.results ?? [];
-    }, (error) => {
-      console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
-    })
+  retrievePatients(): Observable<Patient[]> {
+    return this.patientService.listPatients().pipe(
+      map(response => response.data?.results ?? []),
+      tap(patients => this.patientsList = patients),
+      catchError(error => {
+        this.handleError(error);
+        return of([]);
+      })
+    );
   }
 
   saveFinanceOptions(showFinanceData: boolean) {
@@ -152,13 +152,15 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  retrievePaymentBalance() {
-    this.paymentService.getPaymentBalance().subscribe(response => {
-      this.paymentBalance = response.data as PaymentBalance;
-    }, (error) => {
-      console.log('ERROR', error.error.message)
-      this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
-    })
+  retrievePaymentBalance(): Observable<PaymentBalance> {
+    return this.paymentService.getPaymentBalance().pipe(
+      map(response => response.data ?? new PaymentBalance()),
+      tap(paymentBalance => this.paymentBalance = paymentBalance),
+      catchError(error => {
+        this.handleError(error);
+        return of(new PaymentBalance());
+      })
+    );
   }
 
   findPatientNameById(patientId: number): string {
@@ -208,7 +210,11 @@ export class DashboardComponent implements OnInit {
       tap(response => this.informedConsentList = response.data?.results ?? []), // Asignar datos al recibir respuesta
       // Map the API response to just the results array
       // Import 'map' from 'rxjs/operators' if not already imported
-      map(response => response.data?.results ?? [])
+      map(response => response.data?.results ?? []),
+      catchError(error => {
+        this.handleError(error);
+        return of([]);
+      })
     );
   }
 
@@ -254,9 +260,12 @@ export class DashboardComponent implements OnInit {
    * @param error Error capturado de la respuesta HTTP.
    */
   private handleError(error: any): void {
-    console.error('ERROR', error.error.error.message);
-    // Descomentar la siguiente línea para mostrar una notificación de error
-    // this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar');
+    console.error('ERROR', error);
+    const message = error?.error?.error?.message
+      ?? error?.error?.message
+      ?? error?.message
+      ?? 'No fue posible cargar la información del dashboard.';
+    this.openSnackbar(`Ocurrió un error: ${message}`, 'Aceptar');
   }
 
 }
