@@ -95,19 +95,23 @@ export class PatientFileComponent {
 
   //guarda la informacion del paciente
   crearPaciente() {
-    if (this.crearPacientesForm.valid) {
-      this.spinner = true
-      this.patient = this.crearPacientesForm.value
-      this.pacientesService.createPatient(this.patient).subscribe(data => {
-        this.openSnackbar('Se guardo la informacion correctamente', 'Ok')
-        this.router.navigate(['/lista-pacientes'])
-        this.spinner = false
-      }, (error) => {
-        this.spinner = false
-        console.log('ERROR', error)
-        this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
-      })
+    this.crearPacientesForm.markAllAsTouched()
+    if (this.crearPacientesForm.invalid) {
+      this.showFirstValidationError()
+      return
     }
+
+    this.spinner = true
+    this.patient = this.crearPacientesForm.value
+    this.pacientesService.createPatient(this.patient).subscribe(data => {
+      this.openSnackbar('Se guardo la informacion correctamente', 'Ok')
+      this.router.navigate(['/patient-list'])
+      this.spinner = false
+    }, (error) => {
+      this.spinner = false
+      console.log('ERROR', error)
+      this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+    })
   }
 
   actualizarPaciente() {
@@ -161,6 +165,39 @@ export class PatientFileComponent {
     }
 
     return this.crearPacientesForm.controls['phone'].hasError('pattern') ? 'No es un telefono valido' : '';
+  }
+
+  private showFirstValidationError(): void {
+    const validations = [
+      { name: 'name', required: 'Ingresa el nombre del paciente.' },
+      { name: 'middle_name', required: 'Ingresa el apellido paterno del paciente.' },
+      { name: 'last_name', required: 'Ingresa el apellido materno del paciente.' },
+      { name: 'date_of_birth', required: 'Ingresa la fecha de nacimiento del paciente.' },
+      {
+        name: 'phone',
+        required: 'Ingresa el teléfono del paciente.',
+        invalid: 'Ingresa un teléfono válido.'
+      },
+      {
+        name: 'email',
+        required: 'Ingresa el correo electrónico del paciente.',
+        invalid: 'Ingresa un correo electrónico válido.'
+      }
+    ] as const
+
+    for (const validation of validations) {
+      const control = this.crearPacientesForm.get(validation.name)
+      if (!control?.invalid) continue
+
+      const message = control.hasError('required')
+        ? validation.required
+        : 'invalid' in validation
+          ? validation.invalid
+          : validation.required
+
+      this.openSnackbar(message, 'Ok')
+      return
+    }
   }
 
   buildPacientesForm(): FormGroup {

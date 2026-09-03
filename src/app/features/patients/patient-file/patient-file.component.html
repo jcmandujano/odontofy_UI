@@ -591,17 +591,17 @@
         <section class="crear-pacientes-actions">
             <div class="row">
                 <div class="col-12 custom-actions">
-                    <button mat-fab extended class="action-button-cancel me-2" (click)="cancel()">
+                    <button type="button" mat-fab extended class="action-button-cancel me-2" (click)="cancel()">
                         Cancelar
                     </button>
                     @if(!pacienteId){
-                    <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3"
+                    <button type="button" mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3"
                         (click)="crearPaciente()">
                         Guardar
                     </button>
                     }
                     @if(pacienteId){
-                    <button mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3"
+                    <button type="button" mat-fab extended class="action-button-confirm  mat-elevation-z0 mr-3"
                         (click)="actualizarPaciente()">
                         Actualizar
                     </button>
