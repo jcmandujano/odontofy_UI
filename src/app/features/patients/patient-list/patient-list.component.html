@@ -16,7 +16,7 @@
         </div>
         <div class="col-6">
             <div class="nuevo_paciente_button_container"> <button mat-fab extended class="logout-navbar-button"
-                    (click)="crearPaciente()">Agregar Nuevo</button> </div>
+                    (click)="crearPaciente()">Agregar paciente</button> </div>
 
         </div>
     </div>
@@ -26,7 +26,7 @@
                 <mat-label>Buscar...</mat-label>
                 <input matInput placeholder="" [(ngModel)]="searchCriteria" (keyup.enter)="onSearch()">
                 @if (searchCriteria) {
-                    <button class="clearCriteria" matSuffix matIconButton aria-label="Clear" (click)="clearSearch()">
+                    <button class="clearCriteria" matSuffix matIconButton aria-label="Limpiar búsqueda" (click)="clearSearch()">
                       <mat-icon>close</mat-icon>
                     </button>
                   }
@@ -55,7 +55,7 @@
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="prox_cita">
-                    <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Proxima cita </th>
+                    <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Próxima cita </th>
                     <td mat-cell *matCellDef="let element" class="nextdate-content-column">
                         --
                     </td>
@@ -80,7 +80,7 @@
             }
             @if (!dataSource || dataSource.data.length === 0) {
             <app-no-data-found [title]="'No tienes pacientes.'"
-                [message]="'Haz click en el boton Agregar Nuevo para comenzar a generarlos.'">
+                [message]="'Haz clic en el botón «Agregar paciente» para registrar el primero.'">
             </app-no-data-found>
             }
         </div>

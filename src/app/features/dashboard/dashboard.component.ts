@@ -120,7 +120,7 @@ export class DashboardComponent implements OnInit {
       console.log('APPOINTMENTS', response)
     }, (error) => {
       console.log('ERROR', error)
-      this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
     })
   }
 
@@ -129,7 +129,7 @@ export class DashboardComponent implements OnInit {
       this.patientsList = response.data?.results ?? [];
     }, (error) => {
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -147,7 +147,7 @@ export class DashboardComponent implements OnInit {
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -157,7 +157,7 @@ export class DashboardComponent implements OnInit {
       this.paymentBalance = response.data as PaymentBalance;
     }, (error) => {
       console.log('ERROR', error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
     })
   }
 
@@ -190,7 +190,7 @@ export class DashboardComponent implements OnInit {
           }, (error) => {
             this.spinner.hide()
             console.log('ERROR', error.error.message)
-            this.openSnackbar(`Ocurrio un error: ${error.error.message}`, 'Ok')
+            this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
           })
         }
       });
@@ -256,7 +256,7 @@ export class DashboardComponent implements OnInit {
   private handleError(error: any): void {
     console.error('ERROR', error.error.error.message);
     // Descomentar la siguiente línea para mostrar una notificación de error
-    // this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok');
+    // this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar');
   }
 
 }

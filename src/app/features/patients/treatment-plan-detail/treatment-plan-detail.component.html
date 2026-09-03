@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row navigation_row">
         <div class="col-12">
-            <span class="pacientes_navigation">Inicio > Pacientes > Planes de Tratamiento > Detalle</span>
+            <span class="pacientes_navigation">Inicio > Pacientes > Planes de tratamiento > Detalle</span>
         </div>
     </div>
 
@@ -34,7 +34,7 @@
 
     @if (treatmentPlan) {
     <section class="detail-section">
-        <p class="section_title">Informacion general</p>
+        <p class="section_title">Información general</p>
         <div class="info-grid">
             <div class="info-item">
                 <span class="info-label">Plan</span>
@@ -42,7 +42,7 @@
             </div>
             @if (treatmentPlan.description) {
             <div class="info-item wide">
-                <span class="info-label">Descripcion</span>
+                <span class="info-label">Descripción</span>
                 <span class="info-value">{{treatmentPlan.description}}</span>
             </div>
             }
@@ -69,13 +69,13 @@
 
     <section class="detail-section">
         <div class="section_header">
-            <p class="section_title">Items del plan</p>
+            <p class="section_title">Ítems del plan</p>
             <button mat-fab extended class="logout-navbar-button" (click)="openTreatmentPlanItemDialog()">Agregar tratamiento</button>
         </div>
         @if (treatmentPlanItems.length > 0) {
         <table mat-table [dataSource]="treatmentPlanItems" class="mat-elevation-z0 info-table">
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef class="name-header-column"> Item </th>
+                <th mat-header-cell *matHeaderCellDef class="name-header-column"> Ítem </th>
                 <td mat-cell *matCellDef="let element" class="name-content-column">
                     <div>{{element.name}}</div>
                     @if (element.description) {
@@ -93,7 +93,7 @@
             </ng-container>
 
             <ng-container matColumnDef="area">
-                <th mat-header-cell *matHeaderCellDef class="short-header-column"> Area </th>
+                <th mat-header-cell *matHeaderCellDef class="short-header-column"> Área </th>
                 <td mat-cell *matCellDef="let element" class="table-content-column"> {{getDisplayValue(element.area)}} </td>
             </ng-container>
 
@@ -154,8 +154,8 @@
         </table>
         }
         @if (treatmentPlanItems.length === 0) {
-        <app-no-data-found [title]="'Este plan todavia no tiene items'"
-            [message]="'Cuando se agreguen procedimientos, apareceran en esta seccion.'">
+        <app-no-data-found [title]="'Este plan todavía no tiene ítems'"
+            [message]="'Cuando se agreguen procedimientos, aparecerán en esta sección.'">
         </app-no-data-found>
         }
     </section>

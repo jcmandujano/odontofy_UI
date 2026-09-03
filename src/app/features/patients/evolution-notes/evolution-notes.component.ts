@@ -97,7 +97,7 @@ export class EvolutionNotesComponent {
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -112,7 +112,7 @@ export class EvolutionNotesComponent {
         this.loadTreatmentPlanDetailsForNotes(this.notasList);
       },
       error: error => {
-        this.openSnackbar(`Ocurrio un error al cargar planes: ${this.getErrorMessage(error)}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error al cargar los planes: ${this.getErrorMessage(error)}`, 'Aceptar')
       }
     })
   }
@@ -126,7 +126,7 @@ export class EvolutionNotesComponent {
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -145,7 +145,7 @@ export class EvolutionNotesComponent {
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -163,7 +163,7 @@ export class EvolutionNotesComponent {
       })
     }, (error) => {
       this.spinner.hide()
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -215,7 +215,7 @@ export class EvolutionNotesComponent {
   eliminarNota(id: any) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Nota',
+        title: 'Eliminar nota',
         message: '¿Seguro que quieres eliminar esta nota?',
       }
     });
@@ -228,7 +228,7 @@ export class EvolutionNotesComponent {
           this.spinner.hide()
         }, (error) => {
           this.spinner.hide()
-          this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+          this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
         })
       }
     });
@@ -301,7 +301,7 @@ export class EvolutionNotesComponent {
     return error?.error?.error?.message
       ?? error?.error?.message
       ?? error?.message
-      ?? 'Ocurrio un problema al procesar tu solicitud';
+      ?? 'Ocurrió un problema al procesar tu solicitud';
   }
 
   private ensureSelectedTreatmentPlanItems() {
@@ -335,7 +335,7 @@ export class EvolutionNotesComponent {
         }
       },
       error: error => {
-        this.openSnackbar(`Ocurrio un error al cargar procedimientos del plan: ${this.getErrorMessage(error)}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error al cargar los procedimientos del plan: ${this.getErrorMessage(error)}`, 'Aceptar')
       }
     })
   }
@@ -352,13 +352,13 @@ export class EvolutionNotesComponent {
       { status: TreatmentPlanItemStatus.COMPLETED }
     ).subscribe({
       next: () => {
-        this.openSnackbar('Nota guardada y tratamiento marcado como completado', 'Ok')
+        this.openSnackbar('La nota se guardó y el tratamiento se marcó como completado', 'Aceptar')
         this.refreshTreatmentPlanDetail(response.treatment_plan_id)
         onComplete()
       },
       error: error => {
         this.spinner.hide()
-        this.openSnackbar(`La nota se guardo, pero no se pudo completar el tratamiento: ${this.getErrorMessage(error)}`, 'Ok')
+        this.openSnackbar(`La nota se guardó, pero no se pudo completar el tratamiento: ${this.getErrorMessage(error)}`, 'Aceptar')
       }
     })
   }
@@ -371,7 +371,7 @@ export class EvolutionNotesComponent {
         }
       },
       error: error => {
-        this.openSnackbar(`Ocurrio un error al refrescar el plan: ${this.getErrorMessage(error)}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error al actualizar el plan: ${this.getErrorMessage(error)}`, 'Aceptar')
       }
     })
   }

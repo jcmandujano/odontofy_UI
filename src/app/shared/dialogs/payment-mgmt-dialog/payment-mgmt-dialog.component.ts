@@ -50,9 +50,9 @@ export interface PaymentDialogResult {
 
 const PAYMENT_METHOD_LIST = [
   { id: 'CASH', description: 'Efectivo' },
-  { id: 'CREDIT_CARD', description: 'Tarjeta de Credito' },
-  { id: 'DEBIT_CARD', description: 'Tarjeta de Debito' },
-  { id: 'BANK_TRANSFER', description: 'Transferencia electronica' },
+  { id: 'CREDIT_CARD', description: 'Tarjeta de crédito' },
+  { id: 'DEBIT_CARD', description: 'Tarjeta de débito' },
+  { id: 'BANK_TRANSFER', description: 'Transferencia electrónica' },
 ];
 
 @Component({

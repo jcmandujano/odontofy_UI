@@ -2,13 +2,13 @@
 <section class="row header_row">
   <div class="col-9">
     <div class="title_container">
-      <span class="section_title">Gestionar Consentimientos Informados</span>
+      <span class="section_title">Gestionar consentimientos informados</span>
     </div>
   </div>
   <div class="col-3">
     <div class="nuevo_paciente_button_container">
       <button mat-fab extended class="logout-navbar-button" (click)="launchAddConsentDialog()">Agregar
-        Consentimiento</button>
+        consentimiento</button>
     </div>
   </div>
 </section>
@@ -49,7 +49,7 @@
 
   @if (!dataSource || dataSource.data.length === 0) {
   <app-no-data-found [title]="'No tienes consentimientos informados.'"
-    [message]="'Haz click en el boton Agregar consentimiento para comenzar a generarlos.'">
+    [message]="'Haz clic en el botón «Agregar consentimiento» para registrar el primero.'">
   </app-no-data-found>
   }
   <div class="row">

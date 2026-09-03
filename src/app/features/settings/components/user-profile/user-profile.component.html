@@ -2,7 +2,7 @@
     <section class="row header_row">
         <div class="col-9">
             <div class="title_container">
-                <span class="section_title">Gestionar Perfil</span>
+                <span class="section_title">Gestionar perfil</span>
             </div>
         </div>
         <div class="col-3">
@@ -15,13 +15,13 @@
                 <mat-label>Nombre</mat-label>
                 <input matInput formControlName="name">
                 @if(userProfileForm.controls['name'].invalid){
-                    <mat-error>Debes ingresar el numbre</mat-error>
+                    <mat-error>Debes ingresar el nombre</mat-error>
                 }
             </mat-form-field>
         </div>
         <div class="col-6">
             <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Apellido Paterno</mat-label>
+                <mat-label>Apellido paterno</mat-label>
                 <input matInput formControlName="middle_name">
                 @if(userProfileForm.controls['middle_name'].invalid){
                     <mat-error>Debes ingresar el apellido paterno</mat-error>
@@ -30,7 +30,7 @@
         </div>
         <div class="col-6">
             <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Apellido Materno</mat-label>
+                <mat-label>Apellido materno</mat-label>
                 <input matInput formControlName="last_name">
                 @if(userProfileForm.controls['last_name'].invalid){
                     <mat-error>Debes ingresar el apellido materno</mat-error>
@@ -39,9 +39,9 @@
         </div>
         <div class="col-6">
             <mat-form-field class="full-width" appearance="outline">
-                <mat-label>Fecha de Nacimiento</mat-label>
+                <mat-label>Fecha de nacimiento</mat-label>
                 <input matInput [matDatepicker]="picker" formControlName="date_of_birth" (dateInput)="onDateChange($event)" (dateChange)="onDateChange($event)">
-                <mat-hint>DD/MM/YYYY</mat-hint>
+                <mat-hint>DD/MM/AAAA</mat-hint>
                 @if(userProfileForm.controls['date_of_birth'].invalid){
                     <mat-error>Debes ingresar la fecha de nacimiento</mat-error>
                 }
@@ -61,7 +61,7 @@
         </div>
         <div class="col-6">
             <mat-form-field class="full-width" appearance="outline" disabled>
-                <mat-label>Email</mat-label>
+                <mat-label>Correo electrónico</mat-label>
                 <input matInput [readonly]="isEmailDisabled" formControlName="email">
             </mat-form-field>
         </div>

@@ -95,11 +95,13 @@ describe('API v1 contract adapters', () => {
       phone: null,
       email: null,
       active: true,
-      currentBalance: '125.50'
+      currentBalance: '125.50',
+      createdAt: '2026-08-22T12:00:00.000Z'
     }], { pagination: { page: 2, pageSize: 25, total: 51, totalPages: 3 } }));
 
     expect(patient?.middle_name).toBe('');
     expect(patient?.debt).toBe(125.5);
+    expect(patient?.createdAt).toEqual(new Date('2026-08-22T12:00:00.000Z'));
   });
 
   it('normalizes the first patient page to the API base', () => {
@@ -149,7 +151,7 @@ describe('API v1 contract adapters', () => {
     const request = http.expectOne(`${environment.API_URL}/patients/4/evolution-notes/8`);
     expect(request.request.method).toBe('DELETE');
     expect(request.request.body).toEqual({
-      changeReason: 'Archivado solicitado desde el expediente clinico'
+      changeReason: 'Archivado solicitado desde el expediente clínico'
     });
     request.flush(envelope({
       id: 8,

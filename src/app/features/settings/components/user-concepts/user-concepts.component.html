@@ -2,12 +2,12 @@
 <section class="row header_row">
   <div class="col-9">
     <div class="title_container">
-      <span class="section_title">Gestionar Conceptos</span>
+      <span class="section_title">Gestionar conceptos</span>
     </div>
   </div>
   <div class="col-3">
     <div class="nuevo_paciente_button_container">
-      <button mat-fab extended class="logout-navbar-button" (click)="launchAddConceptDialog()">Agregar Concepto</button>
+      <button mat-fab extended class="logout-navbar-button" (click)="launchAddConceptDialog()">Agregar concepto</button>
     </div>
   </div>
 </section>
@@ -49,7 +49,7 @@
 
   @if (!dataSource || dataSource.data.length === 0) {
   <app-no-data-found [title]="'No tienes conceptos.'"
-    [message]="'Haz click en el boton Agregar concepto para comenzar a generarlos.'">
+    [message]="'Haz clic en el botón «Agregar concepto» para registrar el primero.'">
   </app-no-data-found>
   }
   <div class="row">

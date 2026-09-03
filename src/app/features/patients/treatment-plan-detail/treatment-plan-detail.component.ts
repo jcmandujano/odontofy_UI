@@ -97,7 +97,7 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -108,7 +108,7 @@ export class TreatmentPlanDetailComponent {
         this.conceptList = response.data?.results ?? [];
       },
       error: error => {
-        this.openSnackbar(`Ocurrio un error al cargar conceptos: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error al cargar los conceptos: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -169,7 +169,7 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -182,7 +182,7 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error al actualizar el estado: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error al actualizar el estado: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -213,7 +213,7 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -250,7 +250,7 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.setItemProcessing(itemId, false);
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -285,7 +285,7 @@ export class TreatmentPlanDetailComponent {
       },
       error: error => {
         this.setItemProcessing(itemId, false);
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -324,7 +324,7 @@ export class TreatmentPlanDetailComponent {
     return error?.error?.error?.message
       ?? error?.error?.message
       ?? error?.message
-      ?? 'Ocurrio un problema al procesar tu solicitud';
+      ?? 'Ocurrió un problema al procesar tu solicitud';
   }
 
   isItemProcessing(itemId: number): boolean {

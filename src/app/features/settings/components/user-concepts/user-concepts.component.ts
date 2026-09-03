@@ -99,7 +99,7 @@ export class UserConceptsComponent {
   deleteConcept(id: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Concepto',
+        title: 'Eliminar concepto',
         message: '¿Seguro que quieres eliminar este concepto?',
       }
     });

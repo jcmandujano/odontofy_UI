@@ -111,7 +111,7 @@ export class AgendaComponent {
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -233,7 +233,7 @@ export class AgendaComponent {
   handleDeleteEvent(event: CalendarEvent): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Cita',
+        title: 'Eliminar cita',
         message: '¿Seguro que quieres eliminar esta cita?',
       }
     });
@@ -251,11 +251,11 @@ export class AgendaComponent {
     this.spinner.show()
     this.appointmentService.createAppointment(appointment).subscribe(data => {
       this.retrieveAppointments(this.fromDate ?? '', this.toDate ?? '')
-      this.openSnackbar('Cita creada exitosamente', 'Ok')
+      this.openSnackbar('Cita creada correctamente', 'Aceptar')
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -263,11 +263,11 @@ export class AgendaComponent {
     this.spinner.show()
     this.appointmentService.deleteAppointment(appointment_id).subscribe(data => {
       this.retrieveAppointments(this.fromDate ?? '', this.toDate ?? '')
-      this.openSnackbar('Cita eliminada exitosamente', 'Ok')
+      this.openSnackbar('Cita eliminada correctamente', 'Aceptar')
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -275,11 +275,11 @@ export class AgendaComponent {
     this.spinner.show()
     this.appointmentService.updateAppointment(appointment_id, appointment).subscribe(data => {
       this.retrieveAppointments(this.fromDate ?? '', this.toDate ?? '')
-      this.openSnackbar('Cita actualizada exitosamente', 'Ok')
+      this.openSnackbar('Cita actualizada correctamente', 'Aceptar')
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -312,7 +312,7 @@ export class AgendaComponent {
     }
       , (error) => {
         console.log('ERROR', error.error.error.message)
-        this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+        this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
       })
   }
 

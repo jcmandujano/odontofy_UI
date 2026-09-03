@@ -74,7 +74,7 @@ export class PatientListComponent implements AfterViewInit {
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
     })
   }
 
@@ -100,7 +100,7 @@ export class PatientListComponent implements AfterViewInit {
   eliminaPaciente(pacienteId: any) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar Paciente',
+        title: 'Eliminar paciente',
         message: '¿Seguro que quieres eliminar a este paciente?'
       }
     });
@@ -109,13 +109,13 @@ export class PatientListComponent implements AfterViewInit {
       if (result) {
         this.spinner.show()
         this.pacientesService.deletePatient(pacienteId).subscribe(data => {
-          this.openSnackbar('Se elimino la informacion correctamente', 'Ok')
+          this.openSnackbar('La información se eliminó correctamente', 'Aceptar')
           this.recuperaPacientes()
           this.spinner.hide()
         }, (error) => {
           this.spinner.hide()
           console.log('ERROR', error.error.error.message)
-          this.openSnackbar(`Ocurrio un error: ${error.error.error.message}`, 'Ok')
+          this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
         })
       }
     });

@@ -37,6 +37,7 @@ export interface ApiV1Patient {
   email: string | null;
   active: boolean;
   currentBalance: string;
+  createdAt: string;
 }
 
 export interface ApiV1Appointment {

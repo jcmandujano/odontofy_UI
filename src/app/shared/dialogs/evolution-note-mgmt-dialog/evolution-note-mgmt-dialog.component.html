@@ -1,10 +1,10 @@
-<h2 mat-dialog-title class="dialog-title">Nueva Nota</h2>
+<h2 mat-dialog-title class="dialog-title">Nueva nota</h2>
 <mat-dialog-content>
   <div class="custom-content">
     <mat-form-field class="full-width" appearance="outline">
       <mat-label>Fecha de la nota</mat-label>
       <input matInput [matDatepicker]="picker"  [(ngModel)]="creationDate">
-      <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-hint>DD/MM/AAAA</mat-hint>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -22,7 +22,7 @@
 
       @if (!isGeneralPatientNote) {
       <mat-form-field class="full-width" appearance="outline">
-        <mat-label>Procedimiento / item del plan</mat-label>
+        <mat-label>Procedimiento / ítem del plan</mat-label>
         <mat-select [(ngModel)]="selectedTreatmentPlanItemId" (selectionChange)="onTreatmentPlanItemChange()">
           <mat-option [value]="null">Avance general del plan</mat-option>
           @for (item of selectedTreatmentPlanItems; track item.id) {

@@ -18,17 +18,17 @@
       <div class="nuevo_paciente_button_container">
         @if (!isUserSyncGoogle) {
         <button mat-stroked-button color="primary" class="google-connect-btn" (click)="syncGoogle()">
-          <img src="icons/google-calendar.png" alt="Google logo" />
-          Connectar
+          <img src="icons/google-calendar.png" alt="Logotipo de Google" />
+          Conectar
         </button>
         }
         <!--               <button mat-stroked-button color="primary" class="google-connect-btn" (click)="syncGoogle()" *ngIf="!isUserSyncGoogle">
-                <img src="icons/google-calendar.png" alt="Google logo" />
-                Connectar
+                <img src="icons/google-calendar.png" alt="Logotipo de Google" />
+                Conectar
               </button> -->
 
         <button mat-fab extended class="logout-navbar-button mat-elevation-z0" (click)="newAppointment()">Agregar
-          Cita</button>
+          cita</button>
       </div>
     </div>
   </div>

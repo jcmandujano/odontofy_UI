@@ -86,7 +86,7 @@ export class PatientTreatmentPlansComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -132,7 +132,7 @@ export class PatientTreatmentPlansComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -148,7 +148,7 @@ export class PatientTreatmentPlansComponent {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Eliminar plan de tratamiento',
-        message: `Estas seguro de eliminar "${treatmentPlan.title}"? Tambien se eliminaran sus tratamientos.`,
+        message: `¿Estás seguro de eliminar «${treatmentPlan.title}»? También se eliminarán sus tratamientos.`,
         confirmText: 'Eliminar'
       }
     });
@@ -173,7 +173,7 @@ export class PatientTreatmentPlansComponent {
       },
       error: error => {
         this.spinner.hide();
-        this.openSnackbar(`Ocurrio un error: ${this.getErrorMessage(error)}`, 'Ok');
+        this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }
@@ -200,7 +200,7 @@ export class PatientTreatmentPlansComponent {
     return error?.error?.error?.message
       ?? error?.error?.message
       ?? error?.message
-      ?? 'Ocurrio un problema al procesar tu solicitud';
+      ?? 'Ocurrió un problema al procesar tu solicitud';
   }
 
   private applyStatusFilter(): void {
