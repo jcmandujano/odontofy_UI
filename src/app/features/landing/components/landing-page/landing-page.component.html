@@ -1,17 +1,18 @@
-<main>
+<main class="landing-page">
+  <img class="toothbrush-decoration" src="/img/landing-toothbrush.png" alt="" aria-hidden="true">
+  <img class="teeth-decoration" src="/img/landing-teeth.svg" alt="" aria-hidden="true">
   <section class="content">
-    <img src="/img/logo_blue.png"><br>
-    <div class="row content_actions">
-      <div class="col-6" align="right">
-        <button routerLink="/login" mat-raised-button class="button button--alt">Iniciar sesión</button>
-      </div>
-      <div class="col-6">
-        <button routerLink="/register" mat-raised-button class="button button--alt">Registrarme</button>
-      </div>
+    <h1 class="brand" aria-label="Odontofy">
+      <span class="brand__primary">ODONT</span><span class="brand__secondary">OFY</span>
+    </h1>
+    <p class="tagline">Tu aplicación de gestión odontológica</p>
+    <div class="content_actions">
+      <button routerLink="/login" mat-raised-button class="button button--alt">Login</button>
+      <button routerLink="/register" mat-raised-button class="button button--alt">Registrarme</button>
     </div>
     <div class="content_legal">
-      <p class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</p><br>
-      <p class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</p>
+      <button type="button" class="legal_text" (click)="openTermsConditionsDialog()">Términos y condiciones</button>
+      <button type="button" class="legal_text" (click)="openPrivacyTermsDialog()">Aviso de privacidad</button>
     </div>
   </section>
   <router-outlet></router-outlet>
