@@ -14,7 +14,7 @@
   <section class="patient-summary" aria-label="Resumen del paciente">
     <div class="custom_card_header patient-identity">
       <div class="custom_icon">
-        <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
+        <mat-icon svgIcon="patientDashboardProfile" class="dashboard_agenda_icon"></mat-icon>
       </div>
       <div class="patient-name-container">
         <p class="custom_card_title patient-name">
@@ -46,7 +46,7 @@
   <nav class="menu_grid" aria-label="Secciones del expediente">
     <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToExpediente()">
       <span class="custom_icon">
-        <mat-icon svgIcon="ficha_id" class="dashboard_agenda_icon"></mat-icon>
+        <mat-icon svgIcon="patientDashboardFile" class="dashboard_agenda_icon"></mat-icon>
       </span>
       <span class="custom_title">
         <span class="custom_card_title">Ficha de identificación</span>
@@ -56,7 +56,7 @@
 
     <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToConsentimientos()">
       <span class="custom_icon">
-        <mat-icon svgIcon="concentimientos" class="dashboard_agenda_icon"></mat-icon>
+        <mat-icon svgIcon="patientDashboardConsents" class="dashboard_agenda_icon"></mat-icon>
       </span>
       <span class="custom_title">
         <span class="custom_card_title">Consentimientos</span>
@@ -66,7 +66,7 @@
 
     <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToNotasEvolucion()">
       <span class="custom_icon">
-        <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+        <mat-icon svgIcon="patientDashboardNotes" class="dashboard_agenda_icon"></mat-icon>
       </span>
       <span class="custom_title">
         <span class="custom_card_title">Notas de evolución</span>
@@ -76,7 +76,7 @@
 
     <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToTreatmentPlans()">
       <span class="custom_icon">
-        <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+        <mat-icon svgIcon="patientDashboardTreatmentPlan" class="dashboard_agenda_icon"></mat-icon>
       </span>
       <span class="custom_title">
         <span class="custom_card_title">Planes de tratamiento</span>
@@ -86,7 +86,7 @@
 
     <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToHistorialPagos()">
       <span class="custom_icon">
-        <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
+        <mat-icon svgIcon="patientDashboardPayments" class="dashboard_agenda_icon"></mat-icon>
       </span>
       <span class="custom_title">
         <span class="custom_card_title">Historial de pagos</span>
@@ -97,7 +97,7 @@
     @if (showPatientOdontogram) {
       <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToOdontograma()">
         <span class="custom_icon">
-          <mat-icon color="primary" svgIcon="odontograma" class="dashboard_agenda_icon"></mat-icon>
+          <mat-icon svgIcon="patientDashboardOdontogram" class="dashboard_agenda_icon"></mat-icon>
         </span>
         <span class="custom_title">
           <span class="custom_card_title">Odontograma</span>
