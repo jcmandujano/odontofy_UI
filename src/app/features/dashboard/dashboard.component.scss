@@ -154,15 +154,58 @@ mat-card-title {
   width: 50px;
   height: auto;
   margin: 0px 20px;
+  color: #407DDA;
 }
 
 .dashboard_hide_show_finance_icon {
-  width: 50px;
-  height: auto;
-  margin: 10px 20px;
-  font-size: 30px;
-  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  font-size: 17px;
   color: #407DDA;
+}
+
+.finance-card-header {
+  align-items: center;
+  position: relative;
+}
+
+.finance-card-header .custom_card_header {
+  padding-right: 52px;
+  width: 100%;
+}
+
+.finance-card-actions {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  padding-right: 0;
+  position: absolute;
+  right: 16px;
+  top: calc(50% - 6px);
+  transform: translateY(-50%);
+}
+
+.finance-visibility-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.finance-visibility-button:hover {
+  background: rgba(64, 125, 218, 0.08);
+}
+
+.finance-visibility-button:focus-visible {
+  outline: 2px solid #407DDA;
+  outline-offset: 2px;
 }
 
 .dashboard_agenda_dot {
@@ -171,6 +214,7 @@ mat-card-title {
   margin: 0px 10px;
   position: relative;
   top: 8px !important;
+  color: #407DDA;
 }
 
 .custom_title {

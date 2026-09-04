@@ -23,7 +23,7 @@
             <mat-card-header>
               <div class="custom_card_header">
                 <div class="custom_icon">
-                  <mat-icon svgIcon="agenda" class="dashboard_agenda_icon"></mat-icon>
+                  <mat-icon svgIcon="mainDashboardAgenda" class="dashboard_agenda_icon"></mat-icon>
                 </div>
                 <div class="custom_title">
                   <p class="custom_card_title">Agenda</p>
@@ -48,7 +48,7 @@
                       (keydown)="handleAppointmentRowKeydown($event, event)">
                       <div class="dashboard_list_container">
                         <div>
-                          <mat-icon class="dashboard_agenda_dot" svgIcon="agendaDot"></mat-icon>
+                          <mat-icon class="dashboard_agenda_dot" svgIcon="mainDashboardAppointmentDot"></mat-icon>
                           <span>
                             <!--  <span class="day">{{event.appointment_date | date:'dd/MM/y'}} </span>
                             <span class="hour">{{event.appointment_time | slice:0:5 }} </span> -->
@@ -79,7 +79,7 @@
               <div class="dashboard_container">
                 <div class="custom_card_flex_container">
                   <div class="custom_icon">
-                    <mat-icon svgIcon="pacientes" class="dashboard_agenda_icon"></mat-icon>
+                      <mat-icon svgIcon="mainDashboardPatients" class="dashboard_agenda_icon"></mat-icon>
                   </div>
                   <div class="custom_title">
                     <p class="custom_card_title pacientes_list_btn" (click)="listadePacientes()">
@@ -103,7 +103,7 @@
                 <div class="dashboard_container">
                   <div class="custom_card_flex_container">
                     <div class="custom_icon">
-                      <mat-icon svgIcon="recetas" class="dashboard_agenda_icon"></mat-icon>
+                      <mat-icon svgIcon="mainDashboardConsents" class="dashboard_agenda_icon"></mat-icon>
                     </div>
                     <div class="custom_title">
                       <p class="custom_card_title">Consentimientos informados</p>
@@ -119,32 +119,34 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="item4">
-              <mat-card class="dashboard-card">
-                <div class="d-flex justify-content-between">
-                  <div class="d-flex align-items-center flex-direction-row">
+          <div class="item4">
+            <mat-card class="dashboard-card">
+                <mat-card-header class="finance-card-header">
+                  <div class="custom_card_header">
                     <div class="custom_icon">
-                      <mat-icon svgIcon="finanzas" class="dashboard_agenda_icon"></mat-icon>
+                      <mat-icon svgIcon="mainDashboardFinance" class="dashboard_agenda_icon"></mat-icon>
                     </div>
                     <div class="custom_title">
                       <p class="custom_card_title">Mis finanzas</p>
                     </div>
-                  </div>
-                  <div>
-                    <div class="custom_icon">
+                    <div class="custom_actions finance-card-actions">
                       @if (!showFinanceData) {
-                        <mat-icon aria-label="Ocultar finanzas" aria-hidden="false" fontIcon="visibility"
-                          class="dashboard_hide_show_finance_icon"
-                        (click)="visibilityFinanceHandler(true)"></mat-icon>
+                        <button type="button" class="finance-visibility-button" aria-label="Ocultar finanzas"
+                          (click)="visibilityFinanceHandler(true)">
+                          <mat-icon aria-hidden="true" svgIcon="mainDashboardFinanceVisible"
+                            class="dashboard_hide_show_finance_icon"></mat-icon>
+                        </button>
                       }
                       @if (showFinanceData) {
-                        <mat-icon aria-label="Mostrar finanzas" aria-hidden="false"
-                          fontIcon="visibility_off" class="dashboard_hide_show_finance_icon"
-                        (click)="visibilityFinanceHandler(false)"></mat-icon>
+                        <button type="button" class="finance-visibility-button" aria-label="Mostrar finanzas"
+                          (click)="visibilityFinanceHandler(false)">
+                          <mat-icon aria-hidden="true" svgIcon="mainDashboardFinanceHidden"
+                            class="dashboard_hide_show_finance_icon"></mat-icon>
+                        </button>
                       }
                     </div>
                   </div>
-                </div>
+                </mat-card-header>
 
 
                 <mat-card-content class="finanzas_card_content">
