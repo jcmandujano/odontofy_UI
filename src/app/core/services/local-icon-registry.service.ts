@@ -5,7 +5,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 const LOCAL_SVG_ICONS = {
   add: '/icons/iconsV3/plus-circle.svg',
   agenda: '/icons/iconsV3/agenda.svg',
-  agendaDot: '/icons/iconsV3/appointment-dot.svg',
   concentimientos: '/icons/iconsV3/consent-document.svg',
   editaCita: '/icons/iconsV3/edit.svg',
   eliminaCita: '/icons/iconsV3/trash.svg',
@@ -18,7 +17,6 @@ const LOCAL_SVG_ICONS = {
   mainDashboardFinanceHidden: '/icons/iconsV3/eye-off.svg',
   mainDashboardFinanceVisible: '/icons/iconsV3/eye.svg',
   mainDashboardPatients: '/icons/iconsV3/patient-add.svg',
-  iniciaCita: '/icons/iconsV3/check-square.svg',
   logout: '/icons/iconsV3/power.svg',
   odontograma: '/icons/iconsV3/tooth.svg',
   pacientes: '/icons/iconsV3/patient-add.svg',
@@ -32,7 +30,6 @@ const LOCAL_SVG_ICONS = {
   recetas: '/icons/iconsV3/prescription.svg',
   remove: '/icons/iconsV3/minus-circle.svg',
   settings: '/icons/iconsV3/settings.svg',
-  calendar: '/icons/iconsV3/calendar.svg',
   bell: '/icons/iconsV3/bell.svg',
   checkCircle: '/icons/iconsV3/check-circle.svg',
   closeCircle: '/icons/iconsV3/close-circle.svg',
