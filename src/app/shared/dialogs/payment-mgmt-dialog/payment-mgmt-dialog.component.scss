@@ -100,6 +100,22 @@ table {
   cursor: pointer;
 }
 
+.add-concept-button {
+  color: #27ae60;
+}
+
+.remove-concept-button {
+  color: #eb5757;
+}
+
+.add-concept-button mat-icon {
+  color: #27ae60;
+}
+
+.remove-concept-button mat-icon {
+  color: #eb5757;
+}
+
 .concept-option-price {
   margin-left: auto;
   color: #58616d;

@@ -6,6 +6,12 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: "Roboto Condensed", "Helvetica Neue", sans-serif; }
 
+/* V3 icons inherit the brand blue unless a component assigns a semantic color. */
+mat-icon {
+  --mat-icon-color: #407dda;
+  color: #407dda;
+}
+
 .button {
     font-weight: 700;
     border: none;

@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Location } from '@angular/common';
 
 @Component({
@@ -28,7 +29,8 @@ import { Location } from '@angular/common';
     MatProgressSpinnerModule,
     NavBarComponent,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   templateUrl: './patient-file.component.html',
   styleUrl: './patient-file.component.scss'

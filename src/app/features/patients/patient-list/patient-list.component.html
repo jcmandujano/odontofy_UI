@@ -27,7 +27,7 @@
                 <input matInput placeholder="" [(ngModel)]="searchCriteria" (keyup.enter)="onSearch()">
                 @if (searchCriteria) {
                     <button class="clearCriteria" matSuffix matIconButton aria-label="Limpiar búsqueda" (click)="clearSearch()">
-                      <mat-icon>close</mat-icon>
+                      <mat-icon svgIcon="close"></mat-icon>
                     </button>
                   }
             </mat-form-field>
