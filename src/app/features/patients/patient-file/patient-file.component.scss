@@ -18,14 +18,17 @@
     color: $primary--blue;
 }
   
-.container-fluid{
-    width: 80vw;
-}
-
 .title_container{
     display: flex;
     align-items: center;
   }
+
+.dashboard_agenda_icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+    color: $primary--blue;
+}
 
 .section_title{
     font-family: 'Roboto Condensed';

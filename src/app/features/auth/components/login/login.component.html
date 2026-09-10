@@ -15,16 +15,16 @@
           </div>
           <div class="login_form_container_form">
             <mat-form-field class="login_form_control" appearance="outline">
-              <mat-icon class="prefix_form_color" matPrefix> mail</mat-icon>
+              <mat-icon class="prefix_form_color" matPrefix svgIcon="mail"></mat-icon>
               <mat-label>Correo electrónico</mat-label>
               <input type="email" matInput formControlName="username" autocomplete="email">
             </mat-form-field>
             <br>
             <mat-form-field class="login_form_control" appearance="outline">
-              <mat-icon class="prefix_form_color" matPrefix> keyboard</mat-icon>
+              <mat-icon class="prefix_form_color" matPrefix svgIcon="key"></mat-icon>
               <mat-label>Contraseña</mat-label>
               <button type="button" class="login_form_pass_toggle" mat-icon-button matSuffix (click)="hide = !hide" aria-label="Mostrar u ocultar contraseña">
-                <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+                <mat-icon [svgIcon]="hide ? 'eyeOff' : 'eye'"></mat-icon>
               </button>
               <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" autocomplete="current-password">
             </mat-form-field>

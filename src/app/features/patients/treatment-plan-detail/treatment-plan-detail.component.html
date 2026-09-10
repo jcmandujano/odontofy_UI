@@ -139,10 +139,10 @@
                 <th mat-header-cell *matHeaderCellDef class="actions-header-column"> Acciones </th>
                 <td mat-cell *matCellDef="let element" class="actions-content-column">
                     <div class="item-actions">
-                        <mat-icon class="item-action-icon" fontIcon="edit" matTooltip="Editar estado"
+                        <mat-icon class="item-action-icon" svgIcon="editaCita" matTooltip="Editar estado"
                             [class.disabled-action]="isItemProcessing(element.id)"
                             (click)="openEditTreatmentPlanItemStatusDialog(element)"></mat-icon>
-                        <mat-icon class="item-action-icon delete-action-icon" fontIcon="delete" matTooltip="Eliminar"
+                        <mat-icon class="item-action-icon delete-action-icon" svgIcon="eliminaCita" matTooltip="Eliminar"
                             [class.disabled-action]="isItemProcessing(element.id)"
                             (click)="confirmDeleteTreatmentPlanItem(element)"></mat-icon>
                     </div>
