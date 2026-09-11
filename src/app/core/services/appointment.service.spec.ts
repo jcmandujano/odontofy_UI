@@ -48,11 +48,15 @@ describe('AppointmentService', () => {
 
     http.expectOne(request => request.url === `${environment.API_URL}/appointments`)
       .flush(envelope([localAppointment]));
+
+    // Local data is emitted without waiting for the external request to finish.
+    expect(result!.data?.length).toBe(1);
+    expect(result!.data?.[0].id).toBe(6);
+
     http.expectOne(request => request.url === `${environment.API_URL}/calendar/external-events`)
       .flush({ errors: [{ code: 'CALENDAR_PROVIDER_UNAVAILABLE', message: 'Google no disponible' }] }, { status: 503, statusText: 'Service Unavailable' });
 
     expect(result!.data?.length).toBe(1);
-    expect(result!.data?.[0].id).toBe(6);
     expect(result!.data?.[0].patientFullName).toBe('Monserrat Salas');
   });
 
