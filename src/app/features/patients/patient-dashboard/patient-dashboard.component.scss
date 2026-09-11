@@ -9,6 +9,21 @@
   padding-bottom: 40px;
 }
 
+.patient-dashboard-intro h1 {
+  margin: 0;
+  color: #263442;
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.patient-dashboard-intro p {
+  margin: 8px 0 0;
+  color: $gray--text;
+  font-family: "Roboto", sans-serif;
+  font-size: 15px;
+}
+
 .navigation_row {
   margin-block: 15px clamp(28px, 5vw, 50px);
 }

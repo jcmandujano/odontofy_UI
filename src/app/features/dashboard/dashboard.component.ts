@@ -22,7 +22,6 @@ import { Patient } from '../../core/models/patient.model';
 import { PaymentService } from '../../core/services/payment.service';
 import { PaymentBalance } from '../../core/models/payment-balance.model';
 import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
-import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.component';
 import { UserService } from '../../core/services/user.service';
 import { ConfirmWithPasswordDialogComponent } from '../../shared/dialogs/confirm-with-password-dialog/confirm-with-password-dialog.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -37,8 +36,7 @@ import { endOfWeek, startOfWeek } from 'date-fns';
     MatCardModule,
     MatListModule,
     CommonModule,
-    NgxSpinnerModule,
-    NavBarComponent
+    NgxSpinnerModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

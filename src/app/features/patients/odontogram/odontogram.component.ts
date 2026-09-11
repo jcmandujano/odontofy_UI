@@ -1,5 +1,4 @@
 import { Component, ElementRef, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,7 +56,6 @@ const dentalDerInferior: CuadranteDental[] = [
 @Component({
     selector: 'app-odontogram',
     imports: [
-        NavBarComponent,
         MatIconModule,
         MatRadioModule,
         MatButtonModule

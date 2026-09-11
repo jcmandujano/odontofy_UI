@@ -1,49 +1,62 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatIconModule } from "@angular/material/icon";
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../core/models/user.model';
 
 @Component({
     selector: 'app-nav-bar',
     standalone: true,
     imports: [
         MatIconModule,
-        MatToolbarModule,
-        MatButtonModule
+        MatButtonModule,
+        MatMenuModule,
+        RouterLink
     ],
     templateUrl: './nav-bar.component.html',
     styleUrls: ['./nav-bar.component.scss']
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent {
+  @Input() activeSection = 'dashboard';
+  @Input() collapsed = false;
+  @Output() readonly collapsedChange = new EventEmitter<boolean>();
 
   constructor(private sessionService : SessionStorageService,
     private router: Router,
     private authService: AuthService
     ) {}
 
-  ngOnInit(): void {
+  get currentUser(): User {
+    return this.sessionService.getUser();
   }
 
-  goToDashboard(){
-    this.router.navigate(['dashboard'])
+  get userName(): string {
+    return [this.currentUser.name, this.currentUser.middle_name, this.currentUser.last_name]
+      .filter(Boolean)
+      .join(' ') || 'Mi cuenta';
   }
 
-  goToPatients(){
-    this.router.navigate(['patient-list'])
+  get userInitials(): string {
+    const names = [this.currentUser.name, this.currentUser.last_name].filter(Boolean);
+    return names.map(name => String(name).charAt(0)).join('').toUpperCase() || 'OD';
   }
 
-  goToAgenda(){
-    this.router.navigate(['schedule'])
+  toggleCollapsed(): void {
+    this.collapsedChange.emit(!this.collapsed);
   }
 
-  goToConfig(){
-    this.router.navigate(['settings'])
+  searchPatients(event: Event, searchInput: HTMLInputElement): void {
+    event.preventDefault();
+    const search = searchInput.value.trim();
+    this.router.navigate(['/patient-list'], {
+      queryParams: search ? { search } : undefined
+    });
   }
 
-  doLogout(){
+  doLogout(): void {
     this.authService.logout().subscribe({ complete: () => { this.sessionService.signOut(); this.router.navigate(['/login']); }, error: () => { this.sessionService.signOut(); this.router.navigate(['/login']); } });
   }
 

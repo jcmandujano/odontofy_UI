@@ -1,47 +1,8 @@
-<app-nav-bar></app-nav-bar>
-
-@if (spinner) {
-  <div class="progress-loader">
-    <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
-  </div>
-}
-
 <main class="container patient-dashboard">
-  <div class="navigation_row">
-    <span class="pacientes_navigation">Inicio &gt; Pacientes &gt; Expediente</span>
-  </div>
-
-  <section class="patient-summary" aria-label="Resumen del paciente">
-    <div class="custom_card_header patient-identity">
-      <div class="custom_icon">
-        <mat-icon svgIcon="patientDashboardProfile" class="dashboard_agenda_icon"></mat-icon>
-      </div>
-      <div class="patient-name-container">
-        <p class="custom_card_title patient-name">
-          {{ paciente?.name }} {{ paciente?.middle_name }} {{ paciente?.last_name }}
-          @if (antecedentes) {
-            <mat-icon
-              class="alergy-icon"
-              aria-label="Antecedentes del paciente"
-              svgIcon="bell"
-              [matTooltip]="antecedentes">
-            </mat-icon>
-          }
-        </p>
-      </div>
-    </div>
-
-    <div class="finanzas_container patient-balance">
-      <div>
-        <p class="dashboard_finanzas_table_title">Balance</p>
-        <p
-          class="dashboard_finanzas_table_adeudo"
-          [ngClass]="patientBalance > 0 ? 'balance-income-color' : 'balance-debt-color'">
-          {{ patientBalance | currency:'':'symbol':'1.2-2' }}
-        </p>
-      </div>
-    </div>
-  </section>
+  <header class="patient-dashboard-intro">
+    <h1>Resumen del expediente</h1>
+    <p>Consulta la información clínica y administrativa del paciente.</p>
+  </header>
 
   <nav class="menu_grid" aria-label="Secciones del expediente">
     <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToExpediente()">

@@ -13,7 +13,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { CreateTreatmentPlanRequest, TREATMENT_PLAN_STATUS_LABELS, TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { TreatmentPlanMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-mgmt-dialog/treatment-plan-mgmt-dialog.component';
@@ -24,7 +23,6 @@ type TreatmentPlanStatusFilter = TreatmentPlanStatus | 'ACTIVE' | 'ALL';
   selector: 'app-patient-treatment-plans',
   imports: [
     CommonModule,
-    NavBarComponent,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,

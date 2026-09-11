@@ -25,7 +25,6 @@ import {
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { UserConceptsService } from '../../../core/services/user-concepts.service';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { TreatmentPlanItemMgmtDialogComponent } from '../../../shared/dialogs/treatment-plan-item-mgmt-dialog/treatment-plan-item-mgmt-dialog.component';
@@ -43,7 +42,6 @@ import {
     MatIconModule,
     MatTableModule,
     MatTooltipModule,
-    NavBarComponent,
     NgxSpinnerModule,
     NoDataFoundComponent
   ],

@@ -1,23 +1,118 @@
-<mat-toolbar class="main-toolbar">
-  <button type="button" class="brand-button" (click)="goToDashboard()" aria-label="Ir al inicio">
-    <img src="/img/logo.png" alt="Odontofy">
-  </button>
+<a class="skip-link" href="#main-content">Saltar al contenido</a>
 
-  <span class="spacer"></span>
+<aside class="nav-rail" [class.is-collapsed]="collapsed">
+  <div class="brand-row">
+    <a class="brand" routerLink="/dashboard" aria-label="Ir al inicio de Odontofy">
+      <img class="brand-logo" src="/img/logo.png" alt="Odontofy">
+      <span class="brand-compact" aria-hidden="true">O</span>
+    </a>
 
-  <nav class="main-menu" aria-label="Navegación principal">
-    <button type="button" class="menu-item" (click)="goToDashboard()">Inicio</button>
-    <button type="button" class="menu-item" (click)="goToPatients()">Pacientes</button>
-    <button type="button" class="menu-item" (click)="goToAgenda()">Agenda</button>
-    <button type="button" class="menu-item" (click)="goToConfig()">Configuraciones</button>
+    <button
+      type="button"
+      class="collapse-button"
+      [attr.aria-label]="collapsed ? 'Expandir menú' : 'Contraer menú'"
+      [attr.aria-expanded]="!collapsed"
+      (click)="toggleCollapsed()">
+      <span class="collapse-chevron" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <nav class="primary-nav" aria-label="Navegación principal">
+    <a
+      routerLink="/dashboard"
+      class="nav-destination"
+      title="Inicio"
+      [class.is-active]="activeSection === 'dashboard'"
+      [attr.aria-current]="activeSection === 'dashboard' ? 'page' : null">
+      <mat-icon svgIcon="home"></mat-icon>
+      <span>Inicio</span>
+    </a>
+    <a
+      routerLink="/schedule"
+      class="nav-destination"
+      title="Agenda"
+      [class.is-active]="activeSection === 'schedule'"
+      [attr.aria-current]="activeSection === 'schedule' ? 'page' : null">
+      <mat-icon svgIcon="agenda"></mat-icon>
+      <span>Agenda</span>
+    </a>
+    <a
+      routerLink="/patient-list"
+      class="nav-destination"
+      title="Pacientes"
+      [class.is-active]="activeSection === 'patients'"
+      [attr.aria-current]="activeSection === 'patients' ? 'page' : null">
+      <mat-icon svgIcon="pacientes"></mat-icon>
+      <span>Pacientes</span>
+    </a>
   </nav>
 
+  <nav class="rail-utilities" aria-label="Utilidades">
+    <a
+      routerLink="/settings"
+      class="nav-destination"
+      title="Configuración"
+      [class.is-active]="activeSection === 'settings'"
+      [attr.aria-current]="activeSection === 'settings' ? 'page' : null">
+      <mat-icon svgIcon="settings"></mat-icon>
+      <span>Configuración</span>
+    </a>
+  </nav>
+</aside>
+
+<header class="topbar">
+  <a class="mobile-brand" routerLink="/dashboard" aria-label="Ir al inicio">
+    <img src="/img/logo.png" alt="Odontofy">
+  </a>
+
+  <form class="patient-search" role="search" (submit)="searchPatients($event, patientSearchInput)">
+    <mat-icon svgIcon="search" aria-hidden="true"></mat-icon>
+    <label class="visually-hidden" for="global-patient-search">Buscar paciente</label>
+    <input
+      #patientSearchInput
+      id="global-patient-search"
+      type="search"
+      autocomplete="off"
+      placeholder="Buscar paciente…">
+  </form>
+
   <button
-    mat-mini-fab
-    class="logout-navbar-button"
     type="button"
-    aria-label="Cerrar sesión"
-    (click)="doLogout()">
-    <mat-icon svgIcon="logout"></mat-icon>
+    class="account-button"
+    [matMenuTriggerFor]="accountMenu"
+    aria-label="Abrir menú de cuenta">
+    <span class="account-avatar" aria-hidden="true">{{ userInitials }}</span>
+    <span class="account-name">{{ userName }}</span>
+    <span class="account-chevron" aria-hidden="true"></span>
   </button>
-</mat-toolbar>
+</header>
+
+<mat-menu #accountMenu="matMenu" xPosition="before">
+  <a mat-menu-item routerLink="/settings">
+    <mat-icon svgIcon="settings"></mat-icon>
+    <span>Configuración</span>
+  </a>
+  <button mat-menu-item type="button" (click)="doLogout()">
+    <mat-icon svgIcon="logout"></mat-icon>
+    <span>Cerrar sesión</span>
+  </button>
+</mat-menu>
+
+<nav class="mobile-nav" aria-label="Navegación principal móvil">
+  <a routerLink="/dashboard" [class.is-active]="activeSection === 'dashboard'" [attr.aria-current]="activeSection === 'dashboard' ? 'page' : null">
+    <mat-icon svgIcon="home"></mat-icon>
+    <span>Inicio</span>
+  </a>
+  <a routerLink="/schedule" [class.is-active]="activeSection === 'schedule'" [attr.aria-current]="activeSection === 'schedule' ? 'page' : null">
+    <mat-icon svgIcon="agenda"></mat-icon>
+    <span>Agenda</span>
+  </a>
+  <a routerLink="/patient-list" [class.is-active]="activeSection === 'patients'" [attr.aria-current]="activeSection === 'patients' ? 'page' : null">
+    <mat-icon svgIcon="pacientes"></mat-icon>
+    <span>Pacientes</span>
+  </a>
+  <a routerLink="/settings" [class.is-active]="activeSection === 'settings'" [attr.aria-current]="activeSection === 'settings' ? 'page' : null">
+    <mat-icon svgIcon="settings"></mat-icon>
+    <span>Configuración</span>
+  </a>
+</nav>

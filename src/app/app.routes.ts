@@ -18,6 +18,7 @@ import { AgendaComponent } from './features/dentist/agenda/agenda.component';
 import { SettingsComponent } from './features/settings/components/settings/settings.component';
 import { ResetPasswordComponent } from './features/auth/components/reset-password/reset-password.component';
 import { AuthGuard } from './core/guards/auth-guard.guard';
+import { AppShellComponent } from './shared/components/app-shell/app-shell.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -27,18 +28,113 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'confirm-account', component: ConfirmAccountComponent },
   { path: 'verify-account', redirectTo: 'confirm-account', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'patient-list', component: PatientListComponent, canActivate: [AuthGuard] },
-  { path: 'patient-file', component: PatientFileComponent, canActivate: [AuthGuard] },
-  { path: 'patient-dashboard', component: PatientDashboardComponent, canActivate: [AuthGuard] },
-  { path: 'evolution-notes', component: EvolutionNotesComponent, canActivate: [AuthGuard] },
-  { path: 'patient-payment', component: PatientPaymentsComponent, canActivate: [AuthGuard] },
-  { path: 'informed-consents', component: InformedConsentsComponent, canActivate: [AuthGuard] },
-  { path: 'patient-treatment-plans', component: PatientTreatmentPlansComponent, canActivate: [AuthGuard] },
-  { path: 'treatment-plan-detail', component: TreatmentPlanDetailComponent, canActivate: [AuthGuard] },
-  { path: 'odontogram', component: OdontogramComponent, canActivate: [AuthGuard] },
-  { path: 'schedule', component: AgendaComponent, canActivate: [AuthGuard] },
-  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] }
+  {
+    path: '',
+    component: AppShellComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        data: { title: 'Inicio', primarySection: 'dashboard' }
+      },
+      {
+        path: 'schedule',
+        component: AgendaComponent,
+        data: { title: 'Agenda', primarySection: 'schedule' }
+      },
+      {
+        path: 'patient-list',
+        component: PatientListComponent,
+        data: { title: 'Pacientes', primarySection: 'patients' }
+      },
+      {
+        path: 'patient-file',
+        component: PatientFileComponent,
+        data: {
+          title: 'Ficha de identificación',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'patient-file'
+        }
+      },
+      {
+        path: 'patient-dashboard',
+        component: PatientDashboardComponent,
+        data: {
+          title: 'Resumen del expediente',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'patient-overview'
+        }
+      },
+      {
+        path: 'evolution-notes',
+        component: EvolutionNotesComponent,
+        data: {
+          title: 'Notas de evolución',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'evolution-notes'
+        }
+      },
+      {
+        path: 'patient-payment',
+        component: PatientPaymentsComponent,
+        data: {
+          title: 'Historial de pagos',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'payments'
+        }
+      },
+      {
+        path: 'informed-consents',
+        component: InformedConsentsComponent,
+        data: {
+          title: 'Consentimientos informados',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'consents'
+        }
+      },
+      {
+        path: 'patient-treatment-plans',
+        component: PatientTreatmentPlansComponent,
+        data: {
+          title: 'Planes de tratamiento',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'treatment-plans'
+        }
+      },
+      {
+        path: 'treatment-plan-detail',
+        component: TreatmentPlanDetailComponent,
+        data: {
+          title: 'Detalle del plan',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'treatment-plans'
+        }
+      },
+      {
+        path: 'odontogram',
+        component: OdontogramComponent,
+        data: {
+          title: 'Odontograma',
+          primarySection: 'patients',
+          patientContext: true,
+          patientSection: 'odontogram'
+        }
+      },
+      {
+        path: 'settings',
+        component: SettingsComponent,
+        data: { title: 'Configuración', primarySection: 'settings' }
+      }
+    ]
+  }
 
 ];
 

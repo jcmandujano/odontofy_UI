@@ -12,7 +12,6 @@ import { EventColor } from 'calendar-utils';
 import { from, Subject } from 'rxjs';
 import localeEs from '@angular/common/locales/es';
 import { AppointmentMgmtDialogComponent } from '../../../shared/dialogs/appointment-mgmt-dialog/appointment-mgmt-dialog.component';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { Patient } from '../../../core/models/patient.model';
 import { PacientesService } from '../../../core/services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -42,8 +41,6 @@ const colors: Record<string, EventColor> = {
   selector: 'app-agenda',
   imports: [
     CalendarModule,
-    MatProgressSpinnerModule,
-    NavBarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,

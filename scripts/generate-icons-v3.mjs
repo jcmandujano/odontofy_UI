@@ -42,6 +42,9 @@ const icons = {
     <circle cx="16" cy="16" r="4" fill="currentColor" stroke="none"/>`,
   'eye-off': `
     <path d="M6.2 8.2C4.2 10 3 12.2 3 16c0 0 4.8 8 13 8 2.6 0 4.9-.8 6.8-2M11 8.8A13 13 0 0 1 16 8c8.2 0 13 8 13 8a15 15 0 0 1-3 3.8M12.5 12.5a5 5 0 0 1 7 7M4 4l24 24"/>`,
+  home: `
+    <path d="m3.5 15.5 12.5-11 12.5 11"/>
+    <path d="M6.5 13v15h19V13M12 28v-9h8v9"/>`,
   'id-card': `
     <rect x="3" y="6" width="26" height="20" rx="2.5"/>
     <circle cx="10" cy="13" r="3"/>

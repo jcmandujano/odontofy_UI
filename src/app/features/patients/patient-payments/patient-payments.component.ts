@@ -12,7 +12,6 @@ import {
   PaymentDialogResult,
   PaymentMgmtDialogComponent,
 } from '../../../shared/dialogs/payment-mgmt-dialog/payment-mgmt-dialog.component';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +29,6 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'app-patient-payments',
   imports: [
-    NavBarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatFormFieldModule,
