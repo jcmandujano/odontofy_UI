@@ -22,7 +22,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 import { User } from '../../../core/models/user.model';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { UserService } from '../../../core/services/user.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   startOfMonth, endOfMonth,
   startOfWeek, endOfWeek,
@@ -75,6 +75,7 @@ export class AgendaComponent {
   fromDate: string | null = null;
   toDate: string | null = null;
   selectedAppointmentRef: string | null = null;
+  private openNewAppointmentOnLoad = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -85,12 +86,14 @@ export class AgendaComponent {
     private spinner: NgxSpinnerService,
     private sessionService: SessionStorageService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();
     this.isUserSyncGoogle = this.currentUser.is_google_synced ?? false;
+    this.openNewAppointmentOnLoad = this.route.snapshot.queryParamMap.get('action') === 'new';
     this.applyAppointmentNavigation();
     this.retrievePatients()
     // Aquí calculas el rango inicial del mes actual (porque view = Month al inicio)
@@ -111,6 +114,16 @@ export class AgendaComponent {
     this.patientService.listPatients().subscribe(response => {
       this.patientsList = response.data?.results ?? []
       this.spinner.hide()
+      if (this.openNewAppointmentOnLoad) {
+        this.openNewAppointmentOnLoad = false;
+        this.launchAppointmentDialog();
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { action: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+      }
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)

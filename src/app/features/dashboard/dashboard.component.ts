@@ -1,113 +1,143 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { catchError, finalize, forkJoin, map, Observable, of, tap } from 'rxjs';
-import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
-import { User } from '../../core/models/user.model';
-import { SessionStorageService } from '../../core/services/session-storage.service';
-import { PrintConsentDialogComponent } from '../../shared/dialogs/print-consent-dialog/print-consent-dialog.component';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UserInformedConsent } from '../../core/models/user-consent.model';
-import { UserConsentService } from '../../core/services/user-consents.service';
-import { AppointmentService } from '../../core/services/appointment.service';
-import { CalendarEvent } from 'angular-calendar';
-import { Appointment } from '../../core/models/appointment.model';
-import { PacientesService } from '../../core/services/patient.service';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { endOfWeek, startOfWeek } from 'date-fns';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { Observable, catchError, finalize, forkJoin, map, of, tap } from 'rxjs';
+import { Appointment } from '../../core/models/appointment.model';
 import { Patient } from '../../core/models/patient.model';
-import { PaymentService } from '../../core/services/payment.service';
 import { PaymentBalance } from '../../core/models/payment-balance.model';
-import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
+import { User } from '../../core/models/user.model';
+import { UserInformedConsent } from '../../core/models/user-consent.model';
+import { AppointmentService } from '../../core/services/appointment.service';
+import { AuthService } from '../../core/services/auth.service';
+import { PacientesService } from '../../core/services/patient.service';
+import { PaymentService } from '../../core/services/payment.service';
+import { SessionStorageService } from '../../core/services/session-storage.service';
+import { UserConsentService } from '../../core/services/user-consents.service';
 import { UserService } from '../../core/services/user.service';
 import { ConfirmWithPasswordDialogComponent } from '../../shared/dialogs/confirm-with-password-dialog/confirm-with-password-dialog.component';
-import { AuthService } from '../../core/services/auth.service';
-import { endOfWeek, startOfWeek } from 'date-fns';
+import { PrintConsentDialogComponent } from '../../shared/dialogs/print-consent-dialog/print-consent-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatListModule,
-    CommonModule,
-    NgxSpinnerModule
-  ],
+  imports: [CommonModule, MatIconModule, NgxSpinnerModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
-  currentUser: User = new User;
+  readonly today = new Date();
+
+  currentUser: User = new User();
   informedConsentList: UserInformedConsent[] = [];
-  events: CalendarEvent[] = []
-  patientsList: Patient[] = []
-  appointmentList: Appointment[] = []
+  patientsList: Patient[] = [];
+  appointmentList: Appointment[] = [];
   paymentBalance: PaymentBalance = new PaymentBalance();
-  showFinanceData: boolean = true;
+  totalPatients = 0;
+  showFinanceData = true;
   fromDate: string | null = null;
   toDate: string | null = null;
-  constructor(private sessionService: SessionStorageService,
-    private router: Router,
-    private elementRef: ElementRef,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private userConsentService: UserConsentService,
-    private appointmentService: AppointmentService,
-    private patientService: PacientesService,
-    private paymentService: PaymentService,
-    private spinner: NgxSpinnerService,
-    public authService: AuthService,
-    private userService: UserService) {}
 
+  constructor(
+    private readonly sessionService: SessionStorageService,
+    private readonly router: Router,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
+    private readonly userConsentService: UserConsentService,
+    private readonly appointmentService: AppointmentService,
+    private readonly patientService: PacientesService,
+    private readonly paymentService: PaymentService,
+    private readonly spinner: NgxSpinnerService,
+    public readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();
     this.showFinanceData = this.currentUser.show_finance_stats ?? false;
     this.spinner.show();
-    this.fromDate = startOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
-    this.toDate = endOfWeek(new Date(), { weekStartsOn: 1 }).toISOString();
+    this.fromDate = startOfWeek(this.today, { weekStartsOn: 1 }).toISOString();
+    this.toDate = endOfWeek(this.today, { weekStartsOn: 1 }).toISOString();
 
-    const dashboardRequests$ = [
+    forkJoin([
       this.loadInformedConsents(),
       this.retrievePatients(),
       this.retrieveAppointments(this.fromDate, this.toDate),
       this.retrievePaymentBalance()
-    ];
-
-    forkJoin(dashboardRequests$).pipe(
+    ]).pipe(
       finalize(() => this.spinner.hide())
-    ).subscribe({
-      error: (err: any) => {
-        console.error('Error ejecutando métodos:', err);
-      }
-    });
+    ).subscribe();
   }
 
-  ngAfterViewInit() {
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#fff';
+  get firstName(): string {
+    return this.currentUser.name?.trim() || 'Doctor';
   }
 
-  doLogout() {
-    this.sessionService.signOut();
-    this.router.navigate([''])
+  get todayLabel(): string {
+    const label = new Intl.DateTimeFormat('es-MX', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    }).format(this.today);
+    return label.charAt(0).toUpperCase() + label.slice(1);
   }
 
-  crearPaciente() {
-    this.router.navigate(['patient-file'])
+  get todayAppointments(): Appointment[] {
+    return this.appointmentList.filter(appointment =>
+      this.isSameLocalDay(new Date(appointment.appointment_datetime), this.today)
+    );
   }
 
-  listadePacientes() {
-    this.router.navigate(['patient-list'])
+  get remainingTodayAppointments(): number {
+    const now = Date.now();
+    return this.todayAppointments.filter(appointment =>
+      new Date(appointment.appointment_datetime).getTime() >= now
+    ).length;
   }
 
-  goToAgenda(appointment?: Appointment) {
+  get upcomingAppointments(): Appointment[] {
+    const now = Date.now();
+    return this.appointmentList
+      .filter(appointment => new Date(appointment.appointment_datetime).getTime() >= now)
+      .sort((a, b) =>
+        new Date(a.appointment_datetime).getTime() - new Date(b.appointment_datetime).getTime()
+      )
+      .slice(0, 5);
+  }
+
+  get upcomingWeekCount(): number {
+    const now = Date.now();
+    return this.appointmentList.filter(appointment =>
+      new Date(appointment.appointment_datetime).getTime() >= now
+    ).length;
+  }
+
+  get hasAttentionItems(): boolean {
+    return !this.currentUser.is_google_synced || this.totalPatients === 0 || this.informedConsentList.length === 0;
+  }
+
+  createAppointment(): void {
+    this.router.navigate(['/schedule'], { queryParams: { action: 'new' } });
+  }
+
+  createPatient(): void {
+    this.router.navigate(['/patient-file']);
+  }
+
+  listPatients(): void {
+    this.router.navigate(['/patient-list']);
+  }
+
+  goToSettings(): void {
+    this.router.navigate(['/settings']);
+  }
+
+  goToAgenda(appointment?: Appointment): void {
     if (!appointment) {
-      this.router.navigate(['schedule']);
+      this.router.navigate(['/schedule']);
       return;
     }
 
@@ -115,7 +145,7 @@ export class DashboardComponent implements OnInit {
       ? `local:${appointment.id}`
       : `external:${appointment.google_event_id}`;
 
-    this.router.navigate(['schedule'], {
+    this.router.navigate(['/schedule'], {
       queryParams: {
         date: appointment.appointment_datetime,
         appointmentRef
@@ -123,17 +153,14 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  handleAppointmentRowKeydown(event: KeyboardEvent, appointment: Appointment): void {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      this.goToAgenda(appointment);
-    }
-  }
-
   retrieveAppointments(fromDate?: string, toDate?: string): Observable<Appointment[]> {
     return this.appointmentService.listAppointments(fromDate, toDate).pipe(
       map(response => response.data ?? []),
-      tap(appointments => this.appointmentList = appointments),
+      tap(appointments => {
+        this.appointmentList = [...appointments].sort((a, b) =>
+          new Date(a.appointment_datetime).getTime() - new Date(b.appointment_datetime).getTime()
+        );
+      }),
       catchError(error => {
         this.handleError(error);
         return of([]);
@@ -143,6 +170,7 @@ export class DashboardComponent implements OnInit {
 
   retrievePatients(): Observable<Patient[]> {
     return this.patientService.listPatients().pipe(
+      tap(response => this.totalPatients = response.data?.total ?? response.data?.results?.length ?? 0),
       map(response => response.data?.results ?? []),
       tap(patients => this.patientsList = patients),
       catchError(error => {
@@ -151,25 +179,6 @@ export class DashboardComponent implements OnInit {
       })
     );
   }
-
-  saveFinanceOptions(showFinanceData: boolean) {
-    const financeOptions = {
-      show_finance_stats: showFinanceData
-    } as unknown as User
-    this.spinner.show()
-    this.userService.updateUser(this.currentUser.id, financeOptions).subscribe(response => {
-      this.spinner.hide()
-      if (response.data) {
-        this.currentUser = response.data
-        this.sessionService.saveUser(response.data)
-      }
-    }, (error) => {
-      this.spinner.hide()
-      console.log('ERROR', error.error.error.message)
-      this.openSnackbar(`Ocurrió un error: ${error.error.error.message}`, 'Aceptar')
-    })
-  }
-
 
   retrievePaymentBalance(): Observable<PaymentBalance> {
     return this.paymentService.getPaymentBalance().pipe(
@@ -182,54 +191,78 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  findPatientNameById(patientId: number): string {
-    const patient = this.patientsList.find(patient => patient.id === patientId);
-    return patient ? `${patient.name} ${patient.middle_name} ${patient.last_name}` : '';
-  }
+  visibilityFinanceHandler(visibility: boolean): void {
+    if (!visibility) {
+      this.saveFinanceOptions(false);
+      this.showFinanceData = false;
+      return;
+    }
 
-  openSnackbar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 3000
+    const dialogRef = this.dialog.open(ConfirmWithPasswordDialogComponent, {
+      width: 'min(440px, 92vw)'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      this.spinner.show();
+      this.authService.verifyPassword(result).subscribe({
+        next: () => {
+          this.saveFinanceOptions(true);
+          this.showFinanceData = true;
+          this.spinner.hide();
+        },
+        error: error => {
+          this.spinner.hide();
+          const message = error?.error?.message ?? 'No fue posible verificar la contraseña.';
+          this.openSnackbar(`Ocurrió un error: ${message}`, 'Aceptar');
+        }
+      });
     });
   }
 
-  visibilityFinanceHandler(visibility: boolean) {
-    if (visibility) {
-      const dialogRef = this.dialog.open(ConfirmWithPasswordDialogComponent, {
-        width: '40vw',
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          const confirmPassword = result
-          this.spinner.show()
-          this.authService.verifyPassword(confirmPassword).subscribe(data => {
-            this.saveFinanceOptions(visibility)
-            this.showFinanceData = visibility;
-            this.spinner.hide()
-            console.log('Se confirma operacion')
-          }, (error) => {
-            this.spinner.hide()
-            console.log('ERROR', error.error.message)
-            this.openSnackbar(`Ocurrió un error: ${error.error.message}`, 'Aceptar')
-          })
-        }
-      });
-    } else {
-      this.saveFinanceOptions(visibility)
-      this.showFinanceData = visibility;
+  launchPrintConsentDialog(): void {
+    if (this.informedConsentList.length === 0) {
+      this.openSnackbar(
+        'No hay consentimientos disponibles. Crea uno en Configuración antes de imprimir.',
+        'Aceptar'
+      );
+      return;
     }
+
+    const dialogRef = this.dialog.open(PrintConsentDialogComponent, {
+      width: 'min(680px, 92vw)',
+      data: this.informedConsentList,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.downloadPdf(result.filename);
+    });
   }
 
-  /**
-   * Carga la lista de consentimientos informados desde el servicio y la asigna al componente.
-   */
+  private saveFinanceOptions(showFinanceData: boolean): void {
+    const financeOptions = { show_finance_stats: showFinanceData } as User;
+    this.spinner.show();
+    this.userService.updateUser(this.currentUser.id, financeOptions).pipe(
+      finalize(() => this.spinner.hide())
+    ).subscribe({
+      next: response => {
+        if (!response.data) return;
+        this.currentUser = response.data;
+        this.sessionService.saveUser(response.data);
+      },
+      error: error => {
+        const message = error?.error?.error?.message ?? 'No fue posible guardar la preferencia.';
+        this.openSnackbar(`Ocurrió un error: ${message}`, 'Aceptar');
+      }
+    });
+  }
+
   private loadInformedConsents(): Observable<UserInformedConsent[]> {
     return this.userConsentService.listUserConsent().pipe(
-      tap(response => this.informedConsentList = response.data?.results ?? []), // Asignar datos al recibir respuesta
-      // Map the API response to just the results array
-      // Import 'map' from 'rxjs/operators' if not already imported
       map(response => response.data?.results ?? []),
+      tap(consents => this.informedConsentList = consents),
       catchError(error => {
         this.handleError(error);
         return of([]);
@@ -237,36 +270,6 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-
-  /**
-   * Abre un diálogo para crear un nuevo consentimiento informado.
-   * Si el diálogo se cierra con un resultado, se inicia la descarga del PDF.
-   */
-  launchPrintConsentDialog(): void {
-    //if there is no informed consents we show a message and return
-    if (this.informedConsentList.length === 0) {
-      this.openSnackbar('No hay consentimientos informados disponibles. Por favor, crea un consentimiento en tus configuraciones antes de imprimir.', 'Ok');
-      return;
-    }
-
-    const dialogRef = this.dialog.open(PrintConsentDialogComponent, {
-      width: '40vw',
-      data: this.informedConsentList,
-      panelClass: 'custom-dialog-container'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.downloadPdf(result.filename);
-      }
-    });
-  }
-
-  /**
-   * Simula la descarga de un consentimiento informado como PDF.
-   * Este método deberá ser actualizado cuando se implemente la funcionalidad de descarga real.
-   * @param filename Nombre del archivo PDF a descargar.
-   */
   private downloadPdf(filename: string): void {
     const link = document.createElement('a');
     link.href = '/static/informed-consents-demo/dummy_doc.pdf';
@@ -274,17 +277,17 @@ export class DashboardComponent implements OnInit {
     link.click();
   }
 
-  /**
-   * Maneja los errores de las llamadas HTTP, detiene el spinner y muestra un mensaje en consola.
-   * @param error Error capturado de la respuesta HTTP.
-   */
-  private handleError(error: any): void {
-    console.error('ERROR', error);
-    const message = error?.error?.error?.message
-      ?? error?.error?.message
-      ?? error?.message
-      ?? 'No fue posible cargar la información del dashboard.';
-    this.openSnackbar(`Ocurrió un error: ${message}`, 'Aceptar');
+  private isSameLocalDay(firstDate: Date, secondDate: Date): boolean {
+    return firstDate.getFullYear() === secondDate.getFullYear()
+      && firstDate.getMonth() === secondDate.getMonth()
+      && firstDate.getDate() === secondDate.getDate();
   }
 
+  private handleError(error: unknown): void {
+    console.error('No fue posible cargar una sección del resumen.', error);
+  }
+
+  private openSnackbar(message: string, action: string): void {
+    this.snackBar.open(message, action, { duration: 4000 });
+  }
 }

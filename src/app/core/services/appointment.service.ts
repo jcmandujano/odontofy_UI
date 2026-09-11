@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, forkJoin, map, of, throwError } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { ApiV1Appointment } from '../models/api-v1.model';
 import { toApiAppointment, toUiAppointment } from '../models/api-v1.mapper';
 import { mapApiResponse } from '../models/api-response.model';
@@ -31,7 +31,9 @@ export class AppointmentService {
         return forkJoin({
             local: this.api.get<ApiV1Appointment[]>('/appointments', { params }),
             external: this.api.get<ApiExternalCalendarEvent[]>('/calendar/external-events', { params: externalParams }).pipe(
-                catchError(error => error.status === 409 ? of(null) : throwError(() => error))
+                // Google Calendar complements the local agenda. A provider,
+                // configuration or connection error must never hide local appointments.
+                catchError(() => of(null))
             )
         }).pipe(map(({ local, external }) => mapApiResponse(local, values => [
             ...values.map(toUiAppointment),

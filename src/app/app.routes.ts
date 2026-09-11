@@ -36,7 +36,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
-        data: { title: 'Inicio', primarySection: 'dashboard' }
+        data: { title: 'Resumen', primarySection: 'dashboard' }
       },
       {
         path: 'schedule',

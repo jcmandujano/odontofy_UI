@@ -46,6 +46,80 @@ h1{
 .subtitle{
     color:#7a7a7a;
 }   
+
+/* Responsive layout for the operational dashboard. Kept global to avoid
+   charging shared breakpoint rules to the component style budget. */
+@media (max-width: 1199.98px) {
+  app-dashboard .dashboard-page .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  app-dashboard .dashboard-page .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  app-dashboard .dashboard-page .dashboard-side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  app-dashboard .dashboard-page .dashboard-hero {
+    align-items: stretch;
+    flex-direction: column;
+    margin-bottom: 28px;
+  }
+
+  app-dashboard .dashboard-page .primary-action {
+    align-self: flex-start;
+  }
+
+  app-dashboard .dashboard-page .dashboard-side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  app-dashboard .dashboard-page .dashboard-panel {
+    padding: 18px;
+  }
+
+  app-dashboard .dashboard-page .appointment-row {
+    grid-template-columns: 86px minmax(0, 1fr) 18px;
+    gap: 10px;
+  }
+
+  app-dashboard .dashboard-page .appointment-status {
+    display: none;
+  }
+}
+
+@media (max-width: 519.98px) {
+  app-dashboard .dashboard-page .metrics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  app-dashboard .dashboard-page .metric-card {
+    min-height: 112px;
+  }
+
+  app-dashboard .dashboard-page .finance-visibility span {
+    display: none;
+  }
+
+  app-dashboard .dashboard-page .appointment-row {
+    grid-template-columns: 74px minmax(0, 1fr) 14px;
+  }
+
+  app-dashboard .dashboard-page .appointment-date strong,
+  app-dashboard .dashboard-page .appointment-person strong {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  app-dashboard .dashboard-page .metric-card--interactive {
+    transition: none;
+  }
+}
     
 
 .progress-loader {
