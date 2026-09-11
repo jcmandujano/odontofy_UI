@@ -1,17 +1,13 @@
 <a class="skip-link" href="#main-content">Saltar al contenido</a>
 
 <aside class="nav-rail" [class.is-collapsed]="collapsed">
-  <div class="brand-row">
-    <a class="brand" routerLink="/dashboard" aria-label="Ir al inicio de Odontofy">
-      <img class="brand-logo" src="/img/logo.png" alt="Odontofy">
-      <span class="brand-compact" aria-hidden="true">O</span>
-    </a>
-
+  <div class="rail-controls">
     <button
       type="button"
       class="collapse-button"
       [attr.aria-label]="collapsed ? 'Expandir menú' : 'Contraer menú'"
       [attr.aria-expanded]="!collapsed"
+      [attr.title]="collapsed ? 'Expandir menú' : 'Contraer menú'"
       (click)="toggleCollapsed()">
       <span class="collapse-chevron" aria-hidden="true"></span>
     </button>

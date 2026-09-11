@@ -21,7 +21,7 @@ import { User } from '../../../core/models/user.model';
 })
 export class NavBarComponent {
   @Input() activeSection = 'dashboard';
-  @Input() collapsed = false;
+  @Input() collapsed = true;
   @Output() readonly collapsedChange = new EventEmitter<boolean>();
 
   constructor(private sessionService : SessionStorageService,

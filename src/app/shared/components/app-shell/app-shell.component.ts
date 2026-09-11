@@ -24,7 +24,7 @@ interface PatientDestination {
   styleUrl: './app-shell.component.scss'
 })
 export class AppShellComponent implements OnInit, OnDestroy {
-  navCollapsed = false;
+  navCollapsed = true;
   activeSection: PrimarySection = 'dashboard';
   activePatientSection = '';
   pageTitle = '';

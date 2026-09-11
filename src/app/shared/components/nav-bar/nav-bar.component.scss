@@ -30,25 +30,13 @@
   z-index: 20;
 }
 
-.brand-row {
+.rail-controls {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   min-height: 44px;
-  gap: 8px;
   margin-bottom: 24px;
 }
-
-.brand {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  min-width: 0;
-  min-height: 44px;
-  text-decoration: none;
-}
-
-.brand-logo { display: block; width: 142px; max-width: 100%; height: auto; }
-.brand-compact { display: none; color: #407dda; font-size: 25px; font-weight: 700; }
 
 .collapse-button {
   display: inline-flex;
@@ -100,7 +88,6 @@
 .nav-destination:hover { color: #407dda; background: #f0f5fc; }
 .nav-destination.is-active { color: #2869ca; background: #e8f1ff; font-weight: 600; }
 
-.brand:focus-visible,
 .collapse-button:focus-visible,
 .nav-destination:focus-visible,
 .account-button:focus-visible,
@@ -111,10 +98,7 @@
 }
 
 .nav-rail.is-collapsed { align-items: stretch; padding-inline: 12px; }
-.nav-rail.is-collapsed .brand-row { flex-direction: column; min-height: 92px; }
-.nav-rail.is-collapsed .brand { justify-content: center; }
-.nav-rail.is-collapsed .brand-logo { display: none; }
-.nav-rail.is-collapsed .brand-compact { display: block; }
+.nav-rail.is-collapsed .rail-controls { justify-content: center; }
 .nav-rail.is-collapsed .collapse-chevron { transform: rotate(225deg); }
 .nav-rail.is-collapsed .nav-destination { justify-content: center; padding-inline: 0; }
 .nav-rail.is-collapsed .nav-destination span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
