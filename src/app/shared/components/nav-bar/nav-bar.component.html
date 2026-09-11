@@ -61,20 +61,12 @@
 </aside>
 
 <header class="topbar">
-  <a class="mobile-brand" routerLink="/dashboard" aria-label="Ir al inicio">
-    <img src="/img/logo.png" alt="Odontofy">
+  <a class="topbar-brand" routerLink="/dashboard" aria-label="Ir al inicio de Odontofy">
+    <img class="topbar-brand__icon" src="/icons/iconsV3/tooth.svg" alt="" aria-hidden="true">
+    <span class="topbar-brand__wordmark" aria-hidden="true">
+      <span class="topbar-brand__primary">ODONT</span><span class="topbar-brand__secondary">OFY</span>
+    </span>
   </a>
-
-  <form class="patient-search" role="search" (submit)="searchPatients($event, patientSearchInput)">
-    <mat-icon svgIcon="search" aria-hidden="true"></mat-icon>
-    <label class="visually-hidden" for="global-patient-search">Buscar paciente</label>
-    <input
-      #patientSearchInput
-      id="global-patient-search"
-      type="search"
-      autocomplete="off"
-      placeholder="Buscar paciente…">
-  </form>
 
   <button
     type="button"
@@ -88,10 +80,10 @@
 </header>
 
 <mat-menu #accountMenu="matMenu" xPosition="before">
-  <a mat-menu-item routerLink="/settings">
+  <!-- <a mat-menu-item routerLink="/settings">
     <mat-icon svgIcon="settings"></mat-icon>
     <span>Configuración</span>
-  </a>
+  </a> -->
   <button mat-menu-item type="button" (click)="doLogout()">
     <mat-icon svgIcon="logout"></mat-icon>
     <span>Cerrar sesión</span>

@@ -48,14 +48,6 @@ export class NavBarComponent {
     this.collapsedChange.emit(!this.collapsed);
   }
 
-  searchPatients(event: Event, searchInput: HTMLInputElement): void {
-    event.preventDefault();
-    const search = searchInput.value.trim();
-    this.router.navigate(['/patient-list'], {
-      queryParams: search ? { search } : undefined
-    });
-  }
-
   doLogout(): void {
     this.authService.logout().subscribe({ complete: () => { this.sessionService.signOut(); this.router.navigate(['/login']); }, error: () => { this.sessionService.signOut(); this.router.navigate(['/login']); } });
   }
