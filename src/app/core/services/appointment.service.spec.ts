@@ -80,4 +80,20 @@ describe('AppointmentService', () => {
 
     expect(ids).toEqual([6, 0]);
   });
+
+  it('loads only local appointments for a patient summary', () => {
+    let ids: number[] = [];
+
+    service.listPatientAppointments(1, '2026-09-01', '2027-08-31').subscribe(response => {
+      ids = (response.data ?? []).map(appointment => appointment.id);
+    });
+
+    const request = http.expectOne(req => req.url === `${environment.API_URL}/appointments`);
+    expect(request.request.params.get('patientId')).toBe('1');
+    expect(request.request.params.get('pageSize')).toBe('100');
+    request.flush(envelope([localAppointment]));
+
+    expect(ids).toEqual([6]);
+    http.expectNone(request => request.url === `${environment.API_URL}/calendar/external-events`);
+  });
 });

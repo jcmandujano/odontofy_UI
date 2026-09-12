@@ -42,6 +42,19 @@ export class AppointmentService {
         ])));
     }
 
+    listPatientAppointments(patientId: number, startDate: string, endDate: string) {
+        const params = {
+            from: this.rangeBoundary(startDate, false),
+            to: this.rangeBoundary(endDate, true),
+            patientId,
+            pageSize: 100
+        };
+
+        return this.api.get<ApiV1Appointment[]>('/appointments', { params }).pipe(
+            map(response => mapApiResponse(response, values => values.map(toUiAppointment)))
+        );
+    }
+
     findAppointment(id: number) {
         return this.api.get<ApiV1Appointment>(`/appointments/${id}`).pipe(
             map(response => mapApiResponse(response, toUiAppointment))

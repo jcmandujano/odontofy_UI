@@ -6,13 +6,20 @@
 }
 
 .patient-dashboard {
-  padding-bottom: 40px;
+  padding: 0 0 48px;
+}
+
+.patient-dashboard-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
 }
 
 .patient-dashboard-intro h1 {
-  margin: 0;
+  margin: 3px 0 0;
   color: #263442;
-  font-size: clamp(24px, 2.5vw, 32px);
+  font-size: clamp(25px, 2.5vw, 32px);
   font-weight: 600;
   line-height: 1.2;
 }
@@ -20,234 +27,428 @@
 .patient-dashboard-intro p {
   margin: 8px 0 0;
   color: $gray--text;
-  font-family: "Roboto", sans-serif;
-  font-size: 15px;
+  font: 15px/1.5 "Roboto", sans-serif;
 }
 
-.navigation_row {
-  margin-block: 15px clamp(28px, 5vw, 50px);
+.eyebrow {
+  color: #718096;
+  font: 600 11px/1.2 "Roboto", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.pacientes_navigation {
+.clinical-panel,
+.summary-card,
+.quick-actions {
+  border: 1px solid #dfe8f4;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.clinical-panel {
+  padding: 22px;
+  border-color: #f0d8a4;
+  background: #fffdf8;
+}
+
+.clinical-panel--clear {
+  border-color: #cde8db;
+  background: #fbfefc;
+}
+
+.section-heading,
+.card-heading {
   display: flex;
   align-items: center;
-  color: $primary--blue;
-  font-family: "Roboto", sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 21px;
-  overflow-wrap: anywhere;
-}
-
-.patient-summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 24px;
   min-width: 0;
+  gap: 12px;
 }
 
-.custom_card_header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  min-width: 0;
+.section-heading h2,
+.card-heading h2,
+.quick-actions h2 {
+  margin: 2px 0 0;
+  color: #263442;
+  font: 600 18px/1.25 "Roboto Condensed", sans-serif;
 }
 
-.custom_icon {
+.section-icon {
   display: inline-flex;
-  flex: 0 0 auto;
-}
-
-.dashboard_agenda_icon {
-  width: 50px;
-  height: 50px;
-  color: $primary--blue;
-}
-
-.patient-identity,
-.patient-name-container,
-.custom_title {
-  min-width: 0;
-}
-
-.custom_title {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-}
-
-.custom_card_title {
-  display: flex;
+  flex: 0 0 40px;
   align-items: center;
-  margin: 0;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: #edf4ff;
   color: $primary--blue;
-  font-family: "Roboto Condensed", sans-serif;
-  font-size: clamp(21px, 2.3vw, 26px);
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
 }
 
-.patient-name {
-  flex-wrap: wrap;
+.section-icon mat-icon {
+  width: 22px;
+  height: 22px;
+  color: inherit;
 }
 
-.custom-card-subtitle {
-  margin-top: 4px;
-  color: $gray--text;
-  font-family: "Roboto", sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
+.section-icon--clinical {
+  background: #fff1cf;
+  color: #a06a00;
 }
 
-.menu_grid {
+.text-action,
+.card-action {
+  border: 0;
+  background: transparent;
+  color: #2869ca;
+  cursor: pointer;
+  font: 600 13px "Roboto", sans-serif;
+}
+
+.text-action {
+  margin-left: auto;
+  padding: 9px 10px;
+  border-radius: 9px;
+}
+
+.text-action:hover,
+.card-action:hover {
+  background: #edf4ff;
+}
+
+.clinical-alerts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 28px;
+  gap: 10px;
+  margin-top: 18px;
 }
 
-.dashboard-menu-card {
-  width: 100%;
-  min-height: 104px;
-  padding: 18px;
-  border: 1px solid rgba($primary--blue, 0.16);
-  border-radius: 12px;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.dashboard-menu-card:hover {
-  border-color: rgba($primary--blue, 0.42);
-  box-shadow: 0 6px 18px rgba($primary--blue, 0.1);
-}
-
-.dashboard-menu-card:focus-visible {
-  outline: 3px solid rgba($primary--blue, 0.3);
-  outline-offset: 2px;
-}
-
-.dashboard-menu-card:active {
-  transform: translateY(1px);
-}
-
-.menu_grid > :last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-}
-
-.finanzas_container {
+.clinical-alert {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  padding: 13px 14px;
+  border-left: 3px solid #e3ae41;
+  border-radius: 8px;
+  background: #fff;
+  gap: 4px;
+}
+
+.clinical-alert--high {
+  border-left-color: #df6b62;
+  background: #fffafa;
+}
+
+.clinical-alert--family {
+  border-left-color: #7daaf0;
+}
+
+.clinical-alert strong,
+.clinical-clear strong {
+  color: #344252;
+  font: 600 14px "Roboto", sans-serif;
+}
+
+.clinical-alert span,
+.clinical-clear span {
+  color: #667382;
+  font: 13px/1.45 "Roboto", sans-serif;
+}
+
+.clinical-clear {
+  display: flex;
   align-items: center;
-  height: 100%;
+  margin-top: 18px;
+  padding: 13px 14px;
+  border-radius: 10px;
+  background: #eff9f3;
+  gap: 11px;
 }
 
-.patient-balance {
-  min-width: 140px;
-  text-align: right;
+.clinical-clear mat-icon {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  color: #27845c;
 }
 
-.dashboard_finanzas_table_title,
-.dashboard_finanzas_table_adeudo {
-  margin: 0;
+.clinical-clear div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.dashboard_finanzas_table_title {
-  color: $primary--blue;
-  font-family: "Roboto Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  line-height: 24px;
+.summary-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 0.85fr);
+  align-items: start;
+  gap: 18px;
+  margin-top: 18px;
 }
 
-.dashboard_finanzas_table_adeudo {
-  font-family: "Roboto", sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 30px;
+.summary-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
-.alergy-icon {
-  margin-left: 10px;
-  color: #f2c94c;
+.summary-side {
+  display: grid;
+  min-width: 0;
+  gap: 18px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 252px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(33, 68, 110, 0.04);
+}
+
+.summary-card--wide {
+  grid-column: 1 / -1;
+  min-height: 220px;
+}
+
+.empty-copy {
+  margin: 24px 0;
+  color: #73808f;
+  font: 14px/1.5 "Roboto", sans-serif;
+}
+
+.card-action {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 9px 10px;
+  border-radius: 9px;
+}
+
+.appointment-summary {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  margin: 23px 0;
+}
+
+.appointment-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 54px;
+  height: 58px;
+  border-radius: 12px;
+  background: #edf4ff;
+  color: #2869ca;
+}
+
+.appointment-date strong {
+  font: 700 22px/1 "Roboto Condensed", sans-serif;
+}
+
+.appointment-date span {
+  font: 600 11px/1.2 "Roboto", sans-serif;
+  text-transform: uppercase;
+}
+
+.appointment-summary > div:last-child,
+.treatment-summary,
+.note-summary,
+.last-payment {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.appointment-summary > div:last-child {
+  gap: 5px;
+}
+
+.appointment-summary > div:last-child strong,
+.treatment-title > strong {
+  color: #344252;
+  font: 600 15px/1.35 "Roboto", sans-serif;
+}
+
+.appointment-summary > div:last-child span {
+  color: #6d7987;
+  font: 13px/1.4 "Roboto", sans-serif;
+}
+
+.treatment-summary {
+  margin: 22px 0;
+  gap: 13px;
+}
+
+.treatment-title,
+.progress-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-pill {
   flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #edf4ff;
+  color: #2869ca;
+  font: 600 11px "Roboto", sans-serif;
 }
 
-.balance-debt-color {
+.progress-copy {
+  color: #73808f;
+  font: 12px "Roboto", sans-serif;
+}
+
+.progress-copy strong {
+  color: #344252;
+}
+
+.progress-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e9eef5;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #407dda;
+}
+
+.next-item {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  gap: 3px;
+}
+
+.next-item span {
+  color: #73808f;
+  font: 12px "Roboto", sans-serif;
+}
+
+.next-item strong {
+  color: #344252;
+  font: 600 13px "Roboto", sans-serif;
+}
+
+.note-summary {
+  margin: 22px 0;
+  gap: 8px;
+}
+
+.note-summary time {
+  color: #718096;
+  font: 600 12px "Roboto", sans-serif;
+}
+
+.note-summary p {
+  display: -webkit-box;
+  max-width: 78ch;
+  margin: 0;
+  overflow: hidden;
+  color: #445160;
+  font: 14px/1.6 "Roboto", sans-serif;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.financial-card {
+  min-height: 314px;
+}
+
+.balance-summary {
+  display: flex;
+  flex-direction: column;
+  margin: 24px 0 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #edf1f6;
+  gap: 4px;
+}
+
+.balance-summary span,
+.last-payment span {
+  color: #73808f;
+  font: 12px "Roboto", sans-serif;
+}
+
+.balance-summary strong {
+  color: #27845c;
+  font: 700 27px "Roboto Condensed", sans-serif;
+}
+
+.balance-summary .balance-summary--debt {
   color: $warn--primary;
 }
 
-.balance-income-color {
-  color: #6fcf97;
+.last-payment {
+  margin-bottom: 18px;
+  gap: 4px;
 }
 
-@media (max-width: 767.98px) {
-  .menu_grid {
-    grid-template-columns: 1fr;
-  }
-
-  .menu_grid > :last-child:nth-child(odd) {
-    grid-column: auto;
-  }
+.last-payment strong {
+  color: #344252;
+  font: 600 16px "Roboto", sans-serif;
 }
 
-@media (max-width: 575.98px) {
-  .patient-dashboard {
-    padding-inline: 16px;
-  }
-
-  .navigation_row {
-    margin-bottom: 24px;
-  }
-
-  .pacientes_navigation {
-    font-size: 14px;
-    line-height: 18px;
-  }
-
-  .patient-summary {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .patient-balance {
-    justify-content: flex-start;
-    padding-left: 58px;
-    text-align: left;
-  }
-
-  .custom_card_header {
-    gap: 14px;
-  }
-
-  .dashboard_agenda_icon {
-    width: 44px;
-    height: 44px;
-  }
-
-  .custom-card-subtitle {
-    font-size: 14px;
-  }
-
-  .dashboard-menu-card {
-    min-height: 92px;
-    padding: 14px;
-  }
+.last-payment small {
+  overflow: hidden;
+  color: #7a8694;
+  font: 12px/1.4 "Roboto", sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .dashboard-menu-card {
-    transition: none;
-  }
+.quick-actions {
+  padding: 20px;
+}
+
+.quick-actions-heading {
+  margin-bottom: 15px;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.quick-actions-grid button {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 66px;
+  padding: 10px;
+  border: 1px solid #e2eaf5;
+  border-radius: 11px;
+  background: #fbfdff;
+  color: #405064;
+  cursor: pointer;
+  font: 600 12px/1.25 "Roboto", sans-serif;
+  gap: 8px;
+  text-align: left;
+}
+
+.quick-actions-grid button:hover {
+  border-color: #a9c5ef;
+  background: #f1f6fd;
+  color: #2869ca;
+}
+
+.quick-actions-grid mat-icon {
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+  color: #407dda;
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(64, 125, 218, 0.28);
+  outline-offset: 2px;
 }
