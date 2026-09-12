@@ -7,7 +7,6 @@ import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { Appointment } from '../../../core/models/appointment.model';
 import { EvolutionNote } from '../../../core/models/evolution-note.model';
 import { Patient } from '../../../core/models/patient.model';
-import { Payment } from '../../../core/models/payment.model';
 import {
   TREATMENT_PLAN_STATUS_LABELS,
   TreatmentPlan,
@@ -18,7 +17,6 @@ import {
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { EvolutionNoteService } from '../../../core/services/evolution-note.service';
 import { PacientesService } from '../../../core/services/patient.service';
-import { PaymentService } from '../../../core/services/payment.service';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 
 interface ClinicalAlert {
@@ -67,7 +65,6 @@ export class PatientDashboardComponent implements OnInit {
   nextAppointment: Appointment | null = null;
   activeTreatmentPlan: TreatmentPlan | null = null;
   latestNote: EvolutionNote | null = null;
-  latestPayment: Payment | null = null;
   loading = true;
 
   readonly treatmentPlanStatusLabels = TREATMENT_PLAN_STATUS_LABELS;
@@ -78,8 +75,7 @@ export class PatientDashboardComponent implements OnInit {
     private readonly patientsService: PacientesService,
     private readonly appointmentsService: AppointmentService,
     private readonly treatmentPlansService: TreatmentPlanService,
-    private readonly evolutionNotesService: EvolutionNoteService,
-    private readonly paymentsService: PaymentService
+    private readonly evolutionNotesService: EvolutionNoteService
   ) {}
 
   ngOnInit(): void {
@@ -127,10 +123,6 @@ export class PatientDashboardComponent implements OnInit {
 
   get latestNotePreview(): string {
     return this.latestNote ? this.plainText(this.latestNote.note) : '';
-  }
-
-  get latestPaymentDescription(): string {
-    return this.latestPayment?.displayConcepts || 'Pago registrado';
   }
 
   goToPatientFile(): void {
@@ -187,10 +179,6 @@ export class PatientDashboardComponent implements OnInit {
       latestNote: this.evolutionNotesService.listNotes(this.patientId, 1, 1).pipe(
         map(response => response.data?.results[0] ?? null),
         catchError(() => of(null))
-      ),
-      latestPayment: this.paymentsService.listPayments(this.patientId, 1, 1).pipe(
-        map(response => response.data?.results[0] ?? null),
-        catchError(() => of(null))
       )
     }).subscribe(result => {
       this.patient = result.patient;
@@ -203,7 +191,6 @@ export class PatientDashboardComponent implements OnInit {
         )[0] ?? null;
       this.activeTreatmentPlan = result.treatmentPlan;
       this.latestNote = result.latestNote;
-      this.latestPayment = result.latestPayment;
       this.loading = false;
     });
   }

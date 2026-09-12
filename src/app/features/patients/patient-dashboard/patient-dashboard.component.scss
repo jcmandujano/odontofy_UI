@@ -25,20 +25,26 @@
   text-transform: uppercase;
 }
 
-.patient-dashboard-intro h1 {
-  margin: 5px 0 0;
-  color: #263442;
-  font-size: clamp(28px, 3vw, 38px);
-  font-weight: 600;
-  letter-spacing: -.02em;
-  line-height: 1.15;
+.title-container {
+  display: flex;
+  align-items: center;
 }
 
-.patient-dashboard-intro p {
-  margin: 8px 0 0;
-  color: $gray--text;
-  font-size: 15px;
-  line-height: 1.45;
+.dashboard-title-icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+  color: $primary--blue;
+}
+
+.patient-dashboard-intro h1 {
+  margin: 0;
+  color: $primary--blue;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: .01em;
+  line-height: 30px;
 }
 
 .primary-action,
@@ -78,8 +84,7 @@
 .clinical-panel { background: #fbfdff; }
 
 .section-heading,
-.card-heading,
-.quick-actions-heading {
+.card-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -87,8 +92,7 @@
 }
 
 .section-heading h2,
-.card-heading h2,
-.quick-actions h2 {
+.card-heading h2 {
   margin: 4px 0 0;
   color: #2b3947;
   font-size: 20px;
@@ -194,8 +198,7 @@
 
 .appointment-summary > div:last-child,
 .treatment-summary,
-.note-summary,
-.last-payment { display: flex; min-width: 0; flex-direction: column; }
+.note-summary { display: flex; min-width: 0; flex-direction: column; }
 .appointment-summary > div:last-child { gap: 3px; }
 
 .appointment-summary > div:last-child strong,
@@ -239,37 +242,10 @@
   -webkit-line-clamp: 3;
 }
 
-.financial-card { min-height: 304px; }
-.balance-summary { display: flex; flex-direction: column; margin: 24px 0 18px; padding-bottom: 18px; border-bottom: 1px solid #edf1f6; gap: 4px; }
-.balance-summary span,
-.last-payment span { color: #778392; font-size: 12px; }
+.balance-summary { display: flex; flex-direction: column; margin: 24px 0 18px; gap: 4px; }
+.balance-summary span { color: #778392; font-size: 12px; }
 .balance-summary strong { color: #347655; font-size: 28px; font-weight: 600; letter-spacing: -.02em; }
 .balance-summary .balance-summary--debt { color: $warn--primary; }
-.last-payment { margin-bottom: 18px; gap: 4px; }
-.last-payment strong { color: #354351; font-size: 16px; font-weight: 600; }
-.last-payment small { overflow: hidden; color: #7a8694; font-size: 12px; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
-
-.quick-actions-heading { margin-bottom: 10px; }
-.quick-actions-grid { display: grid; gap: 6px; }
-
-.quick-actions-grid button {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-height: 52px;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
-  color: #354351;
-  cursor: pointer;
-  font: 600 14px/1.25 "Roboto", sans-serif;
-  gap: 12px;
-  text-align: left;
-}
-
-.quick-actions-grid button:hover { background: #f2f7fd; color: $primary--blue; }
-.quick-actions-grid mat-icon { flex: 0 0 22px; width: 22px; height: 22px; }
 
 button:focus-visible { outline: 3px solid rgba($primary--blue, .3); outline-offset: 2px; }
 

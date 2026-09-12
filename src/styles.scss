@@ -167,7 +167,7 @@ app-patient-dashboard .loading-cards span {
   }
 
   app-patient-dashboard .summary-side {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 }
 
@@ -194,8 +194,7 @@ app-patient-dashboard .loading-cards span {
   }
 
   app-patient-dashboard .clinical-panel,
-  app-patient-dashboard .summary-card,
-  app-patient-dashboard .quick-actions {
+  app-patient-dashboard .summary-card {
     padding: 16px;
     border-radius: 13px;
   }

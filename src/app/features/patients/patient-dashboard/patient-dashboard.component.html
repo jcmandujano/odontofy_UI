@@ -1,12 +1,13 @@
 <main class="patient-dashboard">
   <header class="patient-dashboard-intro">
-    <div>
+    <div class="title-container">
+      <mat-icon svgIcon="home" class="dashboard-title-icon" aria-hidden="true"></mat-icon>
       <h1>Resumen del paciente</h1>
     </div>
-    <button type="button" class="primary-action" (click)="goToPatientFile()">
+    <!-- <button type="button" class="primary-action" (click)="goToPatientFile()">
       <mat-icon svgIcon="patientDashboardFile" aria-hidden="true"></mat-icon>
       Editar ficha
-    </button>
+    </button> -->
   </header>
 
   @if (loading) {
@@ -22,7 +23,6 @@
       <section class="dashboard-panel clinical-panel" aria-labelledby="clinical-alerts-title">
         <div class="section-heading">
           <div>
-            <span class="eyebrow">Prioridad clínica</span>
             <h2 id="clinical-alerts-title">Alertas y antecedentes relevantes</h2>
           </div>
         </div>
@@ -49,7 +49,6 @@
         <article class="dashboard-panel summary-card">
           <div class="card-heading">
             <div>
-              <span class="eyebrow">Siguiente paso</span>
               <h2>Próxima cita</h2>
             </div>
           </div>
@@ -77,7 +76,6 @@
         <article class="dashboard-panel summary-card">
           <div class="card-heading">
             <div>
-              <span class="eyebrow">Atención en curso</span>
               <h2>Tratamiento activo</h2>
             </div>
           </div>
@@ -110,36 +108,12 @@
           </button>
         </article>
 
-        <article class="dashboard-panel summary-card summary-card--wide">
-          <div class="card-heading">
-            <div>
-              <span class="eyebrow">Actividad clínica</span>
-              <h2>Última evolución</h2>
-            </div>
-          </div>
-
-          @if (latestNote) {
-            <div class="note-summary">
-              <time [attr.datetime]="latestNote.createdAt">
-                {{ latestNote.createdAt | date:'d MMM y, h:mm a':'':'es-MX' }}
-              </time>
-              <p>{{ latestNotePreview }}</p>
-            </div>
-          } @else {
-            <p class="empty-copy">Todavía no hay notas de evolución para este paciente.</p>
-          }
-
-          <button type="button" class="card-action" (click)="goToEvolutionNotes()">
-            {{ latestNote ? 'Ver historial' : 'Agregar nota' }}
-          </button>
-        </article>
       </div>
 
-      <aside class="summary-side" aria-label="Información administrativa y accesos rápidos">
-        <section class="dashboard-panel summary-card financial-card" aria-labelledby="financial-title">
+      <aside class="summary-side" aria-label="Información administrativa">
+        <section class="dashboard-panel summary-card" aria-labelledby="financial-title">
           <div class="card-heading">
             <div>
-              <span class="eyebrow">Estado administrativo</span>
               <h2 id="financial-title">Estado financiero</h2>
             </div>
           </div>
@@ -151,44 +125,33 @@
             </strong>
           </div>
 
-          @if (latestPayment) {
-            <div class="last-payment">
-              <span>Último pago</span>
-              <strong>{{ latestPayment.income | currency:'MXN':'symbol-narrow':'1.2-2':'es-MX' }}</strong>
-              <small>{{ latestPaymentDescription }} · {{ latestPayment.payment_date | date:'d MMM y':'':'es-MX' }}</small>
-            </div>
-          } @else {
-            <p class="empty-copy">No hay pagos registrados.</p>
-          }
-
           <button type="button" class="card-action" (click)="goToPayments()">Ver pagos</button>
         </section>
-
-        <section class="dashboard-panel quick-actions" aria-labelledby="quick-actions-title">
-          <div class="quick-actions-heading">
-            <span class="eyebrow">Accesos rápidos</span>
-            <h2 id="quick-actions-title">Atender al paciente</h2>
-          </div>
-          <div class="quick-actions-grid">
-            <button type="button" (click)="goToEvolutionNotes()">
-              <mat-icon svgIcon="patientDashboardNotes" aria-hidden="true"></mat-icon>
-              <span>Nueva nota</span>
-            </button>
-            <button type="button" (click)="goToSchedule()">
-              <mat-icon svgIcon="agenda" aria-hidden="true"></mat-icon>
-              <span>Agendar cita</span>
-            </button>
-            <button type="button" (click)="goToPayments()">
-              <mat-icon svgIcon="patientDashboardPayments" aria-hidden="true"></mat-icon>
-              <span>Registrar pago</span>
-            </button>
-            <button type="button" (click)="goToTreatmentPlans()">
-              <mat-icon svgIcon="patientDashboardTreatmentPlan" aria-hidden="true"></mat-icon>
-              <span>Nuevo tratamiento</span>
-            </button>
-          </div>
-        </section>
       </aside>
+
+      <article class="dashboard-panel summary-card summary-card--wide">
+        <div class="card-heading">
+          <div>
+            <h2>Actividad clínica</h2>
+            <span class="eyebrow">Última evolución</span>
+          </div>
+        </div>
+
+        @if (latestNote) {
+          <div class="note-summary">
+            <time [attr.datetime]="latestNote.createdAt">
+              {{ latestNote.createdAt | date:'d MMM y, h:mm a':'':'es-MX' }}
+            </time>
+            <p>{{ latestNotePreview }}</p>
+          </div>
+        } @else {
+          <p class="empty-copy">Todavía no hay notas de evolución para este paciente.</p>
+        }
+
+        <button type="button" class="card-action" (click)="goToEvolutionNotes()">
+          {{ latestNote ? 'Ver historial' : 'Agregar nota' }}
+        </button>
+      </article>
     </div>
   }
 </main>
