@@ -5,9 +5,8 @@ import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/c
 import { MatIconModule } from '@angular/material/icon';
 import { PacientesService } from '../../../core/services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -17,12 +16,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
-import { finalize } from 'rxjs';
+import { distinctUntilChanged, finalize, map } from 'rxjs';
 
 @Component({
   selector: 'app-patient-list',
   imports: [
-    NavBarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatFormFieldModule,
@@ -51,12 +49,20 @@ export class PatientListComponent implements AfterViewInit {
   constructor(private pacientesService: PacientesService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private route: ActivatedRoute,
     public dialog: MatDialog,
     private spinner: NgxSpinnerService,
     private elementRef: ElementRef) {}
 
   ngOnInit(): void {
-    this.recuperaPacientes()
+    this.route.queryParamMap.pipe(
+      map(params => params.get('search')?.trim() ?? ''),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.searchCriteria = search;
+      this.pageIndex = 0;
+      this.recuperaPacientes();
+    });
   }
 
 
@@ -123,15 +129,20 @@ export class PatientListComponent implements AfterViewInit {
 
   
   onSearch(): void {
-    // Aquí llamas tu endpoint con el filtro actual
-    console.log('Buscando pacientes con criterio:', this.searchCriteria);
-    this.recuperaPacientes(); // Reinicia a la primera página al buscar
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: this.searchCriteria.trim() || null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   clearSearch(): void {
     this.searchCriteria = '';
-    this.recuperaPacientes(); // Reinicia a la primera página al limpiar
-    console.log('Búsqueda limpiada. Mostrar todos los pacientes.');
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   handlePageEvent(e: PageEvent) {

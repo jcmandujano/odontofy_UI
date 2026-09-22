@@ -1,15 +1,9 @@
-<app-nav-bar></app-nav-bar>
 @if (spinner) {
   <div class="progress-loader">
     <mat-progress-spinner [mode]="'indeterminate'"> </mat-progress-spinner>
   </div>
 }
 <div class="container">
-  <div class="row navigation_row">
-    <div class="col-12">
-      <span class="pacientes_navigation">Inicio > Pacientes > Consentimientos informados</span>
-    </div>
-  </div>
   <div class="row pacientes_header_row">
     <div class="col-6">
       <div class="title_container">
@@ -21,7 +15,7 @@
       <div class="nuevo_paciente_button_container">
         <button mat-fab extended class="logout-navbar-button print-consent-btn" [disableRipple]="true"
         (click)="launchPrintConsentDialog()">Imprimir consentimiento</button>
-        <button mat-fab extended class="logout-navbar-button" [disableRipple]="true"
+        <button mat-fab extended class="logout-navbar-button app-primary-action" [disableRipple]="true"
         (click)="launchAddSignedConsentDialog()">Agregar consentimiento</button>
       </div>
     </div>

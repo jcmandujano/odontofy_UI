@@ -1,109 +1,157 @@
-<app-nav-bar></app-nav-bar>
+<main class="patient-dashboard">
+  <header class="patient-dashboard-intro">
+    <div class="title-container">
+      <mat-icon svgIcon="home" class="dashboard-title-icon" aria-hidden="true"></mat-icon>
+      <h1>Resumen del paciente</h1>
+    </div>
+    <!-- <button type="button" class="primary-action" (click)="goToPatientFile()">
+      <mat-icon svgIcon="patientDashboardFile" aria-hidden="true"></mat-icon>
+      Editar ficha
+    </button> -->
+  </header>
 
-@if (spinner) {
-  <div class="progress-loader">
-    <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
-  </div>
-}
-
-<main class="container patient-dashboard">
-  <div class="navigation_row">
-    <span class="pacientes_navigation">Inicio &gt; Pacientes &gt; Expediente</span>
-  </div>
-
-  <section class="patient-summary" aria-label="Resumen del paciente">
-    <div class="custom_card_header patient-identity">
-      <div class="custom_icon">
-        <mat-icon svgIcon="patientDashboardProfile" class="dashboard_agenda_icon"></mat-icon>
+  @if (loading) {
+    <section class="loading-state" aria-live="polite" aria-label="Cargando resumen del paciente">
+      <span class="loading-bar loading-bar--wide"></span>
+      <span class="loading-bar"></span>
+      <div class="loading-cards">
+        <span></span><span></span><span></span>
       </div>
-      <div class="patient-name-container">
-        <p class="custom_card_title patient-name">
-          {{ paciente?.name }} {{ paciente?.middle_name }} {{ paciente?.last_name }}
-          @if (antecedentes) {
-            <mat-icon
-              class="alergy-icon"
-              aria-label="Antecedentes del paciente"
-              svgIcon="bell"
-              [matTooltip]="antecedentes">
-            </mat-icon>
+    </section>
+  } @else {
+    @if (clinicalAlerts.length || familyHistory) {
+      <section class="dashboard-panel clinical-panel" aria-labelledby="clinical-alerts-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="clinical-alerts-title">Alertas y antecedentes relevantes</h2>
+          </div>
+        </div>
+
+        <div class="clinical-alerts">
+          @for (alert of clinicalAlerts; track alert.label) {
+            <article class="clinical-alert" [class.clinical-alert--high]="alert.priority === 'high'">
+              <strong>{{ alert.label }}</strong>
+              <span>{{ alert.detail || 'Antecedente confirmado sin comentarios adicionales.' }}</span>
+            </article>
           }
-        </p>
-      </div>
-    </div>
-
-    <div class="finanzas_container patient-balance">
-      <div>
-        <p class="dashboard_finanzas_table_title">Balance</p>
-        <p
-          class="dashboard_finanzas_table_adeudo"
-          [ngClass]="patientBalance > 0 ? 'balance-income-color' : 'balance-debt-color'">
-          {{ patientBalance | currency:'':'symbol':'1.2-2' }}
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <nav class="menu_grid" aria-label="Secciones del expediente">
-    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToExpediente()">
-      <span class="custom_icon">
-        <mat-icon svgIcon="patientDashboardFile" class="dashboard_agenda_icon"></mat-icon>
-      </span>
-      <span class="custom_title">
-        <span class="custom_card_title">Ficha de identificación</span>
-        <span class="custom-card-subtitle">Consulta y modifica los datos</span>
-      </span>
-    </button>
-
-    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToConsentimientos()">
-      <span class="custom_icon">
-        <mat-icon svgIcon="patientDashboardConsents" class="dashboard_agenda_icon"></mat-icon>
-      </span>
-      <span class="custom_title">
-        <span class="custom_card_title">Consentimientos</span>
-        <span class="custom-card-subtitle">Imprime y almacena consentimientos personalizados</span>
-      </span>
-    </button>
-
-    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToNotasEvolucion()">
-      <span class="custom_icon">
-        <mat-icon svgIcon="patientDashboardNotes" class="dashboard_agenda_icon"></mat-icon>
-      </span>
-      <span class="custom_title">
-        <span class="custom_card_title">Notas de evolución</span>
-        <span class="custom-card-subtitle">Agrega una nueva o revisa el historial</span>
-      </span>
-    </button>
-
-    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToTreatmentPlans()">
-      <span class="custom_icon">
-        <mat-icon svgIcon="patientDashboardTreatmentPlan" class="dashboard_agenda_icon"></mat-icon>
-      </span>
-      <span class="custom_title">
-        <span class="custom_card_title">Planes de tratamiento</span>
-        <span class="custom-card-subtitle">Consulta las propuestas clínicas y económicas del paciente</span>
-      </span>
-    </button>
-
-    <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToHistorialPagos()">
-      <span class="custom_icon">
-        <mat-icon svgIcon="patientDashboardPayments" class="dashboard_agenda_icon"></mat-icon>
-      </span>
-      <span class="custom_title">
-        <span class="custom_card_title">Historial de pagos</span>
-        <span class="custom-card-subtitle">Resumen de pagos del paciente</span>
-      </span>
-    </button>
-
-    @if (showPatientOdontogram) {
-      <button type="button" class="custom_card_header dashboard-menu-card" (click)="goToOdontograma()">
-        <span class="custom_icon">
-          <mat-icon svgIcon="patientDashboardOdontogram" class="dashboard_agenda_icon"></mat-icon>
-        </span>
-        <span class="custom_title">
-          <span class="custom_card_title">Odontograma</span>
-          <span class="custom-card-subtitle">Consulta y modifica el odontograma de este paciente</span>
-        </span>
-      </button>
+          @if (familyHistory) {
+            <article class="clinical-alert clinical-alert--family">
+              <strong>Antecedentes heredofamiliares</strong>
+              <span>{{ familyHistory }}</span>
+            </article>
+          }
+        </div>
+      </section>
     }
-  </nav>
+
+    <div class="summary-layout">
+      <div class="summary-main">
+        <article class="dashboard-panel summary-card">
+          <div class="card-heading">
+            <div>
+              <h2>Próxima cita</h2>
+            </div>
+          </div>
+
+          @if (nextAppointment) {
+            <div class="appointment-summary">
+              <div class="appointment-date">
+                <strong>{{ nextAppointment.appointment_datetime | date:'d' }}</strong>
+                <span>{{ nextAppointment.appointment_datetime | date:'MMM':'':'es-MX' }}</span>
+              </div>
+              <div>
+                <strong>{{ nextAppointment.appointment_datetime | date:'EEEE, h:mm a':'':'es-MX' }}</strong>
+                <span>{{ nextAppointment.reason || 'Consulta odontológica' }}</span>
+              </div>
+            </div>
+          } @else {
+            <p class="empty-copy">Este paciente no tiene citas próximas programadas.</p>
+          }
+
+          <button type="button" class="card-action" (click)="goToSchedule()">
+            {{ nextAppointment ? 'Abrir agenda' : 'Agendar cita' }}
+          </button>
+        </article>
+
+        <article class="dashboard-panel summary-card">
+          <div class="card-heading">
+            <div>
+              <h2>Tratamiento activo</h2>
+            </div>
+          </div>
+
+          @if (activeTreatmentPlan) {
+            <div class="treatment-summary">
+              <div class="treatment-title">
+                <strong>{{ activeTreatmentPlan.title }}</strong>
+                <span class="status-pill">{{ treatmentStatusLabel }}</span>
+              </div>
+              @if (treatmentProgress !== null) {
+                <div class="progress-copy">
+                  <span>{{ completedTreatmentItems }} de {{ treatmentItems.length }} procedimientos completados</span>
+                  <strong>{{ treatmentProgress }}%</strong>
+                </div>
+                <div class="progress-track" aria-hidden="true">
+                  <span [style.width.%]="treatmentProgress"></span>
+                </div>
+              }
+              @if (nextTreatmentItem) {
+                <p class="next-item"><span>Siguiente procedimiento</span><strong>{{ nextTreatmentItem.name }}</strong></p>
+              }
+            </div>
+          } @else {
+            <p class="empty-copy">No hay un plan de tratamiento activo.</p>
+          }
+
+          <button type="button" class="card-action" (click)="goToTreatmentPlanDetail()">
+            {{ activeTreatmentPlan ? 'Ver plan' : 'Crear tratamiento' }}
+          </button>
+        </article>
+
+      </div>
+
+      <aside class="summary-side" aria-label="Información administrativa">
+        <section class="dashboard-panel summary-card" aria-labelledby="financial-title">
+          <div class="card-heading">
+            <div>
+              <h2 id="financial-title">Estado financiero</h2>
+            </div>
+          </div>
+
+          <div class="balance-summary">
+            <span>Balance actual</span>
+            <strong [class.balance-summary--debt]="hasDebt">
+              {{ balance | currency:'MXN':'symbol-narrow':'1.2-2':'es-MX' }}
+            </strong>
+          </div>
+
+          <button type="button" class="card-action" (click)="goToPayments()">Ver pagos</button>
+        </section>
+      </aside>
+
+      <article class="dashboard-panel summary-card summary-card--wide">
+        <div class="card-heading">
+          <div>
+            <h2>Actividad clínica</h2>
+            <span class="eyebrow">Última evolución</span>
+          </div>
+        </div>
+
+        @if (latestNote) {
+          <div class="note-summary">
+            <time [attr.datetime]="latestNote.createdAt">
+              {{ latestNote.createdAt | date:'d MMM y, h:mm a':'':'es-MX' }}
+            </time>
+            <p>{{ latestNotePreview }}</p>
+          </div>
+        } @else {
+          <p class="empty-copy">Todavía no hay notas de evolución para este paciente.</p>
+        }
+
+        <button type="button" class="card-action" (click)="goToEvolutionNotes()">
+          {{ latestNote ? 'Ver historial' : 'Agregar nota' }}
+        </button>
+      </article>
+    </div>
+  }
 </main>

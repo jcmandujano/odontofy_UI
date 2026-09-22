@@ -7,7 +7,6 @@ import { ActivatedRoute } from '@angular/router';
 import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/confirm-dialog.component';
 import { EvolutionNoteService } from '../../../core/services/evolution-note.service';
 import { EvolutionNoteMgmtDialogComponent } from '../../../shared/dialogs/evolution-note-mgmt-dialog/evolution-note-mgmt-dialog.component';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -25,7 +24,6 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-evolution-notes',
   imports: [
-    NavBarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatFormFieldModule,

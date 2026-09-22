@@ -11,7 +11,6 @@ import { ConfirmDialogComponent } from '../../../shared/dialogs/confirm-dialog/c
 import { PrintConsentDialogComponent } from '../../../shared/dialogs/print-consent-dialog/print-consent-dialog.component';
 import { Patient } from '../../../core/models/patient.model';
 import { SignedConsentMgmtDialogComponent } from '../../../shared/dialogs/signed-consent-mgmt-dialog/signed-consent-mgmt-dialog.component';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +28,6 @@ import { FileService } from '../../../core/services/file.service';
 @Component({
   selector: 'app-informed-consents',
   imports: [
-    NavBarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatFormFieldModule,

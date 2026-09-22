@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, forkJoin, map, of, throwError } from 'rxjs';
+import { catchError, combineLatest, EMPTY, map, startWith } from 'rxjs';
 import { ApiV1Appointment } from '../models/api-v1.model';
 import { toApiAppointment, toUiAppointment } from '../models/api-v1.mapper';
 import { mapApiResponse } from '../models/api-response.model';
@@ -28,15 +28,31 @@ export class AppointmentService {
             to: toBoundary,
             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Mexico_City'
         };
-        return forkJoin({
+        return combineLatest({
             local: this.api.get<ApiV1Appointment[]>('/appointments', { params }),
             external: this.api.get<ApiExternalCalendarEvent[]>('/calendar/external-events', { params: externalParams }).pipe(
-                catchError(error => error.status === 409 ? of(null) : throwError(() => error))
+                // Google Calendar complements the local agenda. A provider,
+                // configuration or connection error must never hide local appointments.
+                catchError(() => EMPTY),
+                startWith(null)
             )
         }).pipe(map(({ local, external }) => mapApiResponse(local, values => [
             ...values.map(toUiAppointment),
             ...(external?.data ?? []).filter(event => event.startsAt && event.endsAt).map(toUiExternalAppointment)
         ])));
+    }
+
+    listPatientAppointments(patientId: number, startDate: string, endDate: string) {
+        const params = {
+            from: this.rangeBoundary(startDate, false),
+            to: this.rangeBoundary(endDate, true),
+            patientId,
+            pageSize: 100
+        };
+
+        return this.api.get<ApiV1Appointment[]>('/appointments', { params }).pipe(
+            map(response => mapApiResponse(response, values => values.map(toUiAppointment)))
+        );
     }
 
     findAppointment(id: number) {

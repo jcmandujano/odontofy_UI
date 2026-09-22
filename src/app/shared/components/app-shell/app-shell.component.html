@@ -1,0 +1,79 @@
+<div class="app-shell" [class.nav-collapsed]="navCollapsed">
+  <app-nav-bar
+    [activeSection]="activeSection"
+    [collapsed]="navCollapsed"
+    (collapsedChange)="setNavCollapsed($event)">
+  </app-nav-bar>
+
+  <main id="main-content" class="shell-main" tabindex="-1">
+    <div class="shell-content">
+      @if (activeSection !== 'dashboard') {
+        <nav class="breadcrumbs" aria-label="Ruta de navegación">
+          <a routerLink="/dashboard">Inicio</a>
+          <span class="breadcrumb-separator" aria-hidden="true">/</span>
+
+          @if (activeSection === 'patients' && pageTitle !== 'Pacientes') {
+            <a routerLink="/patient-list">Pacientes</a>
+            <span class="breadcrumb-separator" aria-hidden="true">/</span>
+          }
+
+          @if (patientId && activePatientSection !== 'patient-overview') {
+            <a [routerLink]="patientOverviewLink()">{{ patientName() }}</a>
+            <span class="breadcrumb-separator" aria-hidden="true">/</span>
+          }
+
+          <span aria-current="page">{{ pageTitle }}</span>
+        </nav>
+      }
+
+      @if (patientId) {
+        <section class="patient-context" aria-label="Paciente activo">
+          <div class="patient-context-summary">
+            <div class="patient-context-copy">
+              <span class="context-eyebrow">Paciente activo</span>
+              <a class="patient-name" [routerLink]="patientOverviewLink()">{{ patientName() }}</a>
+              <div class="patient-metadata">
+                <span>Expediente #{{ patientId }}</span>
+                @if (patientAge() !== null) {
+                  <span aria-hidden="true">·</span>
+                  <span>{{ patientAge() }} años</span>
+                }
+              </div>
+            </div>
+
+            @if (patientAlert(); as alert) {
+              <span class="patient-alert" [attr.title]="alert">
+                <mat-icon svgIcon="bell" aria-hidden="true"></mat-icon>
+                Antecedentes
+              </span>
+            }
+
+            @if (patient) {
+              <!-- <div class="patient-balance">
+                <span>Balance</span>
+                <strong [class.has-debt]="patient.debt > 0">
+                  {{ patient.debt * -1 | currency:'MXN':'symbol-narrow':'1.2-2':'es-MX' }}
+                </strong>
+              </div> -->
+            }
+          </div>
+
+          <nav class="patient-tabs" aria-label="Secciones del expediente">
+            @for (destination of patientDestinations; track destination.section) {
+              <a
+                [routerLink]="patientLink(destination.route)"
+                [class.is-active]="activePatientSection === destination.section"
+                [attr.aria-current]="activePatientSection === destination.section ? 'page' : null">
+                {{ destination.label }}
+              </a>
+            }
+          </nav>
+        </section>
+      }
+
+      <div class="route-content" [class.dashboard-content]="activeSection === 'dashboard'">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </main>
+</div>

@@ -91,6 +91,44 @@
     margin-bottom: 50px;
 }
 
+/* Calendar navigation uses the same blue scale as the rest of the app. */
+.agenda-container .btn-group .btn {
+  border-color: $primary--blue;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+}
+
+.agenda-container .btn-group .btn-primary {
+  background-color: $primary--blue;
+  color: #fff;
+}
+
+.agenda-container .btn-group .btn-primary:hover {
+  border-color: #326cc3;
+  background-color: #326cc3;
+}
+
+.agenda-container .btn-group .btn-outline-secondary {
+  background-color: #fff;
+  color: $primary--blue;
+}
+
+.agenda-container .btn-group .btn-outline-secondary:hover {
+  background-color: #eaf2ff;
+  color: $primary--blue;
+}
+
+.agenda-container .btn-group .btn-primary.active {
+  border-color: #2d62ad;
+  background-color: #326cc3;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
+}
+
+.agenda-container .btn-group .btn:focus-visible {
+  outline: 3px solid rgba($primary--blue, .3);
+  outline-offset: 2px;
+}
+
 .month-event-actions {
   display: inline-flex;
   align-items: center;

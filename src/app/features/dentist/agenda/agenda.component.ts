@@ -12,7 +12,6 @@ import { EventColor } from 'calendar-utils';
 import { from, Subject } from 'rxjs';
 import localeEs from '@angular/common/locales/es';
 import { AppointmentMgmtDialogComponent } from '../../../shared/dialogs/appointment-mgmt-dialog/appointment-mgmt-dialog.component';
-import { NavBarComponent } from '../../../shared/components/nav-bar/nav-bar.component';
 import { Patient } from '../../../core/models/patient.model';
 import { PacientesService } from '../../../core/services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -23,7 +22,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
 import { User } from '../../../core/models/user.model';
 import { SessionStorageService } from '../../../core/services/session-storage.service';
 import { UserService } from '../../../core/services/user.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   startOfMonth, endOfMonth,
   startOfWeek, endOfWeek,
@@ -42,8 +41,6 @@ const colors: Record<string, EventColor> = {
   selector: 'app-agenda',
   imports: [
     CalendarModule,
-    MatProgressSpinnerModule,
-    NavBarComponent,
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
@@ -78,6 +75,7 @@ export class AgendaComponent {
   fromDate: string | null = null;
   toDate: string | null = null;
   selectedAppointmentRef: string | null = null;
+  private openNewAppointmentOnLoad = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -88,12 +86,14 @@ export class AgendaComponent {
     private spinner: NgxSpinnerService,
     private sessionService: SessionStorageService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getUser();
     this.isUserSyncGoogle = this.currentUser.is_google_synced ?? false;
+    this.openNewAppointmentOnLoad = this.route.snapshot.queryParamMap.get('action') === 'new';
     this.applyAppointmentNavigation();
     this.retrievePatients()
     // Aquí calculas el rango inicial del mes actual (porque view = Month al inicio)
@@ -114,6 +114,16 @@ export class AgendaComponent {
     this.patientService.listPatients().subscribe(response => {
       this.patientsList = response.data?.results ?? []
       this.spinner.hide()
+      if (this.openNewAppointmentOnLoad) {
+        this.openNewAppointmentOnLoad = false;
+        this.launchAppointmentDialog();
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { action: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+      }
     }, (error) => {
       this.spinner.hide()
       console.log('ERROR', error.error.error.message)
@@ -186,6 +196,11 @@ export class AgendaComponent {
   }
 
   private applyAppointmentNavigation(): void {
+    const viewParam = this.route.snapshot.queryParamMap.get('view');
+    if (viewParam === CalendarView.Day || viewParam === CalendarView.Week) {
+      this.view = viewParam;
+    }
+
     const dateParam = this.route.snapshot.queryParamMap.get('date');
     this.selectedAppointmentRef = this.route.snapshot.queryParamMap.get('appointmentRef');
 
