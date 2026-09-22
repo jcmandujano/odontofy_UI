@@ -153,6 +153,10 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  goToAgendaView(view: 'day' | 'week'): void {
+    this.router.navigate(['/schedule'], { queryParams: { view } });
+  }
+
   retrieveAppointments(fromDate?: string, toDate?: string): Observable<Appointment[]> {
     return this.appointmentService.listAppointments(fromDate, toDate).pipe(
       map(response => response.data ?? []),

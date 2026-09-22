@@ -54,7 +54,7 @@
   color: #fff;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   gap: 9px;
 }
 
@@ -173,12 +173,13 @@ button.metric-card { width: 100%; font: inherit; }
 .dashboard-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.75fr) minmax(300px, 0.75fr);
-  align-items: start;
+  align-items: stretch;
   gap: 18px;
   margin-top: 28px;
 }
 
 .dashboard-side { display: grid; gap: 18px; }
+.dashboard-side--single .dashboard-panel { height: 100%; box-sizing: border-box; }
 
 .dashboard-panel {
   min-width: 0;

@@ -39,6 +39,38 @@ mat-icon {
     color: #407dda;
 }
 
+/* Primary creation actions share the dashboard's visual language. */
+.app-primary-action.app-primary-action.app-primary-action {
+  --mat-fab-container-color: #407dda;
+  --mat-fab-foreground-color: #fff;
+  --mdc-fab-container-color: #407dda;
+  --mdc-fab-foreground-color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #407dda;
+  color: #fff;
+  cursor: pointer;
+  font: 500 14px/1 "Roboto", sans-serif;
+  gap: 9px;
+  box-shadow: none !important;
+}
+
+.app-primary-action.app-primary-action.app-primary-action:hover {
+  background: #326cc3;
+  color: #fff;
+}
+
+.app-primary-action.app-primary-action.app-primary-action:focus-visible {
+  outline: 3px solid rgba(64, 125, 218, .3);
+  outline-offset: 2px;
+}
+
 h1{
     color: #407dda;
 }

@@ -32,7 +32,7 @@
     </div>
 
     <div class="metrics-grid">
-      <button type="button" class="metric-card metric-card--interactive" (click)="goToAgenda()">
+      <button type="button" class="metric-card metric-card--interactive" (click)="goToAgendaView('day')">
         <span class="metric-icon"><mat-icon svgIcon="agenda" aria-hidden="true"></mat-icon></span>
         <span class="metric-content">
           <span class="metric-label">Citas de hoy</span>
@@ -42,8 +42,8 @@
         <span class="metric-arrow" aria-hidden="true">→</span>
       </button>
 
-      <button type="button" class="metric-card metric-card--interactive" (click)="goToAgenda()">
-        <span class="metric-icon"><mat-icon svgIcon="check-circle" aria-hidden="true"></mat-icon></span>
+      <button type="button" class="metric-card metric-card--interactive" (click)="goToAgendaView('week')">
+        <span class="metric-icon"><mat-icon svgIcon="agenda" aria-hidden="true"></mat-icon></span>
         <span class="metric-content">
           <span class="metric-label">Próximas esta semana</span>
           <strong>{{ upcomingWeekCount }}</strong>
@@ -114,12 +114,12 @@
           <mat-icon svgIcon="agenda" aria-hidden="true"></mat-icon>
           <h3>No hay citas próximas</h3>
           <p>Tu semana está libre por ahora.</p>
-          <button type="button" class="secondary-action" (click)="createAppointment()">Agendar una cita</button>
+          <button type="button" class="secondary-action app-primary-action" (click)="createAppointment()">Agendar una cita</button>
         </div>
       }
     </section>
 
-    <aside class="dashboard-side">
+    <aside class="dashboard-side" [class.dashboard-side--single]="!hasAttentionItems">
       <section class="dashboard-panel quick-panel" aria-labelledby="quick-title">
         <div class="panel-heading">
           <div>

@@ -196,6 +196,11 @@ export class AgendaComponent {
   }
 
   private applyAppointmentNavigation(): void {
+    const viewParam = this.route.snapshot.queryParamMap.get('view');
+    if (viewParam === CalendarView.Day || viewParam === CalendarView.Week) {
+      this.view = viewParam;
+    }
+
     const dateParam = this.route.snapshot.queryParamMap.get('date');
     this.selectedAppointmentRef = this.route.snapshot.queryParamMap.get('appointmentRef');
 
