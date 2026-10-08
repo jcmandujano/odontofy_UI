@@ -1,0 +1,28 @@
+// Scoped to the odontogram page; kept in the global bundle to respect Angular's
+// per-component style budget without raising it for the entire application.
+.odontogram-page {
+  .finding-list { display: grid; gap: 10px; }
+  .finding-card { padding: 14px; border: 1px solid #e5ebf2; border-radius: 12px; background: #fbfdff; }
+  .finding-topline { align-items: flex-start; }
+  .finding-topline strong, .finding-topline span { display: block; }
+  .finding-topline strong { font-size: 14px; }
+  .finding-topline span, .linked-item > span { color: #68798b; font-size: 12px; }
+  .finding-actions { display: flex; gap: 8px; }
+  .finding-actions button { padding: 0; border: 0; background: none; color: #336fb2; font-size: 12px; }
+  .finding-actions button:last-child { color: #a25454; }
+  .finding-notes { margin: 10px 0 0; color: #566678; font-size: 13px; overflow-wrap: anywhere; }
+  .linked-items { display: grid; gap: 7px; padding-top: 12px; margin-top: 12px; border-top: 1px solid #e5ebf2; }
+  .linked-item { display: flex; align-items: center; gap: 6px; }
+  .linked-name { flex: 1; min-width: 0; padding: 0; border: 0; background: none; color: #2466aa; font-size: 13px; text-align: left; }
+  .unlink-button { border: 0; background: none; color: #9a4e4e; font-size: 20px; }
+  .finding-card > .text-button { margin-top: 11px; }
+  .piece-empty { padding: 18px; border: 1px dashed #d8e3ef; border-radius: 10px; color: #697b8b; font-size: 13px; }
+  .finding-form { display: grid; gap: 13px; padding-top: 20px; margin-top: 18px; border-top: 1px solid #e6edf5; }
+  .finding-form h3, .picker-heading h3 { margin: 0; }
+  .form-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .helper-text, .treatment-picker p { margin: 0; color: #7a8795; font-size: 12px; }
+  .treatment-picker { display: grid; gap: 12px; padding: 17px; margin-top: 20px; border-radius: 12px; background: #eef6ff; }
+  .available-items { display: grid; gap: 7px; }
+  .available-items button { display: flex; justify-content: space-between; gap: 10px; padding: 10px; border: 1px solid #d7e5f5; border-radius: 8px; background: #fff; color: #2e577e; text-align: left; }
+  .available-items small { color: #6c7f90; }
+}

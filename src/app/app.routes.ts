@@ -121,6 +121,7 @@ export const routes: Routes = [
       {
         path: 'odontogram',
         component: OdontogramComponent,
+        canDeactivate: [(component: OdontogramComponent) => component.canLeave()],
         data: {
           title: 'Odontograma',
           primarySection: 'patients',
