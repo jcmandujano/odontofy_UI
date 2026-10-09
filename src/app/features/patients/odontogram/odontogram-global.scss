@@ -35,9 +35,7 @@ app-odontogram .odontogram-page {
   .status-badge { display: inline-flex; padding: 4px 10px; border-radius: 4px; font-size: 12px; line-height: 16px; color: $primary--blue; background: #EAF2FF; }
   .status-completed { color: #219653; background: #E9F8EF; }
   .status-cancelled { color: $warn--primary; background: #FDECEC; }
-  .piece-empty { padding: 24px; border: 1px dashed $light--blue; border-radius: 4px; color: $gray--text; }
-  .piece-empty p { margin-bottom: 6px; }
-  .piece-empty span, .helper-text, .treatment-picker p { color: $gray--text; font-size: 13px; }
+  .helper-text, .treatment-picker p { color: $gray--text; font-size: 13px; }
   .treatment-picker { display: grid; gap: 16px; padding: 20px; margin-top: 20px; border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
   .treatment-picker mat-form-field { max-width: 480px; }
   .picker-heading { flex-wrap: wrap; }

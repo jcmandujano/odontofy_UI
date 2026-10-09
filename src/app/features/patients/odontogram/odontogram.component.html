@@ -200,12 +200,10 @@
             }
           </div>
         } @else {
-          <div class="piece-empty">
-            <p>{{ selectedToothCode ? 'Esta pieza no tiene hallazgos registrados.' : 'Este odontograma aún no tiene hallazgos registrados.' }}</p>
-            @if (!active.archivedAt) {
-              <span>Usa “Agregar hallazgo” para registrar el primero{{ selectedToothCode ? ' en esta pieza' : '' }}.</span>
-            }
-          </div>
+          <app-no-data-found
+            [title]="selectedToothCode ? 'Esta pieza no tiene hallazgos registrados' : 'Este odontograma aún no tiene hallazgos registrados'"
+            [message]="active.archivedAt ? 'Este odontograma está archivado y es de solo lectura.' : 'Usa “Agregar hallazgo” para registrar el primero' + (selectedToothCode ? ' en esta pieza.' : '.')">
+          </app-no-data-found>
         }
 
         @if (linkingFindingId !== null) {
