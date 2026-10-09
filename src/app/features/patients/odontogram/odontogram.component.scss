@@ -8,13 +8,12 @@ h1 { margin: 0; font-size: 26px; line-height: 30px; }
 h2 { margin-bottom: 6px; font-size: 22px; line-height: 26px; }
 h3 { margin-bottom: 8px; font-size: 18px; }
 .page-header, .title-container, .chart-toolbar, .chart-details-row, .section-heading,
-.finding-topline, .picker-heading, .chart-footer, .footer-actions, .empty-actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.picker-heading, .chart-footer, .footer-actions, .empty-actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .page-header { margin: 15px 0 20px; }
 .title-container { justify-content: flex-start; gap: 20px; }
 .page-icon { flex: 0 0 50px; width: 50px; height: 50px; }
 .page-description { margin-bottom: 24px; }
-.eyebrow, .small-label { color: $primary--blue; font: 400 14px/18px 'Roboto Condensed', sans-serif; }
-.eyebrow { margin-bottom: 6px; }
+.small-label { color: $primary--blue; font: 400 14px/18px 'Roboto Condensed', sans-serif; }
 .section-heading p, .create-card p { margin-bottom: 0; }
 button { font-family: Roboto, sans-serif; }
 .app-primary-action:disabled { opacity: .55; cursor: not-allowed; }
@@ -22,7 +21,7 @@ button { font-family: Roboto, sans-serif; }
 .secondary-action { min-height: 40px; border-color: $light--blue; border-radius: 4px; }
 .text-button { white-space: normal; }
 mat-form-field { width: 100%; min-width: 0; }
-.create-card, .teeth-card, .finding-panel { border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
+.create-card, .teeth-card { border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
 .create-card { display: grid; gap: 20px; padding: 20px; margin-bottom: 24px; }
 .create-fields { display: grid; grid-template-columns: minmax(170px, .8fr) minmax(200px, 1.3fr) auto; align-items: center; gap: 16px; }
 .message { padding: 16px; margin: 16px 0; border: 1px solid $light--blue; border-radius: 4px; color: $primary--blue; background: #EAF2FF; }
@@ -37,8 +36,8 @@ mat-form-field { width: 100%; min-width: 0; }
 .chart-details { margin-bottom: 24px; }
 .chart-details-row mat-form-field { max-width: 440px; }
 .chart-details-row > span { font-size: 13px; }
-.workspace { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(310px, 1fr); align-items: start; gap: 24px; }
-.teeth-card, .finding-panel { min-width: 0; padding: 20px; }
+.workspace { display: grid; gap: 28px; }
+.teeth-card { min-width: 0; padding: 20px; }
 .section-heading { align-items: flex-start; margin-bottom: 16px; }
 .section-heading p { font-size: 13px; }
 .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin: 20px 0; font-size: 12px; }
@@ -51,12 +50,12 @@ mat-form-field { width: 100%; min-width: 0; }
 .quadrant { min-width: 0; padding: 12px 8px; border: 1px solid $light--blue; border-radius: 4px; }
 .quadrant h3 { margin: 0 3px 12px; font-size: 14px; }
 .tooth-row { display: flex; justify-content: space-between; gap: 2px; }
-.tooth { position: relative; display: grid; justify-items: center; align-content: center; gap: 4px; flex: 1 1 0; min-width: 0; min-height: 83px; padding: 5px 2px; border: 1px solid transparent; border-radius: 4px; background: none; color: $primary--blue; cursor: pointer; }
+.tooth { position: relative; display: grid; justify-items: center; align-content: center; gap: 6px; flex: 1 1 0; min-width: 0; min-height: 108px; padding: 6px 2px; border: 1px solid transparent; border-radius: 4px; background: none; color: $primary--blue; cursor: pointer; }
 .tooth:hover { background: #EAF2FF; }
 .tooth.is-selected { border-color: $primary--blue; background: #EAF2FF; }
 .tooth:focus-visible { outline: 3px solid rgba($primary--blue, .3); outline-offset: 2px; }
-.tooth img { width: min(100%, 27px); height: 48px; object-fit: contain; }
-.tooth-code { font-size: 11px; font-weight: 500; }
+.tooth img { width: min(100%, 40px); height: 64px; object-fit: contain; }
+.tooth-code { font-size: 13px; font-weight: 500; }
 .tooth-count { position: absolute; top: 4px; right: 2px; display: grid; place-items: center; min-width: 15px; height: 15px; border-radius: 50%; background: $primary--blue; color: #fff; font-size: 10px; }
 .tooth[data-state='attention'] .tooth-count { background: $warn--primary; }
 .tooth[data-state='missing'] img { opacity: .35; }
@@ -64,7 +63,6 @@ mat-form-field { width: 100%; min-width: 0; }
 .chart-footer { position: sticky; bottom: 0; z-index: 2; padding: 16px 0; margin-top: 24px; border-top: 1px solid $light--blue; background: #fff; }
 .unsaved-label { color: $warn--primary; }
 .saved-label { color: #219653; }
-@media (max-width: 1100px) { .workspace { grid-template-columns: 1fr; } }
 @media (max-width: 767.98px) {
   .page-header, .chart-toolbar, .chart-details-row, .chart-footer { align-items: stretch; flex-direction: column; }
   .page-header > button, .create-fields > button { justify-self: start; align-self: flex-start; }
@@ -75,7 +73,13 @@ mat-form-field { width: 100%; min-width: 0; }
   .chart-footer { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-width: 420px) {
-  .teeth-card, .finding-panel, .create-card { padding: 14px; }
-  .tooth { min-height: 72px; }
-  .tooth img { height: 38px; }
+  .teeth-card, .create-card { padding: 14px; }
+  .tooth { min-height: 83px; }
+  .tooth img { height: 48px; }
 }
+h2.finding-dialog-title { color: $primary--blue; font-family: 'Roboto Condensed', sans-serif; font-weight: 400; }
+.finding-dialog-content { padding-top: 16px !important; }
+.finding-dialog-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.dialog-wide-field { grid-column: 1 / -1; }
+.dialog-helper { color: $gray--text; font: 400 13px/20px Roboto, sans-serif; }
+@media (max-width: 520px) { .finding-dialog-fields { grid-template-columns: 1fr; } }

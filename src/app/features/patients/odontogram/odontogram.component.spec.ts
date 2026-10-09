@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { of, Subject } from 'rxjs';
 
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { Odontogram, OdontogramFinding } from '../../../core/models/odontogram.model';
@@ -34,6 +35,9 @@ describe('OdontogramComponent', () => {
   let component: OdontogramComponent;
   let odontograms: jasmine.SpyObj<OdontogramService>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
+  let dialog: jasmine.SpyObj<MatDialog>;
+  let dialogRef: jasmine.SpyObj<MatDialogRef<unknown>>;
+  let dialogClosed: Subject<void>;
 
   beforeEach(() => {
     odontograms = jasmine.createSpyObj<OdontogramService>('OdontogramService', [
@@ -44,12 +48,19 @@ describe('OdontogramComponent', () => {
     })));
     odontograms.get.and.returnValue(of(response(chart)));
     snackBar = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
+    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    dialogRef = jasmine.createSpyObj<MatDialogRef<unknown>>('MatDialogRef', ['afterClosed', 'close']);
+    dialogClosed = new Subject<void>();
+    dialogRef.afterClosed.and.returnValue(dialogClosed.asObservable());
+    dialogRef.close.and.callFake(() => dialogClosed.next());
+    dialog.open.and.returnValue(dialogRef);
     component = new OdontogramComponent(
       { paramMap: of(convertToParamMap({ id: '7' })) } as ActivatedRoute,
       jasmine.createSpyObj<Router>('Router', ['navigate']),
       odontograms,
       jasmine.createSpyObj<TreatmentPlanService>('TreatmentPlanService', ['listTreatmentPlansByPatient', 'getTreatmentPlanDetail']),
       snackBar,
+      dialog,
     );
     component.ngOnInit();
   });
@@ -123,5 +134,54 @@ describe('OdontogramComponent', () => {
     expect(component.chart?.findings[0].treatmentPlanItemIds).toEqual([9]);
     expect(component.selectedToothCode).toBe('16');
     expect(component.linkingFindingId).toBeNull();
+  });
+
+  it('shows all findings initially and filters only when a tooth is selected', () => {
+    component.draftFindings = [
+      { toothCode: '11', condition: 'CARIES', surface: null, notes: null },
+      { toothCode: '16', condition: 'RESTORATION', surface: null, notes: null },
+    ];
+    expect(component.selectedToothCode).toBe('');
+    expect(component.selectedFindings.length).toBe(2);
+    component.selectTooth('16');
+    expect(component.selectedFindings.map(record => record.finding.toothCode)).toEqual(['16']);
+    component.selectTooth('');
+    expect(component.selectedFindings.length).toBe(2);
+  });
+
+  it('edits the correct tooth from the unfiltered list without changing the filter', () => {
+    component.draftFindings = [
+      { toothCode: '11', condition: 'CARIES', surface: null, notes: null },
+      { toothCode: '16', condition: 'RESTORATION', surface: 'MESIAL', notes: 'Nota inicial' },
+    ];
+    component.editFinding(1);
+    expect(dialog.open).toHaveBeenCalled();
+    expect(component.findingToothCode).toBe('16');
+    component.notes = 'Nota actualizada';
+    component.saveFinding();
+    expect(component.draftFindings[1].notes).toBe('Nota actualizada');
+    expect(component.draftFindings[1].toothCode).toBe('16');
+    expect(component.selectedToothCode).toBe('');
+    expect(component.dirty).toBeTrue();
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('prefills the selected tooth and discards cancelled dialog input', () => {
+    component.selectTooth('16');
+    component.openFindingDialog();
+    expect(component.findingToothCode).toBe('16');
+    component.notes = 'Nota sin confirmar';
+    dialogClosed.next();
+    expect(component.draftFindings).toEqual([]);
+    expect(component.dirty).toBeFalse();
+    expect(component.notes).toBe('');
+  });
+
+  it('does not overwrite unsaved findings by linking a treatment', () => {
+    component.linkingFindingId = 21;
+    component.dirty = true;
+    component.linkItem(9);
+    expect(odontograms.link).not.toHaveBeenCalled();
+    expect(component.dirty).toBeTrue();
   });
 });

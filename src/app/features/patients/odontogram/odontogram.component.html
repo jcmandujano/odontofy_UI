@@ -103,7 +103,7 @@
             <h2 id="teeth-title">Piezas dentales</h2>
             <p>Selecciona una pieza para registrar o consultar sus hallazgos.</p>
           </div>
-          <span class="finding-total">{{ draftFindings.length }} hallazgos</span>
+          <span class="finding-total">{{ draftFindings.length }} {{ draftFindings.length === 1 ? 'hallazgo' : 'hallazgos' }}</span>
         </div>
         <div class="legend" aria-label="Leyenda de hallazgos">
           <span><i class="legend-dot attention"></i> Requiere atención</span>
@@ -121,6 +121,7 @@
                     [attr.data-state]="toothState(code)"
                     [attr.aria-label]="'Pieza ' + code + ', ' + findingCount(code) + ' hallazgos'"
                     [attr.aria-pressed]="selectedToothCode === code"
+                    [disabled]="busy || loading"
                     (click)="selectTooth(code)">
                     <img [src]="toothAsset(code)" alt="" aria-hidden="true">
                     <span class="tooth-code">{{ code }}</span>
@@ -135,107 +136,101 @@
         </div>
       </section>
 
-      <aside class="finding-panel" aria-label="Hallazgos de la pieza seleccionada">
-        <div class="section-heading">
+      <section class="findings-section" aria-labelledby="findings-title">
+        <div class="section-heading findings-heading">
           <div>
-            <p class="eyebrow">Pieza {{ selectedToothCode }}</p>
-            <h2>Hallazgos y tratamientos</h2>
+            <h2 id="findings-title">{{ selectedToothCode ? 'Hallazgos de la pieza ' + selectedToothCode : 'Hallazgos del odontograma' }}</h2>
+            <p role="status" aria-live="polite">
+              {{ selectedFindings.length }} {{ selectedFindings.length === 1 ? 'hallazgo' : 'hallazgos' }}
+              {{ selectedToothCode ? 'en esta pieza' : 'en todas las piezas' }}.
+            </p>
+          </div>
+          <div class="findings-controls">
+            @if (selectedToothCode) {
+              <button type="button" mat-stroked-button class="secondary-action" (click)="selectTooth('')">Todas las piezas</button>
+            }
+            @if (!active.archivedAt) {
+              <button type="button" mat-fab extended class="app-primary-action" (click)="openFindingDialog()" [disabled]="busy || loading">Agregar hallazgo</button>
+            }
           </div>
         </div>
 
+        @if (dirty) {
+          <p class="helper-text">Guarda el odontograma para vincular o desvincular tratamientos.</p>
+        }
+
         @if (selectedFindings.length) {
-          <div class="finding-list">
+          <div class="finding-list" role="list" aria-label="Hallazgos registrados">
             @for (record of selectedFindings; track record.index) {
-              <article class="finding-card">
-                <div class="finding-topline">
-                  <div>
-                    <strong>{{ conditionLabel(record.finding.condition) }}</strong>
-                    <span>{{ surfaceLabel(record.finding.surface) }}</span>
-                  </div>
-                  @if (!active.archivedAt) {
-                    <div class="finding-actions">
-                      <button type="button" mat-icon-button (click)="editFinding(record.index)" [disabled]="busy" aria-label="Editar hallazgo" matTooltip="Editar hallazgo">
-                        <mat-icon svgIcon="editaCita"></mat-icon>
-                      </button>
-                      <button type="button" mat-icon-button class="delete-action" (click)="removeFinding(record.index)" [disabled]="busy" aria-label="Quitar hallazgo" matTooltip="Quitar hallazgo">
-                        <mat-icon svgIcon="eliminaCita"></mat-icon>
-                      </button>
-                    </div>
+              <article class="finding-row" role="listitem">
+                <button type="button" mat-button class="finding-tooth" (click)="selectTooth(record.finding.toothCode)"
+                  [attr.aria-label]="'Ver hallazgos de la pieza ' + record.finding.toothCode">
+                  <span>Pieza</span>
+                  <strong>{{ record.finding.toothCode }}</strong>
+                </button>
+                <div class="finding-description">
+                  <strong>{{ conditionLabel(record.finding.condition) }}</strong>
+                  <span class="finding-surface">{{ surfaceLabel(record.finding.surface) }}</span>
+                  @if (record.finding.notes) {
+                    <p class="finding-notes" [matTooltip]="record.finding.notes">{{ record.finding.notes }}</p>
                   }
                 </div>
-                @if (record.finding.notes) {
-                  <p class="finding-notes">{{ record.finding.notes }}</p>
-                }
-                @if (persistedFinding(record.finding); as persisted) {
-                  @if (persisted.treatmentPlanItems.length) {
-                    <div class="linked-items">
+                <div class="finding-treatments">
+                  @if (persistedFinding(record.finding); as persisted) {
+                    @if (persisted.treatmentPlanItems.length) {
                       <span class="small-label">Tratamientos vinculados</span>
-                      @for (item of persisted.treatmentPlanItems; track item.id) {
-                        <div class="linked-item">
-                          <button type="button" mat-button class="linked-name" (click)="goToPlan(item.treatmentPlanId)">{{ item.name }}</button>
-                          <span class="status-badge" [ngClass]="'status-' + item.status.toLowerCase().replace('_', '-')">{{ treatmentStatusLabels[item.status] }}</span>
-                          @if (!active.archivedAt && !dirty) {
-                            <button type="button" mat-icon-button class="delete-action" (click)="unlinkItem(persisted.id, item.id)" [disabled]="busy" [attr.aria-label]="'Desvincular ' + item.name" matTooltip="Desvincular tratamiento">
-                              <mat-icon svgIcon="remove"></mat-icon>
-                            </button>
-                          }
-                        </div>
-                      }
-                    </div>
+                      <div class="linked-items">
+                        @for (item of persisted.treatmentPlanItems; track item.id) {
+                          <div class="linked-item">
+                            <button type="button" mat-button class="linked-name" (click)="goToPlan(item.treatmentPlanId)">{{ item.name }}</button>
+                            <span class="status-badge" [ngClass]="'status-' + item.status.toLowerCase().replace('_', '-')">{{ treatmentStatusLabels[item.status] }}</span>
+                            @if (!active.archivedAt && !dirty) {
+                              <button type="button" mat-icon-button class="delete-action" (click)="unlinkItem(persisted.id, item.id)"
+                                [disabled]="busy" [attr.aria-label]="'Desvincular ' + item.name" matTooltip="Desvincular tratamiento">
+                                <mat-icon svgIcon="remove"></mat-icon>
+                              </button>
+                            }
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <span class="no-linked-items">Sin tratamientos vinculados</span>
+                    }
+                    @if (!active.archivedAt && !dirty) {
+                      <button type="button" mat-button class="text-button" (click)="openTreatmentPicker(persisted)" [disabled]="busy">+ Vincular tratamiento</button>
+                    }
+                  } @else {
+                    <span class="no-linked-items">Hallazgo pendiente de guardar</span>
                   }
-                  @if (!active.archivedAt && !dirty) {
-                    <button type="button" mat-button class="text-button" (click)="openTreatmentPicker(persisted)">+ Vincular tratamiento</button>
-                  }
+                </div>
+                @if (!active.archivedAt) {
+                  <div class="finding-actions">
+                    <button type="button" mat-icon-button (click)="editFinding(record.index)" [disabled]="busy || loading"
+                      [attr.aria-label]="'Editar hallazgo de la pieza ' + record.finding.toothCode" matTooltip="Editar hallazgo">
+                      <mat-icon svgIcon="editaCita"></mat-icon>
+                    </button>
+                    <button type="button" mat-icon-button class="delete-action" (click)="removeFinding(record.index)" [disabled]="busy"
+                      [attr.aria-label]="'Quitar hallazgo de la pieza ' + record.finding.toothCode" matTooltip="Quitar hallazgo">
+                      <mat-icon svgIcon="eliminaCita"></mat-icon>
+                    </button>
+                  </div>
                 }
               </article>
             }
           </div>
         } @else {
-          <p class="piece-empty">Esta pieza no tiene hallazgos registrados.</p>
-        }
-
-        @if (!active.archivedAt) {
-          <div class="finding-form">
-            <h3>{{ editingIndex === null ? 'Agregar hallazgo' : 'Editar hallazgo' }}</h3>
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
-              <mat-label>Condición</mat-label>
-              <mat-select [ngModel]="condition" (ngModelChange)="setCondition($event)" [disabled]="busy">
-                @for (option of conditions; track option.value) {
-                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-            @if (!isWholeToothCondition()) {
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Superficie opcional</mat-label>
-                <mat-select [(ngModel)]="surface" [disabled]="busy">
-                  <mat-option value="">Pieza completa</mat-option>
-                  @for (option of surfaces; track option.value) {
-                    <mat-option [value]="option.value">{{ option.label }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+          <div class="piece-empty">
+            <p>{{ selectedToothCode ? 'Esta pieza no tiene hallazgos registrados.' : 'Este odontograma aún no tiene hallazgos registrados.' }}</p>
+            @if (!active.archivedAt) {
+              <span>Usa “Agregar hallazgo” para registrar el primero{{ selectedToothCode ? ' en esta pieza' : '' }}.</span>
             }
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
-              <mat-label>Nota opcional</mat-label>
-              <textarea matInput [(ngModel)]="notes" maxlength="2000" rows="3" placeholder="Detalle clínico breve" [disabled]="busy"></textarea>
-            </mat-form-field>
-            <div class="form-actions">
-              <button type="button" mat-stroked-button class="secondary-action" (click)="saveFinding()" [disabled]="busy">
-                {{ editingIndex === null ? 'Agregar a la pieza' : 'Actualizar hallazgo' }}
-              </button>
-              @if (editingIndex !== null) {
-                <button type="button" mat-button class="text-button" (click)="selectTooth(selectedToothCode)">Cancelar edición</button>
-              }
-            </div>
-            <p class="helper-text">Los cambios se guardan al pulsar “Guardar odontograma”.</p>
           </div>
         }
 
         @if (linkingFindingId !== null) {
           <div class="treatment-picker">
             <div class="picker-heading">
-              <h3>Vincular tratamiento</h3>
+              <h3>Vincular tratamiento · Pieza {{ linkingFinding?.toothCode }}</h3>
               <button type="button" mat-button class="text-button" (click)="linkingFindingId = null">Cerrar</button>
             </div>
             @if (loadingPlans) {
@@ -271,7 +266,7 @@
             }
           </div>
         }
-      </aside>
+      </section>
     </div>
 
     <div class="chart-footer">
@@ -295,4 +290,49 @@
       </div>
     </div>
   }
+  <ng-template #findingDialog>
+    <h2 mat-dialog-title class="finding-dialog-title">{{ editingIndex === null ? 'Agregar hallazgo' : 'Editar hallazgo' }}</h2>
+    <mat-dialog-content class="finding-dialog-content">
+      <form id="odontogram-finding-form" class="finding-dialog-fields" (ngSubmit)="saveFinding()">
+        <mat-form-field appearance="outline">
+          <mat-label>Pieza dental</mat-label>
+          <mat-select name="toothCode" [(ngModel)]="findingToothCode" required>
+            @for (code of toothCodes; track code) {
+              <mat-option [value]="code">Pieza {{ code }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Condición</mat-label>
+          <mat-select name="condition" [ngModel]="condition" (ngModelChange)="setCondition($event)">
+            @for (option of conditions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (!isWholeToothCondition()) {
+          <mat-form-field appearance="outline" class="dialog-wide-field">
+            <mat-label>Superficie opcional</mat-label>
+            <mat-select name="surface" [(ngModel)]="surface">
+              <mat-option value="">Pieza completa</mat-option>
+              @for (option of surfaces; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+        <mat-form-field appearance="outline" class="dialog-wide-field">
+          <mat-label>Nota opcional</mat-label>
+          <textarea matInput name="notes" [(ngModel)]="notes" maxlength="2000" rows="3" placeholder="Detalle clínico breve"></textarea>
+        </mat-form-field>
+      </form>
+      <p class="dialog-helper">El hallazgo se incorpora al listado. Los cambios se guardan al pulsar “Guardar odontograma”.</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button type="button" mat-button mat-dialog-close class="text-button">Cancelar</button>
+      <button type="submit" form="odontogram-finding-form" mat-fab extended class="app-primary-action" [disabled]="!findingToothCode">
+        {{ editingIndex === null ? 'Agregar hallazgo' : 'Actualizar hallazgo' }}
+      </button>
+    </mat-dialog-actions>
+  </ng-template>
 </main>
