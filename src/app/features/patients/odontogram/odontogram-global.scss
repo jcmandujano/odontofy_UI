@@ -1,28 +1,32 @@
-// Scoped to the odontogram page; kept in the global bundle to respect Angular's
-// per-component style budget without raising it for the entire application.
-.odontogram-page {
-  .finding-list { display: grid; gap: 10px; }
-  .finding-card { padding: 14px; border: 1px solid #e5ebf2; border-radius: 12px; background: #fbfdff; }
-  .finding-topline { align-items: flex-start; }
+@use '../../../../vars.scss' as *;
+
+// Styles for the finding panel and Material controls are scoped to this page.
+app-odontogram .odontogram-page {
+  .finding-list { display: grid; gap: 12px; }
+  .finding-card { padding: 12px; border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
+  .finding-topline { align-items: flex-start; gap: 8px; }
   .finding-topline strong, .finding-topline span { display: block; }
-  .finding-topline strong { font-size: 14px; }
-  .finding-topline span, .linked-item > span { color: #68798b; font-size: 12px; }
-  .finding-actions { display: flex; gap: 8px; }
-  .finding-actions button { padding: 0; border: 0; background: none; color: #336fb2; font-size: 12px; }
-  .finding-actions button:last-child { color: #a25454; }
-  .finding-notes { margin: 10px 0 0; color: #566678; font-size: 13px; overflow-wrap: anywhere; }
-  .linked-items { display: grid; gap: 7px; padding-top: 12px; margin-top: 12px; border-top: 1px solid #e5ebf2; }
-  .linked-item { display: flex; align-items: center; gap: 6px; }
-  .linked-name { flex: 1; min-width: 0; padding: 0; border: 0; background: none; color: #2466aa; font-size: 13px; text-align: left; }
-  .unlink-button { border: 0; background: none; color: #9a4e4e; font-size: 20px; }
-  .finding-card > .text-button { margin-top: 11px; }
-  .piece-empty { padding: 18px; border: 1px dashed #d8e3ef; border-radius: 10px; color: #697b8b; font-size: 13px; }
-  .finding-form { display: grid; gap: 13px; padding-top: 20px; margin-top: 18px; border-top: 1px solid #e6edf5; }
+  .finding-topline strong { color: $primary--blue; font-weight: 500; }
+  .finding-topline span { color: $gray--text; font-size: 12px; }
+  .finding-actions { display: flex; flex-shrink: 0; }
+  .finding-actions mat-icon, .linked-item mat-icon { width: 20px; height: 20px; }
+  .delete-action mat-icon { color: $warn--primary; }
+  .finding-notes { margin: 10px 0 0; color: $gray--text; font-size: 14px; overflow-wrap: anywhere; }
+  .linked-items { display: grid; gap: 8px; padding-top: 12px; margin-top: 12px; border-top: 1px solid $light--blue; }
+  .linked-item { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .linked-name { flex: 1; min-width: 0; height: auto; min-height: 40px; padding: 4px 8px; color: $primary--blue; font-size: 13px; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+  .status-badge { display: inline-flex; padding: 4px 10px; border-radius: 4px; font-size: 12px; line-height: 16px; color: $primary--blue; background: #EAF2FF; }
+  .status-completed { color: #219653; background: #E9F8EF; }
+  .status-cancelled { color: $warn--primary; background: #FDECEC; }
+  .finding-card > .text-button { margin-top: 8px; }
+  .piece-empty { padding: 16px; border: 1px dashed $light--blue; border-radius: 4px; color: $gray--text; font-size: 14px; }
+  .finding-form { display: grid; gap: 16px; padding-top: 20px; margin-top: 20px; border-top: 1px solid $light--blue; }
   .finding-form h3, .picker-heading h3 { margin: 0; }
-  .form-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .helper-text, .treatment-picker p { margin: 0; color: #7a8795; font-size: 12px; }
-  .treatment-picker { display: grid; gap: 12px; padding: 17px; margin-top: 20px; border-radius: 12px; background: #eef6ff; }
-  .available-items { display: grid; gap: 7px; }
-  .available-items button { display: flex; justify-content: space-between; gap: 10px; padding: 10px; border: 1px solid #d7e5f5; border-radius: 8px; background: #fff; color: #2e577e; text-align: left; }
-  .available-items small { color: #6c7f90; }
+  .form-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .helper-text, .treatment-picker p { margin: 0; color: $gray--text; font-size: 12px; }
+  .treatment-picker { display: grid; gap: 16px; padding: 16px; margin-top: 20px; border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
+  .available-items { display: grid; gap: 8px; }
+  .available-items button { height: auto; min-height: 44px; padding: 10px; border-color: $light--blue; border-radius: 4px; color: $primary--blue; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+  .available-items button .mdc-button__label { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
+  .available-items small { color: $gray--text; }
 }

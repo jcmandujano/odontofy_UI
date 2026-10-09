@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,11 +34,13 @@ import {
 } from '../../../core/models/treatment-plan.model';
 import { OdontogramService } from '../../../core/services/odontogram.service';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-odontogram',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatFormFieldModule,
+    MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, NoDataFoundComponent],
   templateUrl: './odontogram.component.html',
   styleUrl: './odontogram.component.scss',
 })
@@ -165,11 +173,10 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     });
   }
 
-  onChartSelect(event: Event): void {
-    const select = event.target as HTMLSelectElement;
+  onChartSelect(event: MatSelectChange): void {
     const previous = this.chart?.id;
-    this.selectChart(Number(select.value));
-    if (previous) select.value = String(previous);
+    this.selectChart(Number(event.value));
+    if (previous) event.source.value = this.chart?.id ?? previous;
   }
 
   createChart(): void {
