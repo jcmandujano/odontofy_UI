@@ -105,10 +105,15 @@
           </div>
           <span class="finding-total">{{ draftFindings.length }} {{ draftFindings.length === 1 ? 'hallazgo' : 'hallazgos' }}</span>
         </div>
-        <div class="legend" aria-label="Leyenda de hallazgos">
+        <div class="teeth-controls">
+          <div class="legend" aria-label="Leyenda de hallazgos">
           <span><i class="legend-dot attention"></i> Requiere atención</span>
           <span><i class="legend-dot recorded"></i> Registrado</span>
           <span><i class="legend-dot missing"></i> Ausente</span>
+          </div>
+          @if (!active.archivedAt) {
+            <button type="button" mat-fab extended class="app-primary-action" (click)="openFindingDialog()" [disabled]="busy || loading">Agregar hallazgo</button>
+          }
         </div>
         <div class="quadrant-grid">
           @for (quadrant of quadrants; track quadrant.label) {
@@ -149,21 +154,15 @@
             @if (selectedToothCode) {
               <button type="button" mat-stroked-button class="secondary-action" (click)="selectTooth('')">Todas las piezas</button>
             }
-            @if (!active.archivedAt) {
-              <button type="button" mat-fab extended class="app-primary-action" (click)="openFindingDialog()" [disabled]="busy || loading">Agregar hallazgo</button>
-            }
           </div>
         </div>
-
-        @if (dirty) {
-          <p class="helper-text">Guarda el odontograma para vincular o desvincular tratamientos.</p>
-        }
 
         @if (selectedFindings.length) {
           <div class="finding-list-header" [class.is-readonly]="!!active.archivedAt" aria-hidden="true">
             <span>Pieza</span>
             <span>Hallazgo</span>
-            <span>Tratamientos</span>
+            <span>Superficie</span>
+            <span>Notas</span>
             @if (!active.archivedAt) { <span>Acciones</span> }
           </div>
           <div class="finding-list" [class.is-readonly]="!!active.archivedAt" role="list" aria-label="Hallazgos registrados">
@@ -176,38 +175,14 @@
                 </button>
                 <div class="finding-description">
                   <strong>{{ conditionLabel(record.finding.condition) }}</strong>
-                  <span class="finding-surface">{{ surfaceLabel(record.finding.surface) }}</span>
-                  @if (record.finding.notes) {
-                    <p class="finding-notes" [matTooltip]="record.finding.notes">{{ record.finding.notes }}</p>
-                  }
                 </div>
-                <div class="finding-treatments">
-                  @if (persistedFinding(record.finding); as persisted) {
-                    @if (persisted.treatmentPlanItems.length) {
-                      <span class="small-label">Tratamientos vinculados</span>
-                      <div class="linked-items">
-                        @for (item of persisted.treatmentPlanItems; track item.id) {
-                          <div class="linked-item">
-                            <button type="button" mat-button class="linked-name" (click)="goToPlan(item.treatmentPlanId)">{{ item.name }}</button>
-                            <span class="status-badge" [ngClass]="'status-' + item.status.toLowerCase().replace('_', '-')">{{ treatmentStatusLabels[item.status] }}</span>
-                            @if (!active.archivedAt && !dirty) {
-                              <button type="button" mat-icon-button class="delete-action" (click)="unlinkItem(persisted.id, item.id)"
-                                [disabled]="busy" [attr.aria-label]="'Desvincular ' + item.name" matTooltip="Desvincular tratamiento">
-                                <mat-icon svgIcon="remove"></mat-icon>
-                              </button>
-                            }
-                          </div>
-                        }
-                      </div>
-                    } @else {
-                      <span class="no-linked-items">Sin tratamientos vinculados</span>
-                    }
-                    @if (!active.archivedAt && !dirty) {
-                      <button type="button" mat-button class="text-button" (click)="openTreatmentPicker(persisted)" [disabled]="busy">+ Vincular tratamiento</button>
-                    }
-                  } @else {
-                    <span class="no-linked-items">Hallazgo pendiente de guardar</span>
-                  }
+                <div class="finding-surface">
+                  <span class="small-label">Superficie</span>
+                  <span>{{ surfaceLabel(record.finding.surface) }}</span>
+                </div>
+                <div class="finding-notes-cell">
+                  <span class="small-label">Notas</span>
+                  <p class="finding-notes" [matTooltip]="record.finding.notes || ''">{{ record.finding.notes || '—' }}</p>
                 </div>
                 @if (!active.archivedAt) {
                   <div class="finding-actions">

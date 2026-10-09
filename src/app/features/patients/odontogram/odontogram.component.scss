@@ -40,7 +40,9 @@ mat-form-field { width: 100%; min-width: 0; }
 .teeth-card { min-width: 0; padding: 20px; }
 .section-heading { align-items: flex-start; margin-bottom: 16px; }
 .section-heading p { font-size: 13px; }
-.legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin: 20px 0; font-size: 12px; }
+.teeth-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin: 20px 0; }
+.teeth-controls > button { margin-left: auto; flex-shrink: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 12px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
 .legend-dot.attention { background: $warn--primary; }
