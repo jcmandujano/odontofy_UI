@@ -1,146 +1,288 @@
-<div class="container">
-    <div class="row pacientes_header_row">
-        <div class="col-6">
-            <div class="title_container">
-                <mat-icon svgIcon="odontograma" class="dashboard_agenda_icon"></mat-icon>
-                <span class="pacientes_title">Odontograma</span>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="nuevo_paciente_button_container"> <button mat-fab extended class="default-button mat-elevation-z0" >Guardar</button> </div>
-            
-        </div>
+<main class="odontogram-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Expediente clínico</p>
+      <h1>Odontograma</h1>
+      <p class="page-description">Registra hallazgos por pieza y consulta su relación con el tratamiento.</p>
     </div>
-    <div class="row filters_row">
-        <div class="col-6 flex-container">
-            <button mat-fab extended class="default-button odontogram-button mat-elevation-z0" >Inicial</button>
-            <button mat-fab extended class="default-button odontogram-button mat-elevation-z0" >Actual</button>
-            <mat-radio-group aria-label="Selecciona una opción">
-                <mat-radio-button value="1">Adulto</mat-radio-button>
-                <mat-radio-button value="2">Infantil</mat-radio-button>
-              </mat-radio-group>
-        </div>
+    @if (patientId) {
+      <button type="button" class="button button-primary" (click)="showCreate = !showCreate" [disabled]="busy">
+        {{ showCreate ? 'Cerrar' : 'Nuevo odontograma' }}
+      </button>
+    }
+  </header>
+
+  @if (showCreate) {
+    <section class="create-card" aria-labelledby="new-chart-title">
+      <div>
+        <h2 id="new-chart-title">Nuevo odontograma</h2>
+        <p>Elige la dentición. Podrás registrar los hallazgos después de crearlo.</p>
+      </div>
+      <div class="create-fields">
+        <label>
+          Dentición
+          <select [(ngModel)]="newDentition" [disabled]="busy">
+            <option value="ADULT">Adulto · 32 piezas</option>
+            <option value="PEDIATRIC">Infantil · 20 piezas</option>
+          </select>
+        </label>
+        <label>
+          Nombre opcional
+          <input type="text" [(ngModel)]="newTitle" maxlength="255" placeholder="Ej. Revisión inicial" [disabled]="busy">
+        </label>
+        <button type="button" class="button button-primary" (click)="createChart()" [disabled]="busy || !patientId">
+          Crear odontograma
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (error) {
+    <div class="message message-error" role="alert">
+      <span>{{ error }}</span>
+      @if (patientId) {
+        <button type="button" (click)="loadCharts()">Reintentar</button>
+      }
     </div>
-    <div class="row">
-        <div class="col-6 border-bottom border-right">
-            <div class="flex-container odontograma-container">
-                @for (item of dentalIzqSuperior; track item) {
-                    <div class="odontogram-item">
-                        <img [src]="item.asset" class="odontogram-element">
-                          <svg height="50" width="50" id="p18" #p18>
-                              <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
-                                #p18l1 />
-                              <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
-                                #p18l2 />
-                              <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
-                              <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
-                              <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
-                                (click)="changeColor(p18l5)" id="l5" #p18l5 />
-                              <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
-                                #p18l6 />
-                              <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
-                                #p18l7 />
-                              <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
-                                #p18l8 />
-                              <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
-                                #p18l9 />
-                              <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
-                                #p18l10 />
-                            </svg>
-                            <p class="odontogram-numeration">{{item.position}}</p>
-                      </div>
-                }
-            </div>
+  }
+
+  @if (loading && !chart) {
+    <div class="message" role="status">Cargando odontogramas…</div>
+  } @else if (!chart && !error) {
+    <section class="empty-card">
+      <span class="empty-symbol" aria-hidden="true">✦</span>
+      <h2>Aún no hay odontogramas</h2>
+      <p>Crea uno cuando necesites registrar hallazgos dentales. Las citas, notas y tratamientos pueden llevarse sin este registro.</p>
+      <div class="empty-actions">
+        <button type="button" class="button button-primary" (click)="showCreate = true">Crear odontograma</button>
+        <button type="button" class="button button-secondary" (click)="goToPlans()">Ver tratamientos</button>
+      </div>
+    </section>
+  }
+
+  @if (chart; as active) {
+    <section class="chart-toolbar" aria-label="Odontograma seleccionado">
+      <div class="chart-picker">
+        <label for="chart-select">Odontograma</label>
+        <select id="chart-select" [value]="active.id" (change)="onChartSelect($event)" [disabled]="busy || loading">
+          @for (entry of charts; track entry.id) {
+            <option [value]="entry.id">
+              {{ entry.title || (entry.dentition === 'ADULT' ? 'Adulto' : 'Infantil') }} · {{ entry.occurredAt | date:'mediumDate' }}{{ entry.archivedAt ? ' · Archivado' : '' }}
+            </option>
+          }
+        </select>
+        @if (hasMoreCharts) {
+          <button type="button" class="text-button" (click)="loadCharts(chartPage + 1)" [disabled]="loading">Cargar más</button>
+        }
+      </div>
+      <div class="chart-meta">
+        <span class="dentition-pill">{{ active.dentition === 'ADULT' ? 'Adulto' : 'Infantil' }}</span>
+        @if (active.archivedAt) {
+          <span class="archive-pill">Archivado · solo lectura</span>
+        }
+      </div>
+    </section>
+
+    <section class="chart-details" aria-label="Datos del odontograma">
+      <label for="chart-title-input">Nombre del odontograma</label>
+      <div class="chart-details-row">
+        <input id="chart-title-input" type="text" [(ngModel)]="chartTitle" (ngModelChange)="dirty = true"
+          maxlength="255" placeholder="Sin nombre" [disabled]="!!active.archivedAt || busy">
+        <span>Registrado {{ active.occurredAt | date:'mediumDate' }}</span>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <section class="teeth-card" aria-labelledby="teeth-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="teeth-title">Piezas dentales</h2>
+            <p>Selecciona una pieza para registrar o consultar sus hallazgos.</p>
+          </div>
+          <span class="finding-total">{{ draftFindings.length }} hallazgos</span>
         </div>
-        <div class="col-6 border-bottom border-left">
-            <div class="flex-container odontograma-container">
-                @for (item of dentalDerSuperior; track item) {
-                    <div class="odontogram-item">
-                        <img [src]="item.asset" class="odontogram-element flipped">
-                          <svg height="50" width="50" id="p18" #p18>
-                              <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
-                                #p18l1 />
-                              <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
-                                #p18l2 />
-                              <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
-                              <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
-                              <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
-                                (click)="changeColor(p18l5)" id="l5" #p18l5 />
-                              <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
-                                #p18l6 />
-                              <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
-                                #p18l7 />
-                              <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
-                                #p18l8 />
-                              <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
-                                #p18l9 />
-                              <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
-                                #p18l10 />
-                            </svg>
-                            <p class="odontogram-numeration">{{item.position}}</p>
-                      </div>
-                }
-            </div>
+        <div class="legend" aria-label="Leyenda de hallazgos">
+          <span><i class="legend-dot attention"></i> Requiere atención</span>
+          <span><i class="legend-dot recorded"></i> Registrado</span>
+          <span><i class="legend-dot missing"></i> Ausente</span>
         </div>
-        <div class="col-6 border-top border-right">
-            <div class="flex-container odontograma-container">
-                @for (item of dentalIzqInferior; track item) {
-                    <div class="odontogram-item">
-                        <p class="odontogram-botom-numeration">{{item.position}}</p>
-                        <svg height="50" width="50" id="p18" #p18>
-                            <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
-                              #p18l1 />
-                            <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
-                              #p18l2 />
-                            <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
-                            <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
-                            <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
-                              (click)="changeColor(p18l5)" id="l5" #p18l5 />
-                            <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
-                              #p18l6 />
-                            <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
-                              #p18l7 />
-                            <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
-                              #p18l8 />
-                            <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
-                              #p18l9 />
-                            <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
-                              #p18l10 />
-                          </svg>
-                          <img [src]="item.asset" class="odontogram-element rotated ">
+        <div class="quadrant-grid">
+          @for (quadrant of quadrants; track quadrant.label) {
+            <div class="quadrant">
+              <h3>{{ quadrant.label }}</h3>
+              <div class="tooth-row">
+                @for (code of quadrant.codes; track code) {
+                  <button type="button" class="tooth"
+                    [class.is-selected]="selectedToothCode === code"
+                    [attr.data-state]="toothState(code)"
+                    [attr.aria-label]="'Pieza ' + code + ', ' + findingCount(code) + ' hallazgos'"
+                    [attr.aria-pressed]="selectedToothCode === code"
+                    (click)="selectTooth(code)">
+                    <img [src]="toothAsset(code)" alt="" aria-hidden="true">
+                    <span class="tooth-code">{{ code }}</span>
+                    @if (findingCount(code)) {
+                      <span class="tooth-count" aria-hidden="true">{{ findingCount(code) }}</span>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <aside class="finding-panel" aria-label="Hallazgos de la pieza seleccionada">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Pieza {{ selectedToothCode }}</p>
+            <h2>Hallazgos y tratamientos</h2>
+          </div>
+        </div>
+
+        @if (selectedFindings.length) {
+          <div class="finding-list">
+            @for (record of selectedFindings; track record.index) {
+              <article class="finding-card">
+                <div class="finding-topline">
+                  <div>
+                    <strong>{{ conditionLabel(record.finding.condition) }}</strong>
+                    <span>{{ surfaceLabel(record.finding.surface) }}</span>
+                  </div>
+                  @if (!active.archivedAt) {
+                    <div class="finding-actions">
+                      <button type="button" (click)="editFinding(record.index)" [disabled]="busy" aria-label="Editar hallazgo">Editar</button>
+                      <button type="button" (click)="removeFinding(record.index)" [disabled]="busy" aria-label="Quitar hallazgo">Quitar</button>
                     </div>
+                  }
+                </div>
+                @if (record.finding.notes) {
+                  <p class="finding-notes">{{ record.finding.notes }}</p>
                 }
-            </div>
-        </div>
-        <div class="col-6 border-top border-left">
-            <div class="flex-container odontograma-container">
-                @for (item of dentalDerInferior; track item) {
-                    <div class="odontogram-item">
-                        <p class="odontogram-botom-numeration">{{item.position}}</p>
-                        <svg height="50" width="50" id="p18" #p18>
-                            <polygon points="10,15 15,10 50,45 45,50" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l1)" id="l1"
-                              #p18l1 />
-                            <polygon points="45,10 50,15 15,50 10,45" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l2)" id="l2"
-                              #p18l2 />
-                            <circle cx="30" cy="30" r="16" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l3)" id="l3" #p18l3 />
-                            <circle cx="30" cy="30" r="20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l4)" id="l4" #p18l4 />
-                            <polygon points="50,10 40,10 10,26 10,32 46,32 10,50 20,50 50,36 50,28 14,28" fill="white" stroke="#B8B8B8"
-                              (click)="changeColor(p18l5)" id="l5" #p18l5 />
-                            <polygon points="10,10 50,10 40,20 20,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l6)" id="l6"
-                              #p18l6 />
-                            <polygon points="50,10 50,50 40,40 40,20" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l7)" id="l7"
-                              #p18l7 />
-                            <polygon points="50,50 10,50 20,40 40,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l8)" id="l8"
-                              #p18l8 />
-                            <polygon points="10,50 20,40 20,20 10,10" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l9)" id="l9"
-                              #p18l9 />
-                            <polygon points="20,20 40,20 40,40 20,40" fill="white" stroke="#B8B8B8" (click)="changeColor(p18l10)" id="l10"
-                              #p18l10 />
-                          </svg>
-                          <img [src]="item.asset" class="odontogram-element rotated ">
+                @if (persistedFinding(record.finding); as persisted) {
+                  @if (persisted.treatmentPlanItems.length) {
+                    <div class="linked-items">
+                      <span class="small-label">Tratamientos vinculados</span>
+                      @for (item of persisted.treatmentPlanItems; track item.id) {
+                        <div class="linked-item">
+                          <button type="button" class="linked-name" (click)="goToPlan(item.treatmentPlanId)">{{ item.name }}</button>
+                          <span>{{ treatmentStatusLabels[item.status] }}</span>
+                          @if (!active.archivedAt && !dirty) {
+                            <button type="button" class="unlink-button" (click)="unlinkItem(persisted.id, item.id)" [disabled]="busy" [attr.aria-label]="'Desvincular ' + item.name">×</button>
+                          }
+                        </div>
+                      }
                     </div>
+                  }
+                  @if (!active.archivedAt && !dirty) {
+                    <button type="button" class="text-button" (click)="openTreatmentPicker(persisted)">+ Vincular tratamiento</button>
+                  }
                 }
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="piece-empty">Esta pieza no tiene hallazgos registrados.</p>
+        }
+
+        @if (!active.archivedAt) {
+          <div class="finding-form">
+            <h3>{{ editingIndex === null ? 'Agregar hallazgo' : 'Editar hallazgo' }}</h3>
+            <label>
+              Condición
+              <select [ngModel]="condition" (ngModelChange)="setCondition($event)" [disabled]="busy">
+                @for (option of conditions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </label>
+            @if (!isWholeToothCondition()) {
+              <label>
+                Superficie opcional
+                <select [(ngModel)]="surface" [disabled]="busy">
+                  <option value="">Pieza completa</option>
+                  @for (option of surfaces; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </label>
+            }
+            <label>
+              Nota opcional
+              <textarea [(ngModel)]="notes" maxlength="2000" rows="3" placeholder="Detalle clínico breve" [disabled]="busy"></textarea>
+            </label>
+            <div class="form-actions">
+              <button type="button" class="button button-secondary" (click)="saveFinding()" [disabled]="busy">
+                {{ editingIndex === null ? 'Agregar a la pieza' : 'Actualizar hallazgo' }}
+              </button>
+              @if (editingIndex !== null) {
+                <button type="button" class="text-button" (click)="selectTooth(selectedToothCode)">Cancelar edición</button>
+              }
             </div>
-        </div>
+            <p class="helper-text">Los cambios se guardan al pulsar “Guardar odontograma”.</p>
+          </div>
+        }
+
+        @if (linkingFindingId !== null) {
+          <div class="treatment-picker">
+            <div class="picker-heading">
+              <h3>Vincular tratamiento</h3>
+              <button type="button" class="text-button" (click)="linkingFindingId = null">Cerrar</button>
+            </div>
+            @if (loadingPlans) {
+              <p role="status">Cargando tratamientos…</p>
+            } @else if (!plans.length) {
+              <p>Este paciente aún no tiene planes activos.</p>
+              <button type="button" class="text-button" (click)="goToPlans()">Crear un plan de tratamiento</button>
+            } @else {
+              <label>
+                Plan de tratamiento
+                <select [ngModel]="selectedPlanId" (ngModelChange)="selectTreatmentPlan($event)" [disabled]="busy">
+                  <option [ngValue]="0">Selecciona un plan</option>
+                  @for (plan of plans; track plan.id) {
+                    <option [ngValue]="plan.id">{{ plan.title }}</option>
+                  }
+                </select>
+              </label>
+              @if (selectedPlanId && !loadingPlans) {
+                @if (availableItems.length) {
+                  <div class="available-items">
+                    @for (item of availableItems; track item.id) {
+                      <button type="button" (click)="linkItem(item.id)" [disabled]="busy">
+                        <span>{{ item.name }}</span>
+                        <small>{{ treatmentStatusLabels[item.status] }}</small>
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  <p>No hay ítems disponibles en este plan.</p>
+                  <button type="button" class="text-button" (click)="goToPlan(selectedPlanId)">Abrir plan</button>
+                }
+              }
+            }
+          </div>
+        }
+      </aside>
     </div>
-</div>
+
+    <div class="chart-footer">
+      <div>
+        @if (dirty) {
+          <span class="unsaved-label">Cambios sin guardar</span>
+        } @else {
+          <span class="saved-label">Todo guardado</span>
+        }
+      </div>
+      <div class="footer-actions">
+        @if (active.archivedAt) {
+          <button type="button" class="button button-secondary" (click)="restoreChart()" [disabled]="busy">Restaurar odontograma</button>
+        } @else {
+          <button type="button" class="text-button" (click)="archiveChart()" [disabled]="busy || dirty">Archivar</button>
+          @if (dirty) {
+            <button type="button" class="button button-secondary" (click)="discardChanges()" [disabled]="busy">Descartar</button>
+          }
+          <button type="button" class="button button-primary" (click)="saveChanges()" [disabled]="busy || !dirty">Guardar odontograma</button>
+        }
+      </div>
+    </div>
+  }
+</main>
