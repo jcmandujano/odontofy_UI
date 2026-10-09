@@ -5,20 +5,28 @@ app-odontogram .odontogram-page {
   .findings-section { min-width: 0; }
   .findings-heading { flex-wrap: wrap; }
   .findings-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .finding-list { border-top: 1px solid $light--blue; }
-  .finding-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(240px, 1.1fr) 96px; align-items: start; gap: 20px; padding: 18px 12px; border-bottom: 1px solid $light--blue; background: #fff; }
-  .finding-tooth { min-width: 0; min-height: 56px; height: auto; padding: 4px 8px; color: $primary--blue; }
+  .finding-list-header, .finding-row { display: grid; grid-template-columns: 80px minmax(0, 1fr) minmax(240px, 1.1fr) 112px; background: #fff; }
+  .finding-list-header { border: 2px solid $light--blue; color: $primary--blue; font-family: 'Roboto Condensed'; font-size: 14px; font-weight: 400; line-height: 16px; letter-spacing: 0.01em; }
+  .finding-list-header > span { display: flex; align-items: center; min-height: 52px; padding: 12px 16px; border-right: 2px solid $light--blue; }
+  .finding-list-header > span:first-child, .finding-list-header > span:nth-child(4) { justify-content: center; }
+  .finding-list-header > span:last-child { border-right: 0; }
+  .finding-list { border-left: 1px solid $light--blue; border-right: 1px solid $light--blue; }
+  .finding-list-header.is-readonly, .finding-list.is-readonly .finding-row { grid-template-columns: 80px minmax(0, 1fr) minmax(240px, 1.1fr); }
+  .finding-row { align-items: stretch; border-bottom: 1px solid $light--blue; font-family: 'Roboto'; font-size: 14px; line-height: 20px; }
+  .finding-row > * { border-right: 1px solid $light--blue; border-radius: 0; }
+  .finding-row > :last-child { border-right: 0; }
+  .finding-tooth { min-width: 0; min-height: 56px; height: auto; padding: 12px 8px; color: $primary--blue; }
   .finding-tooth .mdc-button__label { display: grid; gap: 4px; }
-  .finding-tooth span { color: $gray--text; font-size: 12px; }
-  .finding-tooth strong { color: $primary--blue; font-size: 20px; font-weight: 500; }
-  .finding-description, .finding-treatments { min-width: 0; }
-  .finding-description > strong { display: block; color: $primary--blue; font-weight: 500; }
+  .finding-tooth span { display: none; color: $gray--text; font-size: 12px; }
+  .finding-tooth strong { color: $primary--blue; font-size: 14px; font-weight: 400; }
+  .finding-description, .finding-treatments { min-width: 0; padding: 14px 16px; overflow-wrap: anywhere; }
+  .finding-description > strong { display: block; color: $gray--text; font-weight: 400; }
   .finding-surface { display: block; color: $gray--text; font-size: 13px; }
-  .finding-actions { display: flex; justify-content: flex-end; }
+  .finding-actions { display: flex; align-items: center; justify-content: center; padding: 8px; }
   .finding-actions mat-icon, .linked-item mat-icon { width: 20px; height: 20px; }
   .delete-action mat-icon { color: $warn--primary; }
   .finding-notes { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 8px 0 0; color: $gray--text; overflow-wrap: anywhere; }
-  .finding-treatments > .small-label { display: block; margin-bottom: 4px; }
+  .finding-treatments > .small-label { display: none; margin-bottom: 4px; }
   .linked-items { display: grid; gap: 4px; }
   .linked-item { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .linked-name { flex: 1; min-width: 0; height: auto; min-height: 40px; padding: 4px 8px; color: $primary--blue; font-size: 13px; text-align: left; white-space: normal; overflow-wrap: anywhere; }
@@ -38,13 +46,20 @@ app-odontogram .odontogram-page {
   .available-items button .mdc-button__label { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
   .available-items small { color: $gray--text; }
   @media (max-width: 1000px) {
-    .finding-row { grid-template-columns: 56px minmax(0, 1fr) 96px; gap: 12px 16px; }
+    .finding-list-header { display: none; }
+    .finding-list { border-top: 1px solid $light--blue; }
+    .finding-row, .finding-list.is-readonly .finding-row { grid-template-columns: 64px minmax(0, 1fr) 96px; gap: 12px 16px; padding: 16px 12px; }
+    .finding-row > * { border-right: 0; }
+    .finding-tooth span { display: block; }
+    .finding-description, .finding-treatments { padding: 0; }
     .finding-treatments { grid-column: 2; }
-    .finding-actions { grid-column: 3; grid-row: 1; }
+    .finding-treatments > .small-label { display: block; }
+    .finding-actions { grid-column: 3; grid-row: 1; padding: 0; }
+    .finding-list.is-readonly .finding-row { grid-template-columns: 64px minmax(0, 1fr); }
   }
   @media (max-width: 600px) {
     .findings-controls { width: 100%; }
-    .finding-row { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; padding: 16px 4px; }
+    .finding-row, .finding-list.is-readonly .finding-row { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; padding: 16px 12px; }
     .finding-treatments, .finding-actions { grid-column: 1 / -1; }
     .finding-actions { grid-row: auto; }
   }

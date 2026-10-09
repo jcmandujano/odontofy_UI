@@ -160,7 +160,13 @@
         }
 
         @if (selectedFindings.length) {
-          <div class="finding-list" role="list" aria-label="Hallazgos registrados">
+          <div class="finding-list-header" [class.is-readonly]="!!active.archivedAt" aria-hidden="true">
+            <span>Pieza</span>
+            <span>Hallazgo</span>
+            <span>Tratamientos</span>
+            @if (!active.archivedAt) { <span>Acciones</span> }
+          </div>
+          <div class="finding-list" [class.is-readonly]="!!active.archivedAt" role="list" aria-label="Hallazgos registrados">
             @for (record of selectedFindings; track record.index) {
               <article class="finding-row" role="listitem">
                 <button type="button" mat-button class="finding-tooth" (click)="selectTooth(record.finding.toothCode)"
