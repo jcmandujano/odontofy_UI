@@ -104,7 +104,7 @@ export class PatientPaymentsComponent {
 
     //if there is no contepts we show a message and return
     if (this.conceptList.length === 0) {
-      this.openSnackbar('No hay conceptos disponibles. Por favor, crea un concepto en tus configuraciones antes de agregar un pago.', 'Ok');
+      this.openSnackbar('No hay tratamientos disponibles. Por favor, crea un tratamiento en tus configuraciones antes de agregar un pago.', 'Ok');
       return;
     }
 

@@ -23,7 +23,7 @@ export class Payment{
                 // Generar displayConcepts con las descripciones separadas por comas
                 this.displayConcepts = this.concepts.map(concept => concept.description).filter(Boolean).join(", ");
             } else {
-                this.displayConcepts = ""; // Si no hay conceptos, dejar vacío
+                this.displayConcepts = ""; // Si no hay tratamientos, dejar vacío
             }
         }
     }

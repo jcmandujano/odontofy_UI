@@ -106,7 +106,7 @@ export class TreatmentPlanDetailComponent {
         this.conceptList = response.data?.results ?? [];
       },
       error: error => {
-        this.openSnackbar(`Ocurrió un error al cargar los conceptos: ${this.getErrorMessage(error)}`, 'Aceptar');
+        this.openSnackbar(`Ocurrió un error al cargar los tratamientos: ${this.getErrorMessage(error)}`, 'Aceptar');
       }
     });
   }

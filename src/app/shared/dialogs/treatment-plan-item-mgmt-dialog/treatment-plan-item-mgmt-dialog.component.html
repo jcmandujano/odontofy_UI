@@ -22,7 +22,7 @@
 
         @if (mode !== 'status') {
         <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Elige un concepto</mat-label>
+            <mat-label>Elige un tratamiento</mat-label>
             <mat-select formControlName="userConceptId" (selectionChange)="onConceptChange($event.value)">
                 <mat-option [value]="manualCaptureValue">Captura manual</mat-option>
                 @for (concept of conceptList; track concept.id) {

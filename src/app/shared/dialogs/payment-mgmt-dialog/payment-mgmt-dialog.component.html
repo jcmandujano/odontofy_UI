@@ -20,14 +20,14 @@
         <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumns"></tr>
 
         <ng-container matColumnDef="concept">
-          <th mat-header-cell *matHeaderCellDef>Concepto</th>
+          <th mat-header-cell *matHeaderCellDef>Tratamiento</th>
           <td mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
             <mat-form-field appearance="outline" class="full-width">
               <input
                 matInput
                 type="text"
                 formControlName="paymentConcept"
-                placeholder="Buscar concepto"
+                placeholder="Buscar tratamiento"
                 autocomplete="off"
                 [matAutocomplete]="conceptAutocomplete"
                 (focus)="showConceptOptions(i)"
@@ -49,7 +49,7 @@
                 }
               </mat-autocomplete>
               <mat-error>
-                Selecciona un concepto válido
+                Selecciona un tratamiento válido
               </mat-error>
             </mat-form-field>
           </td>
@@ -103,8 +103,8 @@
               mat-icon-button
               class="add-concept-button"
               type="button"
-              aria-label="Agregar concepto"
-              matTooltip="Agregar concepto"
+              aria-label="Agregar tratamiento"
+              matTooltip="Agregar tratamiento"
               (click)="addItem()">
               <mat-icon svgIcon="add"></mat-icon>
             </button>
@@ -115,8 +115,8 @@
                 mat-icon-button
                 class="remove-concept-button"
                 type="button"
-                aria-label="Eliminar concepto"
-                matTooltip="Eliminar concepto"
+                aria-label="Eliminar tratamiento"
+                matTooltip="Eliminar tratamiento"
                 (click)="removeItem(i)">
                 <mat-icon svgIcon="remove"></mat-icon>
               </button>

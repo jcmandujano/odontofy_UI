@@ -62,7 +62,7 @@ export class UserConceptsComponent {
         this.userConceptServ.createUserConcept(updatedConcept).subscribe(response => {
           this.spinner.hide()
           this.listUserConcepts()
-          this.openSnackbar('Concepto creado', 'Cerrar');
+          this.openSnackbar('Tratamiento creado', 'Cerrar');
         }
           , (error) => {
             this.spinner.show()
@@ -86,7 +86,7 @@ export class UserConceptsComponent {
         this.userConceptServ.updateUserConcept(concept.id, updatedConcept).subscribe(response => {
           this.spinner.hide()
           this.listUserConcepts()
-          this.openSnackbar('Concepto actualizado', 'Cerrar');
+          this.openSnackbar('Tratamiento actualizado', 'Cerrar');
         }
           , (error) => {
             this.spinner.hide()
@@ -99,8 +99,8 @@ export class UserConceptsComponent {
   deleteConcept(id: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar concepto',
-        message: '¿Seguro que quieres eliminar este concepto?',
+        title: 'Eliminar tratamiento',
+        message: '¿Seguro que quieres eliminar este tratamiento?',
       }
     });
 
@@ -110,7 +110,7 @@ export class UserConceptsComponent {
         this.userConceptServ.deleteUserConcept(id).subscribe(response => {
           this.spinner.hide()
           this.listUserConcepts()
-          this.openSnackbar('Concepto eliminado', 'Cerrar');
+          this.openSnackbar('Tratamiento eliminado', 'Cerrar');
         }
           , (error) => {
             this.spinner.hide()
