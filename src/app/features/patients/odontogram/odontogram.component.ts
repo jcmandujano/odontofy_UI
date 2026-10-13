@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,11 +35,13 @@ import {
 } from '../../../core/models/treatment-plan.model';
 import { OdontogramService } from '../../../core/services/odontogram.service';
 import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
+import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-odontogram',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule,
+    MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, NoDataFoundComponent],
   templateUrl: './odontogram.component.html',
   styleUrl: './odontogram.component.scss',
 })
@@ -56,6 +65,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   draftFindings: OdontogramFindingInput[] = [];
   dirty = false;
   selectedToothCode = '';
+  findingToothCode = '';
   editingIndex: number | null = null;
   condition: OdontogramCondition = 'CARIES';
   surface: OdontogramSurface | '' = '';
@@ -68,6 +78,8 @@ export class OdontogramComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
   private requestedChartId = 0;
+  private findingDialogRef: MatDialogRef<unknown> | null = null;
+  @ViewChild('findingDialog') private findingDialog!: TemplateRef<unknown>;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -75,6 +87,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     private readonly odontograms: OdontogramService,
     private readonly treatments: TreatmentPlanService,
     private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +103,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+    this.findingDialogRef?.close();
     this.destroy$.complete();
   }
 
@@ -104,7 +118,11 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   get selectedFindings(): Array<{ finding: OdontogramFindingInput; index: number }> {
     return this.draftFindings
       .map((finding, index) => ({ finding, index }))
-      .filter(({ finding }) => finding.toothCode === this.selectedToothCode);
+      .filter(({ finding }) => !this.selectedToothCode || finding.toothCode === this.selectedToothCode);
+  }
+
+  get toothCodes(): string[] {
+    return this.quadrants.flatMap(quadrant => quadrant.codes).sort();
   }
 
   get linkingFinding(): OdontogramFinding | null {
@@ -165,11 +183,10 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     });
   }
 
-  onChartSelect(event: Event): void {
-    const select = event.target as HTMLSelectElement;
+  onChartSelect(event: MatSelectChange): void {
     const previous = this.chart?.id;
-    this.selectChart(Number(select.value));
-    if (previous) select.value = String(previous);
+    this.selectChart(Number(event.value));
+    if (previous) event.source.value = this.chart?.id ?? previous;
   }
 
   createChart(): void {
@@ -232,19 +249,36 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     return WHOLE_TOOTH_CONDITIONS.has(this.condition);
   }
 
+  openFindingDialog(index: number | null = null): void {
+    if (!this.chart || this.chart.archivedAt || this.busy || this.loading || this.findingDialogRef) return;
+    this.resetFindingForm();
+    if (index !== null) {
+      const finding = this.draftFindings[index];
+      if (!finding) return;
+      this.editingIndex = index;
+      this.findingToothCode = finding.toothCode;
+      this.condition = finding.condition;
+      this.surface = finding.surface ?? '';
+      this.notes = finding.notes ?? '';
+    }
+    this.findingDialogRef = this.dialog.open(this.findingDialog, {
+      width: '600px', maxWidth: '92vw', maxHeight: '90vh',
+      ariaLabel: index === null ? 'Agregar hallazgo' : 'Editar hallazgo',
+    });
+    this.findingDialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.findingDialogRef = null;
+      this.resetFindingForm();
+    });
+  }
+
   editFinding(index: number): void {
-    const finding = this.draftFindings[index];
-    if (!finding) return;
-    this.editingIndex = index;
-    this.condition = finding.condition;
-    this.surface = finding.surface ?? '';
-    this.notes = finding.notes ?? '';
+    this.openFindingDialog(index);
   }
 
   saveFinding(): void {
-    if (!this.chart || this.chart.archivedAt || !this.selectedToothCode) return;
+    if (!this.chart || this.chart.archivedAt || this.busy || !this.toothCodes.includes(this.findingToothCode)) return;
     const next: OdontogramFindingInput = {
-      toothCode: this.selectedToothCode,
+      toothCode: this.findingToothCode,
       condition: this.condition,
       surface: WHOLE_TOOTH_CONDITIONS.has(this.condition) ? null : this.surface || null,
       notes: this.notes.trim() || null,
@@ -263,12 +297,14 @@ export class OdontogramComponent implements OnInit, OnDestroy {
       const previous = this.draftFindings[this.editingIndex];
       const persisted = this.persistedFinding(previous);
       if (persisted?.treatmentPlanItemIds.length && this.findingKey(previous) !== this.findingKey(next) &&
-        !window.confirm('Cambiar el diagnóstico o la superficie quitará sus vínculos con tratamientos al guardar. ¿Continuar?')) return;
+        !window.confirm('Cambiar la pieza, el diagnóstico o la superficie quitará sus vínculos con tratamientos al guardar. ¿Continuar?')) return;
       this.draftFindings[this.editingIndex] = next;
     } else {
       this.draftFindings = [...this.draftFindings, next];
     }
     this.dirty = true;
+    this.linkingFindingId = null;
+    this.findingDialogRef?.close();
     this.resetFindingForm();
   }
 
@@ -280,6 +316,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
       !window.confirm('Al guardar, este hallazgo perderá sus vínculos con tratamientos. ¿Continuar?')) return;
     this.draftFindings = this.draftFindings.filter((_, candidate) => candidate !== index);
     this.dirty = true;
+    this.linkingFindingId = null;
     this.resetFindingForm();
   }
 
@@ -366,7 +403,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   }
 
   linkItem(itemId: number): void {
-    if (!this.chart || !this.linkingFindingId || this.busy) return;
+    if (!this.chart || this.chart.archivedAt || this.dirty || !this.linkingFindingId || this.busy) return;
     this.busy = true;
     this.odontograms.link(this.chart.id, this.linkingFindingId, itemId)
       .pipe(takeUntil(this.destroy$)).subscribe({
@@ -409,7 +446,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
       toothCode, condition, surface, notes,
     }));
     this.dirty = false;
-    this.selectedToothCode = preserveTooth && previousTooth ? previousTooth : chart.dentition === 'ADULT' ? '11' : '51';
+    this.selectedToothCode = preserveTooth ? previousTooth : '';
     this.linkingFindingId = null;
     this.resetFindingForm();
   }
@@ -429,6 +466,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
 
   private resetFindingForm(): void {
     this.editingIndex = null;
+    this.findingToothCode = this.selectedToothCode;
     this.condition = 'CARIES';
     this.surface = '';
     this.notes = '';
