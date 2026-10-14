@@ -1,0 +1,7 @@
+@use '../../../../vars.scss' as *;
+:host { display: block; }
+.independent-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.independent-heading p { color: $gray--text; margin: 0; flex: 1 1 260px; }
+.table-scroll { overflow-x: auto; }
+td { color: $primary--blue; }
+.actions-content-column mat-icon { width: 20px; height: 20px; }

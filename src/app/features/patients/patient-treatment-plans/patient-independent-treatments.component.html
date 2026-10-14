@@ -1,0 +1,28 @@
+<div class="independent-heading">
+  <p>Registra y da seguimiento a tratamientos sin crear un plan. No genera cargos ni modifica pagos.</p>
+  <button type="button" mat-fab extended class="app-primary-action" (click)="open()" [disabled]="busy">Agregar tratamiento</button>
+</div>
+@if (busy) { <p role="status">Cargando…</p> }
+@if (error) {
+  <div role="alert">{{error}} <button mat-button (click)="load()">Reintentar</button></div>
+} @else if (items.length) {
+  <div class="table-scroll">
+    <table mat-table [dataSource]="items" class="info-table">
+      <ng-container matColumnDef="name"><th mat-header-cell *matHeaderCellDef>Tratamiento</th><td mat-cell *matCellDef="let item" class="title-content-column" [matTooltip]="item.name">{{item.name}}</td></ng-container>
+      <ng-container matColumnDef="tooth"><th mat-header-cell *matHeaderCellDef>Pieza / área</th><td mat-cell *matCellDef="let item">{{item.tooth || item.area || '—'}}</td></ng-container>
+      <ng-container matColumnDef="quantity"><th mat-header-cell *matHeaderCellDef>Cantidad</th><td mat-cell *matCellDef="let item">{{item.quantity}}</td></ng-container>
+      <ng-container matColumnDef="price"><th mat-header-cell *matHeaderCellDef>Precio unitario</th><td mat-cell *matCellDef="let item">{{item.unit_price | currency:'MXN'}}</td></ng-container>
+      <ng-container matColumnDef="subtotal"><th mat-header-cell *matHeaderCellDef>Importe estimado</th><td mat-cell *matCellDef="let item">{{item.subtotal | currency:'MXN'}}</td></ng-container>
+      <ng-container matColumnDef="status"><th mat-header-cell *matHeaderCellDef>Estado clínico</th><td mat-cell *matCellDef="let item"><span class="status-badge" [ngClass]="'status-' + item.status.toLowerCase().replace('_', '-')">{{statusLabel(item.status)}}</span></td></ng-container>
+      <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef>Acciones</th><td mat-cell *matCellDef="let item" class="actions-content-column">
+        <button mat-icon-button [disabled]="busy" (click)="open(item)" aria-label="Editar tratamiento" matTooltip="Editar tratamiento"><mat-icon svgIcon="editaCita"></mat-icon></button>
+        <button mat-icon-button [disabled]="busy" (click)="changeStatus(item)" aria-label="Cambiar estado clínico" matTooltip="Cambiar estado"><mat-icon svgIcon="eye"></mat-icon></button>
+        @if (item.status !== 'CANCELLED') { <button mat-icon-button [disabled]="busy" (click)="cancel(item)" aria-label="Cancelar tratamiento" matTooltip="Cancelar tratamiento"><mat-icon svgIcon="eliminaCita" class="delete-action-icon"></mat-icon></button> }
+      </td></ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+  </div>
+  <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 25, 50]" (page)="page($event)"></mat-paginator>
+} @else if (!busy) {
+  <app-no-data-found title="Este paciente no tiene tratamientos independientes" message="Selecciona un tratamiento del catálogo para registrarlo sin necesidad de crear un plan."></app-no-data-found>
+}
