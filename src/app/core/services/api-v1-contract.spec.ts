@@ -8,6 +8,8 @@ import { AuthService } from './auth.service';
 import { EvolutionNoteService } from './evolution-note.service';
 import { PacientesService } from './patient.service';
 import { PaymentService } from './payment.service';
+import { TreatmentPlanService } from './treatment-plan.service';
+import { UserConceptsService } from './user-concepts.service';
 
 const envelope = <T>(data: T, meta?: object) => ({
   success: true,
@@ -27,6 +29,24 @@ describe('API v1 contract adapters', () => {
   });
 
   afterEach(() => http.verify());
+
+  it('requests independent patient treatments with server pagination', () => {
+    TestBed.inject(TreatmentPlanService).listPatientTreatments(9, 2, 25).subscribe(response => {
+      expect(response.data?.total).toBe(30);
+    });
+    const request = http.expectOne(req => req.url === `${environment.API_URL}/patients/9/treatments`);
+    expect(request.request.params.get('scope')).toBe('independent');
+    expect(request.request.params.get('page')).toBe('2');
+    request.flush(envelope([], { pagination: { page: 2, pageSize: 25, total: 30, totalPages: 2 } }));
+  });
+
+  it('loads catalog pages beyond the first hundred entries', () => {
+    let count = 0;
+    TestBed.inject(UserConceptsService).listAllUserConcepts().subscribe(items => count = items.length);
+    http.expectOne(`${environment.API_URL}/billing-concepts?page=1&pageSize=100`).flush(envelope([{ id: 1, description: 'A', unitPrice: '10.00' }], { pagination: { page: 1, pageSize: 100, total: 101, totalPages: 2 } }));
+    http.expectOne(`${environment.API_URL}/billing-concepts?page=2&pageSize=100`).flush(envelope([{ id: 101, description: 'B', unitPrice: '20.00' }], { pagination: { page: 2, pageSize: 100, total: 101, totalPages: 2 } }));
+    expect(count).toBe(2);
+  });
 
   it('uses the v1 identity contract and maps the session for existing views', () => {
     let token = '';

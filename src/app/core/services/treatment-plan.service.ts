@@ -20,7 +20,8 @@ import { ApiService } from './api.service';
 
 interface ApiTreatmentPlanItem {
     id: number;
-    treatmentPlanId: number;
+    treatmentPlanId: number | null;
+    patientId?: number;
     userConceptId: number | null;
     name: string;
     description: string | null;
@@ -70,6 +71,30 @@ interface ApiTreatmentPlanMutation {
 @Injectable({ providedIn: 'root' })
 export class TreatmentPlanService {
     constructor(private api: ApiService) { }
+
+    listPatientTreatments(patientId: number, page = 1, pageSize = 10, scope = 'independent', status = 'all') {
+        return this.api.get<ApiTreatmentPlanItem[]>(`/patients/${patientId}/treatments`, {
+            params: { page, pageSize, scope, status }
+        }).pipe(map(response => mapPaginatedApiResponse(response, toUiItem)));
+    }
+
+    createPatientTreatment(patientId: number, item: CreateTreatmentPlanItemRequest) {
+        return this.api.post<ApiTreatmentPlanItem>(`/patients/${patientId}/treatments`, itemRequest(item)).pipe(
+            map(response => mapApiResponse(response, toUiItem))
+        );
+    }
+
+    updatePatientTreatment(patientId: number, itemId: number, item: UpdateTreatmentPlanItemRequest) {
+        return this.api.patch<ApiTreatmentPlanItem>(`/patients/${patientId}/treatments/${itemId}`, itemRequest(item)).pipe(
+            map(response => mapApiResponse(response, toUiItem))
+        );
+    }
+
+    updatePatientTreatmentStatus(patientId: number, itemId: number, status: UpdateTreatmentPlanItemStatusRequest) {
+        return this.api.patch<ApiTreatmentPlanItem>(`/patients/${patientId}/treatments/${itemId}/status`, status).pipe(
+            map(response => mapApiResponse(response, toUiItem))
+        );
+    }
 
     listTreatmentPlansByPatient(patientId: number, page = 1, limit = 10) {
         return this.api.get<ApiTreatmentPlan[]>(`/patients/${patientId}/treatment-plans`, {
@@ -167,6 +192,7 @@ const itemRequest = (value: CreateTreatmentPlanItemRequest | UpdateTreatmentPlan
 const toUiItem = (value: ApiTreatmentPlanItem): TreatmentPlanItem => ({
     id: value.id,
     treatment_plan_id: value.treatmentPlanId,
+    patient_id: value.patientId,
     user_concept_id: value.userConceptId,
     name: value.name,
     description: value.description,

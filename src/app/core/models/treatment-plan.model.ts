@@ -79,7 +79,8 @@ export interface TreatmentPlan {
 
 export interface TreatmentPlanItem {
     id: number;
-    treatment_plan_id: number;
+    treatment_plan_id: number | null;
+    patient_id?: number;
     user_concept_id: number | null;
     name: string;
     description: string | null;
@@ -131,7 +132,7 @@ export interface CreateTreatmentPlanItemRequest {
     tooth?: string | null;
     area?: string | null;
     quantity: number;
-    unit_price: number;
+    unit_price?: number;
     phase?: string | null;
     priority?: TreatmentPlanItemPriority | null;
     notes?: string | null;

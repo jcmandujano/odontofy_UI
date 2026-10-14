@@ -102,7 +102,7 @@ export const routes: Routes = [
         path: 'patient-treatment-plans',
         component: PatientTreatmentPlansComponent,
         data: {
-          title: 'Planes de tratamiento',
+          title: 'Tratamientos',
           primarySection: 'patients',
           patientContext: true,
           patientSection: 'treatment-plans'
