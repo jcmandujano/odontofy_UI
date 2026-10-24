@@ -8,7 +8,7 @@
 } @else if (items.length) {
   <div class="table-scroll">
     <table mat-table [dataSource]="items" class="info-table">
-      <ng-container matColumnDef="name"><th mat-header-cell *matHeaderCellDef>Tratamiento</th><td mat-cell *matCellDef="let item" class="title-content-column" [matTooltip]="item.name">{{item.name}}</td></ng-container>
+      <ng-container matColumnDef="name"><th mat-header-cell *matHeaderCellDef>Tratamiento</th><td mat-cell *matCellDef="let item" class="title-content-column" [matTooltip]="item.name">{{item.name}} @for (reference of item.odontogram_references || []; track reference.findingId) { <div><a [routerLink]="['/odontogram', { id: patientId, chartId: reference.odontogramId }]">Odontograma #{{reference.odontogramId}} · Pieza {{reference.toothCode}}{{reference.archived ? ' · Archivado' : ''}}</a></div> }</td></ng-container>
       <ng-container matColumnDef="tooth"><th mat-header-cell *matHeaderCellDef>Pieza / área</th><td mat-cell *matCellDef="let item">{{item.tooth || item.area || '—'}}</td></ng-container>
       <ng-container matColumnDef="quantity"><th mat-header-cell *matHeaderCellDef>Cantidad</th><td mat-cell *matCellDef="let item">{{item.quantity}}</td></ng-container>
       <ng-container matColumnDef="price"><th mat-header-cell *matHeaderCellDef>Precio unitario</th><td mat-cell *matCellDef="let item">{{item.unit_price | currency:'MXN'}}</td></ng-container>

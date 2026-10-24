@@ -78,6 +78,7 @@ export interface TreatmentPlan {
 }
 
 export interface TreatmentPlanItem {
+    odontogram_references?: Array<{ odontogramId: number; findingId: number; title: string | null; toothCode: string; condition: string; surface: string | null; archived: boolean }>;
     financial_locked?: boolean;
     id: number;
     treatment_plan_id: number | null;

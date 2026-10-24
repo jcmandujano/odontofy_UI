@@ -11,6 +11,7 @@ import { PaymentService } from './payment.service';
 import { TreatmentPlanService } from './treatment-plan.service';
 import { TreatmentChargeService } from './treatment-charge.service';
 import { UserConceptsService } from './user-concepts.service';
+import { OdontogramService } from './odontogram.service';
 
 const envelope = <T>(data: T, meta?: object) => ({
   success: true,
@@ -30,6 +31,20 @@ describe('API v1 contract adapters', () => {
   });
 
   afterEach(() => http.verify());
+  it('creates an atomic catalog treatment from a saved finding with an idempotency key', () => {
+    TestBed.inject(OdontogramService).createTreatment(10, 21, { userConceptId: 5, quantity: '2.00', notes: null }, 'stable-key').subscribe();
+    const request = http.expectOne(`${environment.API_URL}/odontograms/10/findings/21/treatments`);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.headers.get('Idempotency-Key')).toBe('stable-key');
+    expect(request.request.body).toEqual({ userConceptId: 5, quantity: '2.00', notes: null });
+    request.flush(envelope({ odontogram: {}, treatmentId: 9 }));
+  });
+  it('retains odontogram references when adapting patient treatments', () => {
+    const references = [{ odontogramId: 10, findingId: 21, title: 'Inicial', toothCode: '16', condition: 'CARIES', surface: 'MESIAL', archived: false }];
+    TestBed.inject(TreatmentPlanService).listPatientTreatments(7).subscribe(response => expect(response.data?.results[0].odontogram_references).toEqual(references));
+    const request = http.expectOne(`${environment.API_URL}/patients/7/treatments?page=1&pageSize=10&scope=independent&status=all`);
+    request.flush(envelope([{ id: 9, patientId: 7, treatmentPlanId: null, userConceptId: 5, name: 'Resina', quantity: '1.00', unitPrice: '250.00', subtotal: '250.00', status: 'PENDING', odontogramReferences: references }]));
+  });
 
   it('sends a catalog-backed advance without generating charge items', () => {
     TestBed.inject(TreatmentChargeService).pay(9, '2026-10-24', 'CASH', [], 'advance-key', { sourceTreatmentId: 7, amountReceived: '1200.00' }).subscribe();
