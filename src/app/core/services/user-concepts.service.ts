@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { EMPTY, expand, map, reduce } from 'rxjs';
 import { mapApiResponse, mapPaginatedApiResponse } from '../models/api-response.model';
 import { UserConcept } from '../models/user-concept.model';
 import { ApiService } from './api.service';
@@ -16,6 +16,14 @@ interface ApiBillingConcept {
 @Injectable({ providedIn: 'root' })
 export class UserConceptsService {
     constructor(private api: ApiService) { }
+
+    listAllUserConcepts() {
+        return this.listUserConcepts(1, 100).pipe(
+            expand(response => response.data && response.data.page < response.data.totalPages
+                ? this.listUserConcepts(response.data.page + 1, 100) : EMPTY),
+            reduce((items, response) => [...items, ...(response.data?.results ?? [])], [] as UserConcept[])
+        );
+    }
 
     listUserConcepts(page = 1, limit = 10) {
         return this.api.get<ApiBillingConcept[]>('/billing-concepts', {

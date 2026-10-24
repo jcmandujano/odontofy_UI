@@ -9,6 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTabsModule } from '@angular/material/tabs';
+import { PatientIndependentTreatmentsComponent } from './patient-independent-treatments.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { CreateTreatmentPlanRequest, TREATMENT_PLAN_STATUS_LABELS, TreatmentPlan, TreatmentPlanStatus } from '../../../core/models/treatment-plan.model';
@@ -23,6 +25,8 @@ type TreatmentPlanStatusFilter = TreatmentPlanStatus | 'ACTIVE' | 'ALL';
   selector: 'app-patient-treatment-plans',
   imports: [
     CommonModule,
+    MatTabsModule,
+    PatientIndependentTreatmentsComponent,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -42,6 +46,7 @@ export class PatientTreatmentPlansComponent {
   allTreatmentPlans: TreatmentPlan[] = [];
   dataSource: TreatmentPlan[] = [];
   selectedPatientId = 0;
+  selectedTabIndex = 0;
   length = 0;
   pageIndex = 0;
   pageSize = 10;

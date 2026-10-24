@@ -101,9 +101,9 @@ export class TreatmentPlanDetailComponent {
   }
 
   loadUserConcepts(): void {
-    this.userConceptsService.listUserConcepts(1, 100).subscribe({
-      next: response => {
-        this.conceptList = response.data?.results ?? [];
+    this.userConceptsService.listAllUserConcepts().subscribe({
+      next: concepts => {
+        this.conceptList = concepts;
       },
       error: error => {
         this.openSnackbar(`Ocurrió un error al cargar los tratamientos: ${this.getErrorMessage(error)}`, 'Aceptar');

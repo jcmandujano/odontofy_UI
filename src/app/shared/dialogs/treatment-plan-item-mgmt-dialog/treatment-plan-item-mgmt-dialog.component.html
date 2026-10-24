@@ -24,7 +24,12 @@
         <mat-form-field class="full-width" appearance="outline">
             <mat-label>Elige un tratamiento</mat-label>
             <mat-select formControlName="userConceptId" (selectionChange)="onConceptChange($event.value)">
-                <mat-option [value]="manualCaptureValue">Captura manual</mat-option>
+                @if (mode === 'edit' && data?.treatmentPlanItem?.user_concept_id === null) {
+                  <mat-option [value]="manualCaptureValue">Tratamiento histórico sin catálogo</mat-option>
+                }
+                @if (mode === 'edit' && savedCatalogEntryMissing) {
+                  <mat-option [value]="data?.treatmentPlanItem?.user_concept_id">{{data?.treatmentPlanItem?.name}} · registro histórico</mat-option>
+                }
                 @for (concept of conceptList; track concept.id) {
                 <mat-option [value]="concept.id">{{concept.description}} - {{concept.unit_price | currency:'MXN':'symbol':'1.2-2'}}</mat-option>
                 }
@@ -34,7 +39,7 @@
         @if (isManualCapture) {
             <mat-form-field class="full-width" appearance="outline">
                 <mat-label>Nombre</mat-label>
-                <input matInput formControlName="name">
+                <input matInput formControlName="name" readonly>
                 @if (itemForm.controls['name'].hasError('required') && itemForm.controls['name'].touched) {
                 <mat-error>Este campo es obligatorio</mat-error>
                 }
@@ -50,6 +55,10 @@
             <mat-label>Diente</mat-label>
             <input matInput formControlName="tooth">
         </mat-form-field>
+        <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Área opcional</mat-label>
+            <input matInput formControlName="area" maxlength="100">
+        </mat-form-field>
 
         <div class="row-fields">
             <mat-form-field class="half-width" appearance="outline">
@@ -62,7 +71,7 @@
 
             <mat-form-field class="half-width" appearance="outline">
                 <mat-label>Precio unitario</mat-label>
-                <input matInput type="number" min="0" formControlName="unitPrice">
+                <input matInput type="number" min="0" formControlName="unitPrice" readonly>
                 @if (itemForm.controls['unitPrice'].invalid && itemForm.controls['unitPrice'].touched) {
                 <mat-error>El precio no puede ser negativo</mat-error>
                 }

@@ -51,10 +51,11 @@ export class TreatmentPlanItemMgmtDialogComponent {
     this.conceptList = data?.conceptList ?? [];
     this.mode = data?.mode ?? 'create';
     this.itemForm = this.fb.group({
-      userConceptId: [this.manualCaptureValue],
+      userConceptId: [null, Validators.required],
       name: ['', Validators.required],
       description: [''],
       tooth: [''],
+      area: [''],
       quantity: [1, [Validators.required, Validators.min(0.01)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
       notes: [''],
@@ -103,12 +104,12 @@ export class TreatmentPlanItemMgmtDialogComponent {
     const formValue = this.itemForm.value;
     const isManualCapture = formValue.userConceptId === this.manualCaptureValue;
     const payload: CreateTreatmentPlanItemRequest | UpdateTreatmentPlanItemRequest = {
-      user_concept_id: isManualCapture ? null : Number(formValue.userConceptId),
+      ...(isManualCapture ? {} : { user_concept_id: Number(formValue.userConceptId) }),
       name: formValue.name.trim(),
       description: this.toNullableString(formValue.description),
       tooth: this.toNullableString(formValue.tooth),
+      area: this.toNullableString(formValue.area),
       quantity: Number(formValue.quantity),
-      unit_price: Number(formValue.unitPrice),
       notes: this.toNullableString(formValue.notes),
     };
 
@@ -125,6 +126,11 @@ export class TreatmentPlanItemMgmtDialogComponent {
 
   get isManualCapture(): boolean {
     return this.itemForm.controls['userConceptId'].value === this.manualCaptureValue;
+  }
+
+  get savedCatalogEntryMissing(): boolean {
+    const id = this.data?.treatmentPlanItem?.user_concept_id;
+    return id != null && !this.conceptList.some(concept => concept.id === id);
   }
 
   get dialogTitle(): string {
@@ -157,6 +163,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
       name: item.name,
       description: item.description,
       tooth: item.tooth,
+      area: item.area,
       quantity: Number(item.quantity),
       unitPrice: Number(item.unit_price),
       notes: item.notes,
