@@ -31,6 +31,18 @@ describe('API v1 contract adapters', () => {
   });
 
   afterEach(() => http.verify());
+  it('sends only reviewed existing IDs and revisions when generating a draft plan', () => {
+    const input = { title: 'Plan revisado', expectedSubtotal: '250.00', treatments: [{ treatmentId: 9, revision: 'a'.repeat(64) }] };
+    TestBed.inject(OdontogramService).createPlan(10, input, 'stable-plan-key').subscribe();
+    const request = http.expectOne(`${environment.API_URL}/odontograms/10/treatment-plans`);
+    expect(request.request.body).toEqual(input); expect(request.request.headers.get('Idempotency-Key')).toBe('stable-plan-key');
+    request.flush(envelope({ treatmentPlanId: 3, patientId: 7 }));
+  });
+  it('requests a review without creating a quotation or billing record', () => {
+    TestBed.inject(OdontogramService).planPreview(10).subscribe();
+    const request = http.expectOne(`${environment.API_URL}/odontograms/10/treatment-plan-preview`);
+    expect(request.request.method).toBe('GET'); request.flush(envelope({ odontogramId: 10, patientId: 7, title: null, archived: false, treatments: [] }));
+  });
   it('creates an atomic catalog treatment from a saved finding with an idempotency key', () => {
     TestBed.inject(OdontogramService).createTreatment(10, 21, { userConceptId: 5, quantity: '2.00', notes: null }, 'stable-key').subscribe();
     const request = http.expectOne(`${environment.API_URL}/odontograms/10/findings/21/treatments`);

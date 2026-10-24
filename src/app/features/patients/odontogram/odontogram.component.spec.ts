@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { of, Subject, throwError } from 'rxjs';
 
 import { ApiResponse } from '../../../core/models/api-response.model';
-import { Odontogram, OdontogramFinding } from '../../../core/models/odontogram.model';
+import { Odontogram, OdontogramFinding, OdontogramPlanCandidate } from '../../../core/models/odontogram.model';
 import { TreatmentPlanItemStatus } from '../../../core/models/treatment-plan.model';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { OdontogramService } from '../../../core/services/odontogram.service';
@@ -45,7 +45,7 @@ describe('OdontogramComponent', () => {
 
   beforeEach(() => {
     odontograms = jasmine.createSpyObj<OdontogramService>('OdontogramService', [
-      'list', 'get', 'update', 'create', 'archive', 'restore', 'link', 'unlink', 'createTreatment',
+      'list', 'get', 'update', 'create', 'archive', 'restore', 'link', 'unlink', 'createTreatment', 'planPreview', 'createPlan',
     ]);
     odontograms.list.and.returnValue(of(response({
       total: 1, page: 1, perPage: 100, totalPages: 1, results: [chart],
@@ -195,6 +195,39 @@ describe('OdontogramComponent', () => {
   });
 
   const savedFinding = (): OdontogramFinding => ({ id: 21, odontogramId: 10, toothCode: '16', condition: 'CARIES', surface: 'MESIAL', notes: null, treatmentPlanItemIds: [], treatmentPlanItems: [], createdAt: chart.createdAt, updatedAt: chart.updatedAt });
+  const candidate = (id: number, subtotal = '250.00'): OdontogramPlanCandidate => ({ treatmentId: id, treatmentPlanId: null, userConceptId: 5, name: 'Resina', tooth: '16', area: 'MESIAL', notes: null, clinicalStatus: TreatmentPlanItemStatus.PENDING, quantity: '1.00', unitPrice: subtotal, subtotal, eligible: true, revision: 'a'.repeat(64), reason: null, findings: [{ findingId: 21, toothCode: '16', condition: 'CARIES', surface: 'MESIAL' }] });
+
+  it('opens a review without automatically selecting treatments or creating a plan', () => {
+    odontograms.planPreview.and.returnValue(of(response({ odontogramId: 10, patientId: 7, title: 'Inicial', archived: false, treatments: [candidate(9)] })));
+    component.openPlanReview();
+    expect(odontograms.planPreview).toHaveBeenCalledWith(10); expect(component.planSelected.size).toBe(0); expect(component.planReviewed).toBeFalse(); expect(odontograms.createPlan).not.toHaveBeenCalled();
+  });
+  it('selects only eligible treatments and requires review of the exact total', () => {
+    component.planPreview = { odontogramId: 10, patientId: 7, title: 'Inicial', archived: false, treatments: [candidate(9, '0.10'), candidate(10, '0.20'), { ...candidate(11), eligible: false, reason: 'CHARGE_CONFIRMED' }] };
+    component.selectPlanEligible(); expect([...component.planSelected]).toEqual([9, 10]); expect(component.planSubtotal).toBe('0.30');
+    component.planTitle = 'Plan'; component.createPlan(); expect(odontograms.createPlan).not.toHaveBeenCalled();
+    component.planReviewed = true; component.togglePlanTreatment(component.planPreview.treatments[0], false); expect(component.planReviewed).toBeFalse(); expect(component.planSubtotal).toBe('0.20');
+  });
+  it('retains the same creation key and reviewed revisions on uncertain retries', () => {
+    odontograms.planPreview.and.returnValue(of(response({ odontogramId: 10, patientId: 7, title: 'Inicial', archived: false, treatments: [candidate(9)] })));
+    component.openPlanReview(); component.selectPlanEligible(); component.planReviewed = true;
+    odontograms.createPlan.and.returnValue(throwError(() => ({ error: { message: 'Reintenta sin duplicar' } })));
+    component.createPlan(); component.createPlan();
+    expect(odontograms.createPlan.calls.argsFor(0)[1]).toEqual({ title: 'Plan · Inicial', expectedSubtotal: '250.00', treatments: [{ treatmentId: 9, revision: 'a'.repeat(64) }] });
+    expect(odontograms.createPlan.calls.argsFor(0)[2]).toBe(odontograms.createPlan.calls.argsFor(1)[2]); expect(component.planError).toBe('Reintenta sin duplicar');
+  });
+  it('blocks plan creation from unsaved or archived charts and bounds the selection', () => {
+    component.dirty = true; component.openPlanReview(); expect(odontograms.planPreview).not.toHaveBeenCalled();
+    component.dirty = false; component.chart = { ...chart, archivedAt: chart.createdAt }; component.openPlanReview(); expect(odontograms.planPreview).not.toHaveBeenCalled();
+    component.planPreview = { odontogramId: 10, patientId: 7, title: 'Inicial', archived: false, treatments: Array.from({ length: 101 }, (_, i) => candidate(i + 1)) };
+    component.selectPlanEligible(); expect(component.planSelected.size).toBe(100); component.togglePlanTreatment(component.planPreview.treatments[100], true); expect(component.planSelected.size).toBe(100);
+  });
+  it('ignores a review response after its dialog has closed', () => {
+    const pending = new Subject<ApiResponse<{ odontogramId: number; patientId: number; title: null; archived: boolean; treatments: OdontogramPlanCandidate[] }>>();
+    odontograms.planPreview.and.returnValue(pending.asObservable()); component.openPlanReview(); dialogClosed.next();
+    pending.next(response({ odontogramId: 10, patientId: 7, title: null, archived: false, treatments: [candidate(9)] }));
+    expect(component.planPreview).toBeNull(); expect(component.planLoading).toBeFalse();
+  });
 
   it('loads catalog and existing patient treatments without requiring a plan', () => {
     const finding = savedFinding(); component.chart = { ...chart, findings: [finding] };

@@ -26,6 +26,9 @@
     </div>
 
     @if (treatmentPlan) {
+    @if (treatmentPlan.source_odontogram_id) {
+      <p>Generado desde <a [routerLink]="['/odontogram', { id: patientId, chartId: treatmentPlan.source_odontogram_id }]">odontograma #{{treatmentPlan.source_odontogram_id}}</a>. La cotización no genera deuda hasta confirmar sus cargos.</p>
+    }
     <section class="detail-section">
         <p class="section_title">Información general</p>
         <div class="info-grid">

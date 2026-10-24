@@ -53,6 +53,7 @@ export const TREATMENT_PLAN_ITEM_PRIORITY_LABELS: Record<TreatmentPlanItemPriori
 
 // La API documentada responde en snake_case. Si la UI usa camelCase, mapear antes de renderizar.
 export interface TreatmentPlan {
+    source_odontogram_id?: number | null;
     id: number;
     user_id: number;
     patient_id: number;
