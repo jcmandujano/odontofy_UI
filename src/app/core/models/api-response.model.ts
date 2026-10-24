@@ -21,6 +21,7 @@ export interface PaginationMeta {
 }
 
 export interface ApiResponseMeta {
+    availableCredit?: string;
     summary?: { charged: string; paid: string; balance: string };
     pagination?: PaginationMeta;
 }

@@ -13,12 +13,57 @@
         <td>@if (!row.chargeId) {
           <button type="button" mat-button [disabled]="busy || !row.catalogLinked || row.clinicalStatus === 'CANCELLED'" (click)="openConfirm(row)">Confirmar cargo</button>
           @if (!row.catalogLinked) { <small>Requiere catálogo</small> }
-        } @else if (+row.balance > 0) { <button type="button" mat-button [disabled]="busy" (click)="openPay(row)">Registrar abono</button> }</td></tr>
+        } @else if (+row.balance > 0) {
+          <button type="button" mat-button [disabled]="busy" (click)="openPay(row)">Registrar abono</button>
+          <button type="button" mat-button [disabled]="busy || !availableCredits.length" (click)="openUseCredit(row)">Aplicar anticipo</button>
+        }
+        <button type="button" mat-button [disabled]="busy || !row.catalogLinked || row.clinicalStatus === 'CANCELLED'" (click)="openAdvance(row)">Registrar anticipo</button>
+        </td></tr>
       }</tbody>
     </table></div>
-    <div class="heading"><button type="button" mat-stroked-button [disabled]="busy || !selected.size" (click)="openPay()">Abonar a seleccionados</button><mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10,25,50]" (page)="page($event)"></mat-paginator></div>
+    <div class="heading"><button type="button" mat-stroked-button [disabled]="busy || !selected.size" (click)="openPay()">Abonar a seleccionados</button><button type="button" mat-stroked-button [disabled]="busy || !selected.size || !availableCredits.length" (click)="openUseCredit()">Aplicar anticipo a seleccionados</button><mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10,25,50]" (page)="page($event)"></mat-paginator></div>
   } @else if (!busy && !error) { <app-no-data-found title="Sin tratamientos para confirmar" message="Registra tratamientos del catálogo, con o sin plan, para confirmar sus cargos cuando corresponda."></app-no-data-found> }
 </section>
+<section class="finance" aria-label="Anticipos del paciente">
+  <h2>Anticipos y saldo disponible</h2>
+  <p>Disponible del paciente: <strong>{{availableCredit | currency:'MXN'}}</strong>. Es dinero recibido aún sin aplicar, no un nuevo ingreso ni el saldo neto de su cuenta. Puede cubrir cargos de tratamientos con o sin plan, siempre con tu selección.</p>
+  @if (credits.length) {
+    <div class="table-scroll"><table>
+      <thead><tr><th>Recibo / fecha</th><th>Tratamiento de origen</th><th>Recibido</th><th>Aplicado</th><th>Disponible</th><th>Historial</th></tr></thead>
+      <tbody>@for (credit of credits; track credit.paymentId) {
+        <tr><td>#{{credit.paymentId}}<small>{{credit.occurredOn}} @if (credit.status === 'CANCELLED') { · Cancelado }</small></td><td>{{credit.treatmentName}}</td><td>{{credit.amountReceived | currency:'MXN'}}</td><td>{{credit.applied | currency:'MXN'}} @if (credit.status === 'CANCELLED') { <small>Aplicaciones sin efecto</small> }</td><td>{{credit.available | currency:'MXN'}}</td>
+          <td>@if (credit.applications.length) { <details><summary>{{credit.applications.length}} {{credit.applications.length === 1 ? 'aplicación manual' : 'aplicaciones manuales'}}</summary>@for (event of credit.applications; track event.id) { <p>{{event.occurredOn}} · {{event.amountApplied | currency:'MXN'}} · {{event.actor.name}} @for (allocation of event.allocations; track allocation.chargeId) { <small>{{allocation.description}}: {{allocation.amount | currency:'MXN'}}</small> }</p> }</details> } @else { Sin aplicaciones manuales }</td></tr>
+      }</tbody>
+    </table></div>
+    <mat-paginator [length]="creditTotal" [pageSize]="10" [pageIndex]="creditPageIndex" (page)="creditPage($event)"></mat-paginator>
+    <p>Para aplicar un anticipo, ubica aquí su página y selecciona el cargo en la sección superior. Para corregir un recibo, cancélalo desde Pagos; sus aplicaciones también quedarán sin efecto.</p>
+  } @else if (!busy && !error) { <app-no-data-found title="Sin anticipos" message="Usa Registrar anticipo en un tratamiento del catálogo. No necesitas confirmar antes su cargo ni crear un plan."></app-no-data-found> }
+</section>
+<ng-template #advanceDialog>
+  <h2 mat-dialog-title>Registrar anticipo</h2>
+  <mat-dialog-content><form id="advance-form" #advanceForm="ngForm" (ngSubmit)="advance()">
+    <p>Tratamiento: {{advanceTreatment?.name}}. El dinero quedará disponible para su aplicación manual. No se confirma un cargo ni se cobra dos veces.</p>
+    <mat-form-field appearance="outline"><mat-label>Importe recibido</mat-label><input matInput type="number" name="advanceAmount" min="0.01" max="9999999999.99" step="0.01" [(ngModel)]="advanceAmount" required [disabled]="busy"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Fecha del anticipo</mat-label><input matInput type="date" name="advanceDate" [(ngModel)]="occurredOn" [max]="localDate()" required [disabled]="busy"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>Medio de pago</mat-label><mat-select name="advanceMethod" [(ngModel)]="method" required [disabled]="busy"><mat-option value="CASH">Efectivo</mat-option><mat-option value="DEBIT_CARD">Tarjeta de débito</mat-option><mat-option value="CREDIT_CARD">Tarjeta de crédito</mat-option><mat-option value="BANK_TRANSFER">Transferencia</mat-option><mat-option value="OTHER">Otro</mat-option></mat-select></mat-form-field>
+    @if (dialogError) { <p role="alert">{{dialogError}}</p> }
+  </form></mat-dialog-content>
+  <mat-dialog-actions align="end"><button mat-button mat-dialog-close [disabled]="busy">Volver</button><button mat-flat-button type="submit" form="advance-form" [disabled]="busy || advanceForm.invalid">Registrar anticipo</button></mat-dialog-actions>
+</ng-template>
+<ng-template #creditDialog>
+  <h2 mat-dialog-title>Aplicar anticipo</h2>
+  <mat-dialog-content><form id="credit-form" #creditForm="ngForm" (ngSubmit)="applyCredit()">
+    <p>Se utiliza dinero ya recibido. Esta operación no registra un ingreso nuevo.</p>
+    <mat-form-field appearance="outline"><mat-label>Anticipo disponible (página actual)</mat-label><mat-select name="creditPayment" [(ngModel)]="creditPaymentId" (selectionChange)="distributeCredit()" required [disabled]="busy">@for (credit of availableCredits; track credit.paymentId) { <mat-option [value]="credit.paymentId">#{{credit.paymentId}} · {{credit.treatmentName}} · {{credit.available | currency:'MXN'}}</mat-option> }</mat-select></mat-form-field>
+    @for (row of paymentRows; track row.chargeId) {
+      <mat-form-field appearance="outline"><mat-label>{{row.name}} · saldo {{row.balance | currency:'MXN'}}</mat-label><input matInput type="number" [name]="'credit-amount-' + row.chargeId" min="0" [max]="row.balance" step="0.01" [(ngModel)]="row.paymentAmount" required [disabled]="busy"></mat-form-field>
+    }
+    <p>A aplicar: {{appliedAmount | currency:'MXN'}} / disponible: {{(selectedCredit?.available || 0) | currency:'MXN'}}</p>
+    <mat-form-field appearance="outline"><mat-label>Fecha de aplicación</mat-label><input matInput type="date" name="applicationDate" [(ngModel)]="occurredOn" [max]="localDate()" required [disabled]="busy"></mat-form-field>
+    @if (dialogError) { <p role="alert">{{dialogError}}</p> }
+  </form></mat-dialog-content>
+  <mat-dialog-actions align="end"><button mat-button mat-dialog-close [disabled]="busy">Volver</button><button mat-flat-button type="submit" form="credit-form" [disabled]="busy || creditForm.invalid || !selectedCredit || appliedAmount <= 0 || appliedAmount > +selectedCredit.available">Aplicar anticipo</button></mat-dialog-actions>
+</ng-template>
 <ng-template #confirmDialog>
   <h2 mat-dialog-title>Confirmar cargo</h2>
   <mat-dialog-content>
@@ -38,10 +83,15 @@
   <h2 mat-dialog-title>Registrar abono</h2>
   <mat-dialog-content>
     <form id="treatment-abono-form" #payForm="ngForm" (ngSubmit)="pay()">
-      <p>Se registra dinero recibido; no se genera otro cargo. En esta etapa puedes abonar hasta el saldo pendiente.</p>
+      <p>Se registra dinero recibido; no se genera otro cargo. Si recibes más que el saldo a cubrir, registra el excedente como anticipo.</p>
       @for (row of paymentRows; track row.chargeId) {
         <mat-form-field appearance="outline"><mat-label>{{row.name}} · saldo {{row.balance | currency:'MXN'}}</mat-label><input matInput type="number" [name]="'amount-' + row.chargeId" min="0.01" [max]="row.balance" step="0.01" [(ngModel)]="row.paymentAmount" required [disabled]="busy"></mat-form-field>
       }
+      <mat-form-field appearance="outline"><mat-label>Excedente como anticipo (opcional)</mat-label><input matInput type="number" name="extraAmount" min="0" max="9999999999.99" step="0.01" [(ngModel)]="extraAmount" required [disabled]="busy"></mat-form-field>
+      @if (extraAmount > 0) {
+        <mat-form-field appearance="outline"><mat-label>Tratamiento de origen del excedente</mat-label><mat-select name="extraTreatment" [(ngModel)]="sourceTreatmentId" required [disabled]="busy">@for (row of paymentRows; track row.treatmentId) { <mat-option [value]="row.treatmentId">{{row.name}}</mat-option> }</mat-select></mat-form-field>
+      }
+      <p>Total recibido: {{(appliedAmount + (+extraAmount || 0)) | currency:'MXN'}}</p>
       <mat-form-field appearance="outline"><mat-label>Fecha del abono</mat-label><input matInput type="date" name="paymentDate" [(ngModel)]="occurredOn" [max]="localDate()" required [disabled]="busy"></mat-form-field>
       <mat-form-field appearance="outline"><mat-label>Medio de pago</mat-label><mat-select name="method" [(ngModel)]="method" required [disabled]="busy"><mat-option value="CASH">Efectivo</mat-option><mat-option value="DEBIT_CARD">Tarjeta de débito</mat-option><mat-option value="CREDIT_CARD">Tarjeta de crédito</mat-option><mat-option value="BANK_TRANSFER">Transferencia</mat-option><mat-option value="OTHER">Otro</mat-option></mat-select></mat-form-field>
       @if (dialogError) { <p role="alert">{{dialogError}}</p> }
