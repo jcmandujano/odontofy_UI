@@ -18,7 +18,7 @@ export interface OdontogramFindingInput {
 
 export interface OdontogramTreatmentItem {
   id: number;
-  treatmentPlanId: number;
+  treatmentPlanId: number | null;
   userConceptId: number | null;
   name: string;
   status: TreatmentPlanItemStatus;

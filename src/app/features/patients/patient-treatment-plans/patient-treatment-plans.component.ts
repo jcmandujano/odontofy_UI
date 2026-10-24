@@ -69,6 +69,7 @@ export class PatientTreatmentPlansComponent {
 
   ngOnInit(): void {
     this.selectedPatientId = Number(this.route.snapshot.paramMap.get('id'));
+    this.selectedTabIndex = this.route.snapshot.paramMap.get('tab') === 'independent' ? 1 : 0;
     if (this.selectedPatientId) {
       this.loadTreatmentPlans();
     }

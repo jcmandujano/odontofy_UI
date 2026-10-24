@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <mat-tab-group (selectedIndexChange)="selectedTabIndex = $event">
+    <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="selectedTabIndex = $event">
       <mat-tab label="Planes de tratamiento">
     <div class="row filters_row">
         <div class="col-12">

@@ -175,6 +175,11 @@
                 </button>
                 <div class="finding-description">
                   <strong>{{ conditionLabel(record.finding.condition) }}</strong>
+                  @if (persistedFinding(record.finding); as savedFinding) {
+                    <button type="button" mat-button class="text-button finding-treatment-button" (click)="openTreatmentPicker(savedFinding)" [disabled]="busy || loading || dirty" [attr.aria-label]="'Tratamientos del hallazgo de la pieza ' + record.finding.toothCode">
+                      Tratamientos ({{savedFinding.treatmentPlanItemIds.length}})
+                    </button>
+                  } @else { <small class="helper-text">Guarda para asignar tratamientos</small> }
                 </div>
                 <div class="finding-surface">
                   <span class="small-label">Superficie</span>
@@ -207,41 +212,52 @@
         }
 
         @if (linkingFindingId !== null) {
-          <div class="treatment-picker">
+          <div class="treatment-picker" aria-label="Tratamientos del hallazgo">
             <div class="picker-heading">
-              <h3>Vincular tratamiento · Pieza {{ linkingFinding?.toothCode }}</h3>
-              <button type="button" mat-button class="text-button" (click)="linkingFindingId = null">Cerrar</button>
+              <h3>Tratamientos · Pieza {{ linkingFinding?.toothCode }} · {{conditionLabel(linkingFinding!.condition)}}</h3>
+              <button type="button" mat-button class="text-button" (click)="linkingFindingId = null" [disabled]="busy">Cerrar</button>
             </div>
-            @if (loadingPlans) {
-              <p role="status">Cargando tratamientos…</p>
-            } @else if (!plans.length) {
-              <p>Este paciente aún no tiene planes activos.</p>
-              <button type="button" mat-button class="text-button" (click)="goToPlans()">Crear un plan de tratamiento</button>
-            } @else {
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Plan de tratamiento</mat-label>
-                <mat-select [ngModel]="selectedPlanId" (ngModelChange)="selectTreatmentPlan($event)" [disabled]="busy">
-                  <mat-option [value]="0">Selecciona un plan</mat-option>
-                  @for (plan of plans; track plan.id) {
-                    <mat-option [value]="plan.id">{{ plan.title }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-              @if (selectedPlanId && !loadingPlans) {
-                @if (availableItems.length) {
-                  <div class="available-items">
-                    @for (item of availableItems; track item.id) {
-                      <button type="button" mat-stroked-button (click)="linkItem(item.id)" [disabled]="busy">
-                        <span>{{ item.name }}</span>
-                        <small>{{ treatmentStatusLabels[item.status] }}</small>
-                      </button>
-                    }
+            <p>{{surfaceLabel(linkingFinding?.surface || null)}}. Asociar tratamientos no confirma cargos ni registra pagos. El hallazgo puede permanecer sin tratamiento.</p>
+            @if (linkingFinding?.treatmentPlanItems?.length) {
+              <div class="linked-items">
+                @for (item of linkingFinding!.treatmentPlanItems; track item.id) {
+                  <div class="linked-item">
+                    <button type="button" mat-button class="linked-name" (click)="item.treatmentPlanId ? goToPlan(item.treatmentPlanId) : goToPlans()" [disabled]="busy || dirty">{{item.name}}</button>
+                    <span class="status-badge">{{treatmentStatusLabels[item.status]}}</span>
+                    <small>{{item.treatmentPlanId ? 'Plan #' + item.treatmentPlanId : 'Independiente'}}</small>
+                    @if (!active.archivedAt) { <button type="button" mat-button class="text-button" (click)="unlinkItem(linkingFindingId, item.id)" [disabled]="busy || dirty">Desvincular</button> }
                   </div>
-                } @else {
-                  <p>No hay ítems disponibles en este plan.</p>
-                  <button type="button" mat-button class="text-button" (click)="goToPlan(selectedPlanId)">Abrir plan</button>
                 }
-              }
+              </div>
+            } @else { <app-no-data-found title="Sin tratamientos asociados" message="Puedes conservar este hallazgo como referencia o asignarle un tratamiento cuando corresponda."></app-no-data-found> }
+            @if (pickerError) { <p role="alert">{{pickerError}}</p> }
+            @if (!active.archivedAt) {
+              <details class="treatment-option" open>
+                <summary>Crear desde el catálogo</summary>
+                <p>Se creará un tratamiento independiente para este paciente, con la pieza y superficie del hallazgo. No necesitas un plan.</p>
+                @if (loadingCatalog) { <p role="status">Cargando catálogo…</p> }
+                <form #treatmentForm="ngForm" (ngSubmit)="createTreatment()" class="treatment-create-form">
+                  <mat-form-field appearance="outline"><mat-label>Buscar en el catálogo</mat-label><input matInput name="catalogSearch" [(ngModel)]="catalogSearch" [disabled]="busy || loadingCatalog"></mat-form-field>
+                  <mat-form-field appearance="outline"><mat-label>Tratamiento del catálogo</mat-label><mat-select name="catalogTreatment" [(ngModel)]="selectedConceptId" required [disabled]="busy || loadingCatalog">
+                    @for (concept of filteredCatalog; track concept.id) { <mat-option [value]="concept.id">{{concept.description}} · {{concept.unit_price | currency:'MXN'}}</mat-option> }
+                  </mat-select></mat-form-field>
+                  <mat-form-field appearance="outline"><mat-label>Cantidad</mat-label><input matInput type="number" name="quantity" [(ngModel)]="treatmentQuantity" min="0.01" max="99999999.99" step="0.01" required [disabled]="busy"></mat-form-field>
+                  <mat-form-field appearance="outline"><mat-label>Nota del tratamiento (opcional)</mat-label><textarea matInput name="treatmentNotes" [(ngModel)]="treatmentNotes" maxlength="2000" rows="2" [disabled]="busy"></textarea></mat-form-field>
+                  @if (selectedConcept) { <p>Precio unitario del catálogo: {{selectedConcept.unit_price | currency:'MXN'}}. Importe estimado: {{(+selectedConcept.unit_price * treatmentQuantity) | currency:'MXN'}}.</p> }
+                  @if (duplicateCatalogTreatment) { <p>Este hallazgo ya tiene un tratamiento de ese catálogo. Revisa el asociado; no se creará otro.</p> }
+                  <button type="submit" mat-flat-button class="app-primary-action" [disabled]="busy || loadingCatalog || dirty || treatmentForm.invalid || !selectedConcept || duplicateCatalogTreatment">Crear y asociar tratamiento</button>
+                </form>
+              </details>
+              <details class="treatment-option">
+                <summary>Vincular un tratamiento existente</summary>
+                <p>Reutiliza un tratamiento del paciente, independiente o de un plan, sin duplicarlo ni cambiar sus datos.</p>
+                @if (loadingTreatments) { <p role="status">Cargando tratamientos…</p> } @else if (availableItems.length) {
+                  <div class="available-items">@for (item of availableItems; track item.id) {
+                    <button type="button" mat-stroked-button (click)="linkItem(item.id)" [disabled]="busy || dirty"><span>#{{item.id}} · {{item.name}}<small>{{item.treatment_plan_id ? 'Plan #' + item.treatment_plan_id : 'Independiente'}} · {{item.tooth ? 'Pieza ' + item.tooth : 'Sin pieza específica'}}</small></span><small>{{treatmentStatusLabels[item.status]}}</small></button>
+                  }</div>
+                } @else { <p>No hay tratamientos vinculables en esta página. Los ya asociados, cancelados o sin catálogo no se muestran.</p> }
+                <div class="picker-pagination"><button type="button" mat-button (click)="loadTreatmentPage(treatmentPage - 1)" [disabled]="busy || loadingTreatments || treatmentPage <= 1">Anterior</button><span>Página {{treatmentPage}} de {{treatmentTotalPages || 1}}</span><button type="button" mat-button (click)="loadTreatmentPage(treatmentPage + 1)" [disabled]="busy || loadingTreatments || treatmentPage >= treatmentTotalPages">Siguiente</button></div>
+              </details>
             }
           </div>
         }

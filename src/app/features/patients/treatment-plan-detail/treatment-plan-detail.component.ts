@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import {
   TREATMENT_PLAN_ITEM_PRIORITY_LABELS,
@@ -38,6 +38,7 @@ import {
   selector: 'app-treatment-plan-detail',
   imports: [
     CommonModule,
+    RouterLink,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,

@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { TreatmentFinanceComponent } from '../../../shared/components/treatment-finance/treatment-finance.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +19,7 @@ import { TreatmentPlanItemMgmtDialogComponent } from '../../../shared/dialogs/tr
 
 @Component({
   selector: 'app-patient-independent-treatments',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatTooltipModule, NoDataFoundComponent, TreatmentFinanceComponent],
+  imports: [CommonModule, RouterLink, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatTooltipModule, NoDataFoundComponent, TreatmentFinanceComponent],
   templateUrl: './patient-independent-treatments.component.html',
   styleUrls: ['./patient-treatment-plans.component.scss', './patient-independent-treatments.component.scss'],
 })

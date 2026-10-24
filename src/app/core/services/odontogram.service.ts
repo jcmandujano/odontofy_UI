@@ -46,6 +46,9 @@ export class OdontogramService {
   link(odontogramId: number, findingId: number, itemId: number) {
     return this.api.put<Odontogram>(this.linkPath(odontogramId, findingId, itemId), {});
   }
+  createTreatment(odontogramId: number, findingId: number, input: { userConceptId: number; quantity: string; notes: string | null }, key: string) {
+    return this.api.post<{ odontogram: Odontogram; treatmentId: number }>(`/odontograms/${odontogramId}/findings/${findingId}/treatments`, input, { headers: { 'Idempotency-Key': key } });
+  }
 
   unlink(odontogramId: number, findingId: number, itemId: number) {
     return this.api.delete<Odontogram>(this.linkPath(odontogramId, findingId, itemId));
