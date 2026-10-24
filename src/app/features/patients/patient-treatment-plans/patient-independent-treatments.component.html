@@ -1,5 +1,5 @@
 <div class="independent-heading">
-  <p>Registra y da seguimiento a tratamientos sin crear un plan. No genera cargos ni modifica pagos.</p>
+  <p>Registra y da seguimiento a tratamientos sin crear un plan. Confirmar un cargo es una acción separada.</p>
   <button type="button" mat-fab extended class="app-primary-action" (click)="open()" [disabled]="busy">Agregar tratamiento</button>
 </div>
 @if (busy) { <p role="status">Cargando…</p> }
@@ -26,3 +26,4 @@
 } @else if (!busy) {
   <app-no-data-found title="Este paciente no tiene tratamientos independientes" message="Selecciona un tratamiento del catálogo para registrarlo sin necesidad de crear un plan."></app-no-data-found>
 }
+<app-treatment-finance [patientId]="patientId" scope="independent" (financialChanged)="load()"></app-treatment-finance>

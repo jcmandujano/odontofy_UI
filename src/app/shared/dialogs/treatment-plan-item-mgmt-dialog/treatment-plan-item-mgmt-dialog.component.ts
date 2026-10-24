@@ -64,6 +64,10 @@ export class TreatmentPlanItemMgmtDialogComponent {
 
     if (data?.treatmentPlanItem) {
       this.patchTreatmentPlanItem(data.treatmentPlanItem);
+      if (data.treatmentPlanItem.financial_locked) {
+        this.itemForm.controls['userConceptId'].disable();
+        this.itemForm.controls['quantity'].disable();
+      }
     }
   }
 
@@ -101,7 +105,7 @@ export class TreatmentPlanItemMgmtDialogComponent {
       return;
     }
 
-    const formValue = this.itemForm.value;
+    const formValue = this.itemForm.getRawValue();
     const isManualCapture = formValue.userConceptId === this.manualCaptureValue;
     const payload: CreateTreatmentPlanItemRequest | UpdateTreatmentPlanItemRequest = {
       ...(isManualCapture ? {} : { user_concept_id: Number(formValue.userConceptId) }),

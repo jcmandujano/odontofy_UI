@@ -9,6 +9,7 @@ import { EvolutionNoteService } from './evolution-note.service';
 import { PacientesService } from './patient.service';
 import { PaymentService } from './payment.service';
 import { TreatmentPlanService } from './treatment-plan.service';
+import { TreatmentChargeService } from './treatment-charge.service';
 import { UserConceptsService } from './user-concepts.service';
 
 const envelope = <T>(data: T, meta?: object) => ({
@@ -29,6 +30,32 @@ describe('API v1 contract adapters', () => {
   });
 
   afterEach(() => http.verify());
+
+  it('confirms an explicit treatment charge with a reviewed amount', () => {
+    TestBed.inject(TreatmentChargeService).confirm(9, 7, '2026-10-24', '0.00', '1000.00').subscribe();
+    const request = http.expectOne(`${environment.API_URL}/patients/9/treatment-charges/7/confirmation`);
+    expect(request.request.body).toEqual({ occurredOn: '2026-10-24', discount: '0.00', expectedTotal: '1000.00' });
+    request.flush(envelope({ chargeId: 10, treatmentId: 7, total: '1000.00' }));
+  });
+
+  it('posts allocations as received money without creating service items again', () => {
+    const allocations = [{ chargeId: 10, amount: '400.00' }];
+    TestBed.inject(TreatmentChargeService).pay(9, '2026-10-24', 'CASH', allocations, 'receipt-key').subscribe();
+    const request = http.expectOne(`${environment.API_URL}/patients/9/treatment-payments`);
+    expect(request.request.headers.get('Idempotency-Key')).toBe('receipt-key');
+    expect(request.request.body).toEqual({ occurredOn: '2026-10-24', paymentMethod: 'CASH', allocations });
+    request.flush(envelope({ billingRecordId: 1, amountReceived: '400.00' }));
+  });
+
+  it('preserves treatment receipt descriptions when legacy views rehydrate payments', () => {
+    TestBed.inject(PaymentService).listPayments(9).subscribe(response => {
+      const receipt = new Payment(response.data?.results[0]);
+      expect(receipt.displayConcepts).toBe('Abono: Restauración');
+      expect(receipt.debt).toBe(600);
+      expect(receipt.total).toBe(0);
+    });
+    http.expectOne(`${environment.API_URL}/patients/9/billing-records?page=1&pageSize=10`).flush(envelope([{ id: 1, patientId: 9, recordKind: 'TREATMENT_PAYMENT', occurredOn: '2026-10-24', subtotal: '0.00', total: '0.00', discount: '0.00', amountReceived: '400.00', balanceChange: '-400.00', balanceAfter: '600.00', paymentMethod: 'CASH', items: [], allocations: [{ description: 'Restauración', amount: '400.00' }] }]));
+  });
 
   it('requests independent patient treatments with server pagination', () => {
     TestBed.inject(TreatmentPlanService).listPatientTreatments(9, 2, 25).subscribe(response => {

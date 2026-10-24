@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { TreatmentFinanceComponent } from '../../../shared/components/treatment-finance/treatment-finance.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,12 +18,13 @@ import { TreatmentPlanItemMgmtDialogComponent } from '../../../shared/dialogs/tr
 
 @Component({
   selector: 'app-patient-independent-treatments',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatTooltipModule, NoDataFoundComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatTooltipModule, NoDataFoundComponent, TreatmentFinanceComponent],
   templateUrl: './patient-independent-treatments.component.html',
   styleUrls: ['./patient-treatment-plans.component.scss', './patient-independent-treatments.component.scss'],
 })
 export class PatientIndependentTreatmentsComponent implements OnChanges {
   @Input({ required: true }) patientId = 0;
+  @ViewChild(TreatmentFinanceComponent) finance?: TreatmentFinanceComponent;
   items: TreatmentPlanItem[] = [];
   columns = ['name', 'tooth', 'quantity', 'price', 'subtotal', 'status', 'actions'];
   total = 0;
@@ -42,7 +44,7 @@ export class PatientIndependentTreatmentsComponent implements OnChanges {
     this.busy = true;
     this.error = '';
     this.treatments.listPatientTreatments(this.patientId, this.pageIndex + 1, this.pageSize).pipe(finalize(() => this.busy = false)).subscribe({
-      next: response => { this.items = response.data?.results ?? []; this.total = response.data?.total ?? 0; },
+      next: response => { this.items = response.data?.results ?? []; this.total = response.data?.total ?? 0; this.finance?.load(); },
       error: error => this.error = error?.error?.message ?? 'No se pudieron cargar los tratamientos.',
     });
   }
@@ -75,7 +77,7 @@ export class PatientIndependentTreatmentsComponent implements OnChanges {
 
   cancel(item: TreatmentPlanItem): void {
     if (this.busy) return;
-    this.dialog.open(ConfirmDialogComponent, { data: { title: 'Cancelar tratamiento', message: `¿Cancelar «${item.name}»? Se conservará en el historial.`, confirmText: 'Cancelar tratamiento' } }).afterClosed().subscribe(confirmed => {
+    this.dialog.open(ConfirmDialogComponent, { data: { title: 'Cancelar tratamiento', message: `¿Cancelar «${item.name}»? Se conservará en el historial. Esto no anula cargos ni abonos registrados.`, confirmText: 'Cancelar tratamiento' } }).afterClosed().subscribe(confirmed => {
       if (confirmed) this.setStatus(item, TreatmentPlanItemStatus.CANCELLED);
     });
   }

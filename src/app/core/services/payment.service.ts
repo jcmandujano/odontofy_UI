@@ -6,6 +6,8 @@ import { PaymentBalance } from '../models/payment-balance.model';
 import { ApiService } from './api.service';
 
 interface ApiBillingRecord {
+    recordKind?: 'LEGACY' | 'TREATMENT_PAYMENT';
+    allocations?: Array<{ description: string; amount: string }>;
     id: number;
     patientId: number;
     occurredOn: string;
@@ -92,14 +94,15 @@ const paymentRequest = (value: Payment) => {
     };
 };
 
-const toUiPayment = (value: ApiBillingRecord): Payment => new Payment({
+const toUiPayment = (value: ApiBillingRecord): Payment => Object.assign(new Payment({
+    recordKind: value.recordKind,
     id: value.id,
     patientId: value.patientId,
     payment_date: value.occurredOn,
     subtotal: Number(value.subtotal),
     discount: Number(value.discount),
     income: Number(value.amountReceived),
-    debt: Number(value.balanceChange),
+    debt: Number(value.recordKind === 'TREATMENT_PAYMENT' ? value.balanceAfter : value.balanceChange),
     total: Number(value.total),
     concepts: value.items.map(item => ({
         id: item.id,
@@ -110,7 +113,7 @@ const toUiPayment = (value: ApiBillingRecord): Payment => new Payment({
         description: item.description,
         unitPrice: Number(item.unitPrice)
     }))
-});
+}), value.recordKind === 'TREATMENT_PAYMENT' ? { displayConcepts: 'Abono: ' + (value.allocations ?? []).map(row => row.description).join(', ') } : {});
 
 const localDate = (value: Date): string => {
     const year = value.getFullYear();
