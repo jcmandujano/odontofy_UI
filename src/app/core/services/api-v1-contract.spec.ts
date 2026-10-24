@@ -31,6 +31,38 @@ describe('API v1 contract adapters', () => {
 
   afterEach(() => http.verify());
 
+  it('sends a catalog-backed advance without generating charge items', () => {
+    TestBed.inject(TreatmentChargeService).pay(9, '2026-10-24', 'CASH', [], 'advance-key', { sourceTreatmentId: 7, amountReceived: '1200.00' }).subscribe();
+    const request = http.expectOne(`${environment.API_URL}/patients/9/treatment-payments`);
+    expect(request.request.body).toEqual({ occurredOn: '2026-10-24', paymentMethod: 'CASH', allocations: [], sourceTreatmentId: 7, amountReceived: '1200.00' });
+    expect(request.request.headers.get('Idempotency-Key')).toBe('advance-key');
+    request.flush(envelope({ billingRecordId: 1, amountReceived: '1200.00' }));
+  });
+
+  it('applies credit through a separate idempotent operation rather than a new receipt', () => {
+    TestBed.inject(TreatmentChargeService).applyCredit(9, 20, '2026-10-24', [{ chargeId: 10, amount: '600.00' }], 'application-key').subscribe();
+    const request = http.expectOne(`${environment.API_URL}/patients/9/treatment-credits/20/applications`);
+    expect(request.request.body).toEqual({ occurredOn: '2026-10-24', allocations: [{ chargeId: 10, amount: '600.00' }] });
+    expect(request.request.headers.get('Idempotency-Key')).toBe('application-key');
+    request.flush(envelope({ applicationId: 1, paymentId: 20, amountApplied: '600.00' }));
+  });
+
+  it('preserves patient-wide available credit and paginates advance receipts', () => {
+    TestBed.inject(TreatmentChargeService).credits(9, 2, 10).subscribe(response => {
+      expect(response.data?.total).toBe(11);
+      expect(response.meta?.availableCredit).toBe('200.00');
+    });
+    const request = http.expectOne(`${environment.API_URL}/patients/9/treatment-credits?page=2&pageSize=10`);
+    request.flush(envelope([], { availableCredit: '200.00', pagination: { page: 2, pageSize: 10, total: 11, totalPages: 2 } }));
+  });
+
+  it('shows advance origin and remaining credit in patient payment history', () => {
+    TestBed.inject(PaymentService).listPayments(9).subscribe(response => {
+      expect(response.data?.results[0].displayConcepts).toBe('Anticipo: Restauración · disponible $200.00');
+    });
+    http.expectOne(`${environment.API_URL}/patients/9/billing-records?page=1&pageSize=10`).flush(envelope([{ id: 1, patientId: 9, recordKind: 'TREATMENT_PAYMENT', advanceTreatmentName: 'Restauración', availableCredit: '200.00', occurredOn: '2026-10-24', subtotal: '0.00', total: '0.00', discount: '0.00', amountReceived: '1200.00', balanceChange: '-1200.00', balanceAfter: '-200.00', paymentMethod: 'CASH', items: [], allocations: [] }]));
+  });
+
   it('confirms an explicit treatment charge with a reviewed amount', () => {
     TestBed.inject(TreatmentChargeService).confirm(9, 7, '2026-10-24', '0.00', '1000.00').subscribe();
     const request = http.expectOne(`${environment.API_URL}/patients/9/treatment-charges/7/confirmation`);

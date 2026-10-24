@@ -6,6 +6,8 @@ import { PaymentBalance } from '../models/payment-balance.model';
 import { ApiService } from './api.service';
 
 interface ApiBillingRecord {
+    advanceTreatmentName?: string | null;
+    availableCredit?: string;
     recordKind?: 'LEGACY' | 'TREATMENT_PAYMENT';
     allocations?: Array<{ description: string; amount: string }>;
     id: number;
@@ -113,7 +115,9 @@ const toUiPayment = (value: ApiBillingRecord): Payment => Object.assign(new Paym
         description: item.description,
         unitPrice: Number(item.unitPrice)
     }))
-}), value.recordKind === 'TREATMENT_PAYMENT' ? { displayConcepts: 'Abono: ' + (value.allocations ?? []).map(row => row.description).join(', ') } : {});
+}), value.recordKind === 'TREATMENT_PAYMENT' ? { displayConcepts: value.advanceTreatmentName
+    ? `Anticipo: ${value.advanceTreatmentName} · disponible $${Number(value.availableCredit ?? 0).toFixed(2)}`
+    : 'Abono: ' + (value.allocations ?? []).map(row => row.description).join(', ') } : {});
 
 const localDate = (value: Date): string => {
     const year = value.getFullYear();
