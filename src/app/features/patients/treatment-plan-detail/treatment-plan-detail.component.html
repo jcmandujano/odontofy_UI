@@ -43,7 +43,7 @@
     </section>
 
     <section class="detail-section">
-        <p class="section_title">Resumen financiero</p>
+        <p class="section_title">Cotización · no genera deuda automáticamente</p>
         <div class="financial-grid">
             <div class="financial-item">
                 <span class="info-label">Subtotal</span>
@@ -60,11 +60,13 @@
         </div>
     </section>
 
+    <app-treatment-finance [patientId]="patientId" [treatmentPlanId]="treatmentPlanId" (financialChanged)="loadTreatmentPlanDetail()"></app-treatment-finance>
     <section class="detail-section">
         <div class="section_header">
             <p class="section_title">Ítems del plan</p>
-            <button mat-fab extended class="logout-navbar-button app-primary-action" (click)="openTreatmentPlanItemDialog()">Agregar tratamiento</button>
+            <button mat-fab extended class="logout-navbar-button app-primary-action" [disabled]="financialLocked || treatmentPlan.status === 'CANCELLED'" (click)="openTreatmentPlanItemDialog()">Agregar tratamiento</button>
         </div>
+        @if (financialLocked) { <p>La cotización está fijada por sus cargos confirmados. El seguimiento clínico continúa disponible.</p> }
         @if (treatmentPlanItems.length > 0) {
         <table mat-table [dataSource]="treatmentPlanItems" class="mat-elevation-z0 info-table">
             <ng-container matColumnDef="name">

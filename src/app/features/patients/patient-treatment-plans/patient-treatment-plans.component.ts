@@ -151,7 +151,7 @@ export class PatientTreatmentPlansComponent {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Eliminar plan de tratamiento',
-        message: `¿Estás seguro de eliminar «${treatmentPlan.title}»? También se eliminarán sus tratamientos.`,
+        message: `¿Cancelar «${treatmentPlan.title}»? Sus registros se conservan. Esta acción no anula cargos ni abonos.`,
         confirmText: 'Eliminar'
       }
     });

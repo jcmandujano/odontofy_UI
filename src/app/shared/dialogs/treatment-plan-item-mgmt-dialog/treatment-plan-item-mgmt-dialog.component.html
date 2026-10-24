@@ -2,6 +2,9 @@
 
 <mat-dialog-content class="treatment-plan-item-dialog-content">
     <form [formGroup]="itemForm">
+        @if (data?.treatmentPlanItem?.financial_locked) {
+          <p>Los importes están fijados por un cargo confirmado. Cambiar el estado clínico no cancela cargos ni pagos.</p>
+        }
         @if (mode === 'status') {
         <div class="status-row">
             <div class="current-status">

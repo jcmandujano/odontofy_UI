@@ -1,0 +1,51 @@
+<section aria-label="Cargos y abonos" class="finance">
+  <div class="heading"><h2>Cargos y abonos</h2><button type="button" mat-stroked-button (click)="load()" [disabled]="busy">Actualizar</button></div>
+  <p>El importe cotizado no es deuda hasta confirmar el cargo. Cada abono reduce el saldo sin volver a cobrar el tratamiento.</p>
+  <div class="summary"><span>Cargos confirmados <strong>{{summary.charged | currency:'MXN'}}</strong></span><span>Pagado <strong>{{summary.paid | currency:'MXN'}}</strong></span><span>Pendiente <strong>{{summary.balance | currency:'MXN'}}</strong></span></div>
+  @if (busy) { <p role="status">Procesando…</p> }
+  @if (error) { <p role="alert">{{error}}</p> }
+  @if (!error && rows.length) {
+    <div class="table-scroll"><table>
+      <thead><tr><th>Seleccionar</th><th>Tratamiento</th><th>Importe neto</th><th>Pagado</th><th>Saldo</th><th>Estado financiero</th><th>Acciones</th></tr></thead>
+      <tbody>@for (row of rows; track row.treatmentId) {
+        <tr><td><mat-checkbox [disabled]="busy || !row.chargeId || +row.balance <= 0" [checked]="!!row.chargeId && selected.has(row.chargeId)" (change)="toggle(row, $event.checked)" [attr.aria-label]="'Seleccionar ' + row.name"></mat-checkbox></td>
+        <td>{{row.name}} @if (row.treatmentPlanId) { <small>Plan #{{row.treatmentPlanId}}</small> }</td><td>{{row.total | currency:'MXN'}} @if (+row.discount) { <small>Descuento {{row.discount | currency:'MXN'}}</small> }</td><td>{{row.paid | currency:'MXN'}}</td><td>{{row.balance | currency:'MXN'}}</td><td>{{label(row.financialStatus)}}</td>
+        <td>@if (!row.chargeId) {
+          <button type="button" mat-button [disabled]="busy || !row.catalogLinked || row.clinicalStatus === 'CANCELLED'" (click)="openConfirm(row)">Confirmar cargo</button>
+          @if (!row.catalogLinked) { <small>Requiere catálogo</small> }
+        } @else if (+row.balance > 0) { <button type="button" mat-button [disabled]="busy" (click)="openPay(row)">Registrar abono</button> }</td></tr>
+      }</tbody>
+    </table></div>
+    <div class="heading"><button type="button" mat-stroked-button [disabled]="busy || !selected.size" (click)="openPay()">Abonar a seleccionados</button><mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10,25,50]" (page)="page($event)"></mat-paginator></div>
+  } @else if (!busy && !error) { <app-no-data-found title="Sin tratamientos para confirmar" message="Registra tratamientos del catálogo, con o sin plan, para confirmar sus cargos cuando corresponda."></app-no-data-found> }
+</section>
+<ng-template #confirmDialog>
+  <h2 mat-dialog-title>Confirmar cargo</h2>
+  <mat-dialog-content>
+    <form id="confirm-charge-form" #confirmForm="ngForm" (ngSubmit)="confirm()">
+      <p>{{confirming?.name}}</p>
+      <p>Esta acción generará un adeudo. Verifica que el tratamiento no haya sido cobrado en un registro anterior.</p>
+      @if (confirming?.treatmentPlanId) { <p>El descuento del plan se distribuye entre sus tratamientos. Al confirmar el primer cargo se fijan sus cantidades, servicios y descuento; podrás seguir editando datos clínicos.</p> }
+      <mat-form-field appearance="outline"><mat-label>Fecha del cargo</mat-label><input matInput type="date" name="chargeDate" [(ngModel)]="occurredOn" [max]="localDate()" required [disabled]="busy"></mat-form-field>
+      @if (confirming?.treatmentPlanId === null) { <mat-form-field appearance="outline"><mat-label>Descuento</mat-label><input matInput type="number" name="discount" min="0" [max]="confirming?.subtotal || 0" step="0.01" [(ngModel)]="discount" required [disabled]="busy"></mat-form-field> }
+      <p>Importe a confirmar: {{(confirming?.treatmentPlanId ? confirming?.total : +(confirming?.subtotal || 0) - discount) | currency:'MXN'}}</p>
+      @if (dialogError) { <p role="alert">{{dialogError}}</p> }
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end"><button mat-button mat-dialog-close [disabled]="busy">Volver</button><button mat-flat-button type="submit" form="confirm-charge-form" [disabled]="busy || confirmForm.invalid">Confirmar cargo</button></mat-dialog-actions>
+</ng-template>
+<ng-template #payDialog>
+  <h2 mat-dialog-title>Registrar abono</h2>
+  <mat-dialog-content>
+    <form id="treatment-abono-form" #payForm="ngForm" (ngSubmit)="pay()">
+      <p>Se registra dinero recibido; no se genera otro cargo. En esta etapa puedes abonar hasta el saldo pendiente.</p>
+      @for (row of paymentRows; track row.chargeId) {
+        <mat-form-field appearance="outline"><mat-label>{{row.name}} · saldo {{row.balance | currency:'MXN'}}</mat-label><input matInput type="number" [name]="'amount-' + row.chargeId" min="0.01" [max]="row.balance" step="0.01" [(ngModel)]="row.paymentAmount" required [disabled]="busy"></mat-form-field>
+      }
+      <mat-form-field appearance="outline"><mat-label>Fecha del abono</mat-label><input matInput type="date" name="paymentDate" [(ngModel)]="occurredOn" [max]="localDate()" required [disabled]="busy"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Medio de pago</mat-label><mat-select name="method" [(ngModel)]="method" required [disabled]="busy"><mat-option value="CASH">Efectivo</mat-option><mat-option value="DEBIT_CARD">Tarjeta de débito</mat-option><mat-option value="CREDIT_CARD">Tarjeta de crédito</mat-option><mat-option value="BANK_TRANSFER">Transferencia</mat-option><mat-option value="OTHER">Otro</mat-option></mat-select></mat-form-field>
+      @if (dialogError) { <p role="alert">{{dialogError}}</p> }
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end"><button mat-button mat-dialog-close [disabled]="busy">Volver</button><button mat-flat-button type="submit" form="treatment-abono-form" [disabled]="busy || payForm.invalid">Registrar abono</button></mat-dialog-actions>
+</ng-template>

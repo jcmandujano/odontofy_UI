@@ -78,6 +78,7 @@ export interface TreatmentPlan {
 }
 
 export interface TreatmentPlanItem {
+    financial_locked?: boolean;
     id: number;
     treatment_plan_id: number | null;
     patient_id?: number;

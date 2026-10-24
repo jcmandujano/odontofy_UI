@@ -1,4 +1,5 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { TreatmentFinanceComponent } from '../../../shared/components/treatment-finance/treatment-finance.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -41,11 +42,13 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
     MatInputModule, //FORM MODULES
     NoDataFoundComponent,
     NgxSpinnerModule
+    , TreatmentFinanceComponent
   ],
   templateUrl: './patient-payments.component.html',
   styleUrl: './patient-payments.component.scss'
 })
 export class PatientPaymentsComponent {
+  @ViewChild(TreatmentFinanceComponent) finance?: TreatmentFinanceComponent;
   displayedColumns: string[] = ['conceptos', 'fecha', 'total', 'descuento', 'ingreso', 'adeudo', 'actions'];
   dataSource: Payment[] = []
   patient: Patient | null = null;
@@ -101,6 +104,7 @@ export class PatientPaymentsComponent {
   }
 
   openPaymentDialog(payment?: Payment) {
+    if (payment?.recordKind === 'TREATMENT_PAYMENT') return;
 
     //if there is no contepts we show a message and return
     if (this.conceptList.length === 0) {
@@ -199,6 +203,7 @@ export class PatientPaymentsComponent {
   }
 
   reloadPaymentsData(page: number = 1) {
+    this.finance?.load();
     this.spinner.show()
     this.paymentService.listPayments(this.selectedPatientId, page, this.pageSize).subscribe(response => {
       this.spinner.hide()

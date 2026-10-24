@@ -19,6 +19,7 @@ import {
 import { ApiService } from './api.service';
 
 interface ApiTreatmentPlanItem {
+    financialLocked?: boolean;
     id: number;
     treatmentPlanId: number | null;
     patientId?: number;
@@ -192,6 +193,7 @@ const itemRequest = (value: CreateTreatmentPlanItemRequest | UpdateTreatmentPlan
 const toUiItem = (value: ApiTreatmentPlanItem): TreatmentPlanItem => ({
     id: value.id,
     treatment_plan_id: value.treatmentPlanId,
+    financial_locked: value.financialLocked,
     patient_id: value.patientId,
     user_concept_id: value.userConceptId,
     name: value.name,

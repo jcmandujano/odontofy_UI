@@ -43,4 +43,14 @@ describe('catalog-backed treatment dialog', () => {
     component.saveItem();
     expect(close).toHaveBeenCalledWith({ status: TreatmentPlanItemStatus.COMPLETED });
   });
+
+  it('locks quantities and catalog selection after charge confirmation while keeping notes editable', () => {
+    const item = { user_concept_id: 4, name: 'Limpieza', unit_price: 500, quantity: 1, financial_locked: true, status: TreatmentPlanItemStatus.PENDING } as TreatmentPlanItem;
+    component = new TreatmentPlanItemMgmtDialogComponent(new FormBuilder(), { close } as unknown as MatDialogRef<TreatmentPlanItemMgmtDialogComponent>, { mode: 'edit', conceptList: concepts, treatmentPlanItem: item });
+    expect(component.itemForm.controls['quantity'].disabled).toBeTrue();
+    expect(component.itemForm.controls['userConceptId'].disabled).toBeTrue();
+    component.itemForm.controls['notes'].setValue('Clinical follow-up');
+    component.saveItem();
+    expect(close).toHaveBeenCalledWith(jasmine.objectContaining({ notes: 'Clinical follow-up', user_concept_id: 4, quantity: 1 }));
+  });
 });

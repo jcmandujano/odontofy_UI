@@ -1,5 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { TreatmentFinanceComponent } from '../../../shared/components/treatment-finance/treatment-finance.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,11 +45,13 @@ import {
     MatTooltipModule,
     NgxSpinnerModule,
     NoDataFoundComponent
+    , TreatmentFinanceComponent
   ],
   templateUrl: './treatment-plan-detail.component.html',
   styleUrl: './treatment-plan-detail.component.scss'
 })
 export class TreatmentPlanDetailComponent {
+  @ViewChild(TreatmentFinanceComponent) finance?: TreatmentFinanceComponent;
   treatmentPlanId = 0;
   patientId = 0;
   treatmentPlan: TreatmentPlan | null = null;
@@ -91,6 +94,7 @@ export class TreatmentPlanDetailComponent {
     this.treatmentPlanService.getTreatmentPlanDetail(this.treatmentPlanId).subscribe({
       next: response => {
         this.treatmentPlan = response.data;
+        this.finance?.load();
         this.spinner.hide();
       },
       error: error => {
@@ -122,6 +126,10 @@ export class TreatmentPlanDetailComponent {
 
   get treatmentPlanItems(): TreatmentPlanItem[] {
     return this.treatmentPlan?.TreatmentPlanItems ?? [];
+  }
+
+  get financialLocked(): boolean {
+    return this.treatmentPlanItems.some(item => item.financial_locked);
   }
 
   openEditTreatmentPlanDialog(): void {
