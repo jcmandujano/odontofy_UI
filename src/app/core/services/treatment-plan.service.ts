@@ -43,6 +43,7 @@ interface ApiTreatmentPlanItem {
 }
 
 interface ApiTreatmentPlan {
+    sourceOdontogramId?: number | null;
     id: number;
     patientId: number;
     title: string;
@@ -216,6 +217,7 @@ const toUiItem = (value: ApiTreatmentPlanItem): TreatmentPlanItem => ({
 });
 
 const toUiPlan = (value: ApiTreatmentPlan): TreatmentPlan => ({
+    source_odontogram_id: value.sourceOdontogramId ?? null,
     id: value.id,
     user_id: 0,
     patient_id: value.patientId,

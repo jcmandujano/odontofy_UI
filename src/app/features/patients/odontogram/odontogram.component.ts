@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +25,8 @@ import {
   OdontogramFindingInput,
   OdontogramSummary,
   OdontogramSurface,
+  OdontogramPlanPreview,
+  OdontogramPlanCandidate,
   quadrantsForDentition,
   toothAsset,
 } from '../../../core/models/odontogram.model';
@@ -40,7 +43,7 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
 @Component({
   selector: 'app-odontogram',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule,
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule,
     MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, NoDataFoundComponent],
   templateUrl: './odontogram.component.html',
   styleUrl: './odontogram.component.scss',
@@ -82,6 +85,13 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
   private requestedChartId = 0;
   private findingDialogRef: MatDialogRef<unknown> | null = null;
+  @ViewChild('planDialog') private planDialog!: TemplateRef<unknown>;
+  private planDialogRef: MatDialogRef<unknown> | null = null;
+  planPreview: OdontogramPlanPreview | null = null;
+  planSelected = new Set<number>();
+  planTitle = ''; planReviewed = false; planLoading = false; planError = '';
+  private planKey = '';
+  private planReviewRequestId = 0;
   @ViewChild('findingDialog') private findingDialog!: TemplateRef<unknown>;
 
   constructor(
@@ -109,11 +119,51 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.findingDialogRef?.close();
+    this.planDialogRef?.close();
     this.destroy$.complete();
   }
 
   canLeave(): boolean {
     return !this.dirty || window.confirm('Hay cambios sin guardar en el odontograma. ¿Deseas salir y descartarlos?');
+  }
+  openPlanReview(): void {
+    if (!this.chart || this.chart.archivedAt || this.dirty || this.busy || this.loading || this.planDialogRef) return;
+    this.planTitle = this.chart.title ? `Plan · ${this.chart.title}`.slice(0, 255) : 'Plan de tratamiento';
+    this.planDialogRef = this.dialog.open(this.planDialog, { width: '960px', maxWidth: '96vw', maxHeight: '92vh', disableClose: true, panelClass: 'odontogram-plan-dialog', ariaLabel: 'Revisar borrador de plan de tratamiento' });
+    this.planDialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(() => { this.planDialogRef = null; this.planReviewRequestId++; this.planLoading = false; });
+    this.refreshPlanReview();
+  }
+  refreshPlanReview(): void {
+    if (!this.chart || this.busy) return;
+    const chartId = this.chart.id;
+    const requestId = ++this.planReviewRequestId;
+    this.planKey = crypto.randomUUID(); this.planSelected.clear(); this.planReviewed = false; this.planLoading = true; this.planError = ''; this.planPreview = null;
+    this.odontograms.planPreview(chartId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: response => { if (this.chart?.id !== chartId || requestId !== this.planReviewRequestId) return; this.planPreview = response.data; this.planLoading = false; },
+      error: error => { if (requestId !== this.planReviewRequestId) return; this.planLoading = false; this.planError = this.errorMessage(error); },
+    });
+  }
+  togglePlanTreatment(row: OdontogramPlanCandidate, selected: boolean): void {
+    if (!row.eligible || this.busy) return;
+    if (selected && this.planSelected.size < 100) this.planSelected.add(row.treatmentId); else this.planSelected.delete(row.treatmentId);
+    this.planReviewed = false;
+  }
+  selectPlanEligible(): void { this.planSelected = new Set((this.planPreview?.treatments ?? []).filter(row => row.eligible).slice(0, 100).map(row => row.treatmentId)); this.planReviewed = false; }
+  get selectedPlanTreatments(): OdontogramPlanCandidate[] { return (this.planPreview?.treatments ?? []).filter(row => row.eligible && this.planSelected.has(row.treatmentId)); }
+  get planSubtotal(): string {
+    const total = this.selectedPlanTreatments.reduce((sum, row) => { const [whole, decimal = ''] = row.subtotal.split('.'); return sum + BigInt(whole) * 100n + BigInt(decimal.padEnd(2, '0')); }, 0n);
+    return `${total / 100n}.${String(total % 100n).padStart(2, '0')}`;
+  }
+  planEligibilityLabel(reason: OdontogramPlanCandidate['reason']): string {
+    return reason === 'ALREADY_IN_PLAN' ? 'Ya pertenece a un plan' : reason === 'CHARGE_CONFIRMED' ? 'Tiene cargo confirmado' : reason === 'CANCELLED' ? 'Tratamiento cancelado' : reason === 'CATALOG_REQUIRED' ? 'Requiere catálogo' : 'Disponible';
+  }
+  createPlan(): void {
+    if (!this.chart || this.chart.archivedAt || this.dirty || this.busy || this.planLoading || !this.planReviewed || !this.planTitle.trim() || !this.selectedPlanTreatments.length || this.planPreview?.archived) return;
+    this.busy = true; this.planError = '';
+    this.odontograms.createPlan(this.chart.id, { title: this.planTitle.trim(), expectedSubtotal: this.planSubtotal, treatments: this.selectedPlanTreatments.map(row => ({ treatmentId: row.treatmentId, revision: row.revision })) }, this.planKey).pipe(takeUntil(this.destroy$)).subscribe({
+      next: response => { this.busy = false; if (!response.data) return; this.planDialogRef?.close(); this.notify('Borrador creado. Se conservaron los tratamientos; no se generaron cargos.'); this.goToPlan(response.data.treatmentPlanId); },
+      error: error => { this.busy = false; this.planError = this.errorMessage(error); },
+    });
   }
 
   get quadrants() {

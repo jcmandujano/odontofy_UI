@@ -48,6 +48,16 @@ export interface OdontogramSummary {
 export interface Odontogram extends OdontogramSummary {
   findings: OdontogramFinding[];
 }
+export interface OdontogramPlanCandidate {
+  treatmentId: number; treatmentPlanId: number | null; userConceptId: number | null;
+  name: string; tooth: string | null; area: string | null; notes: string | null; clinicalStatus: TreatmentPlanItemStatus;
+  quantity: string; unitPrice: string; subtotal: string; eligible: boolean; revision: string;
+  reason: 'ALREADY_IN_PLAN' | 'CANCELLED' | 'CATALOG_REQUIRED' | 'CHARGE_CONFIRMED' | null;
+  findings: Array<{ findingId: number; toothCode: string; condition: OdontogramCondition; surface: OdontogramSurface | null }>;
+}
+export interface OdontogramPlanPreview {
+  odontogramId: number; patientId: number; title: string | null; archived: boolean; treatments: OdontogramPlanCandidate[];
+}
 
 export const ODONTOGRAM_CONDITIONS: ReadonlyArray<{ value: OdontogramCondition; label: string }> = [
   { value: 'CARIES', label: 'Caries' },

@@ -1,5 +1,16 @@
 @use '../../../../vars.scss' as *;
 
+.odontogram-plan-dialog {
+  .plan-review-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+  .plan-review-scroll { overflow-x: auto; margin-bottom: 16px; }
+  .plan-review-table { width: 100%; border-collapse: collapse; font: 400 14px/20px Roboto, sans-serif; }
+  .plan-review-table th, .plan-review-table td { padding: 12px; text-align: left; border: 1px solid $light--blue; }
+  .plan-review-table th { color: $primary--blue; font-family: 'Roboto Condensed', sans-serif; }
+  .plan-review-table small { display: block; color: $gray--text; }
+  .plan-review-note { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .plan-review-error { color: $warn--primary; }
+}
+
 // Finding rows and Material controls stay scoped to the odontogram.
 app-odontogram .odontogram-page {
   .findings-section { min-width: 0; }

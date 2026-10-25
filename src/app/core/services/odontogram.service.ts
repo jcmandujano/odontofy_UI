@@ -6,12 +6,17 @@ import {
   OdontogramDentition,
   OdontogramFindingInput,
   OdontogramSummary,
+  OdontogramPlanPreview,
 } from '../models/odontogram.model';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class OdontogramService {
   constructor(private readonly api: ApiService) {}
+  planPreview(odontogramId: number) { return this.api.get<OdontogramPlanPreview>(`/odontograms/${odontogramId}/treatment-plan-preview`); }
+  createPlan(odontogramId: number, input: { title: string; expectedSubtotal: string; treatments: Array<{ treatmentId: number; revision: string }> }, key: string) {
+    return this.api.post<{ treatmentPlanId: number; patientId: number }>(`/odontograms/${odontogramId}/treatment-plans`, input, { headers: { 'Idempotency-Key': key } });
+  }
 
   list(patientId: number, page = 1) {
     return this.api.get<OdontogramSummary[]>(`/patients/${patientId}/odontograms`, {

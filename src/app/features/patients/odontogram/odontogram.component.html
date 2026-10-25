@@ -151,6 +151,9 @@
             </p>
           </div>
           <div class="findings-controls">
+            @if (!active.archivedAt) {
+              <button type="button" mat-stroked-button class="secondary-action" (click)="openPlanReview()" [disabled]="busy || loading || dirty || !active.findings.length">Generar plan de tratamiento</button>
+            }
             @if (selectedToothCode) {
               <button type="button" mat-stroked-button class="secondary-action" (click)="selectTooth('')">Mostrar todos</button>
             }
@@ -329,5 +332,35 @@
         {{ editingIndex === null ? 'Agregar hallazgo' : 'Actualizar hallazgo' }}
       </button>
     </mat-dialog-actions>
+  </ng-template>
+  <ng-template #planDialog>
+    <h2 mat-dialog-title>Revisar borrador del plan</h2>
+    <mat-dialog-content>
+      <p>Selecciona tratamientos de todo este odontograma. Cada tratamiento aparece una sola vez, aunque atienda varios hallazgos. Se agruparán los mismos registros, sin copiar tratamientos ni generar deuda o pagos.</p>
+      <form id="odontogram-plan-form" #planForm="ngForm" (ngSubmit)="createPlan()">
+        <mat-form-field appearance="outline"><mat-label>Nombre del plan</mat-label><input matInput name="planTitle" [(ngModel)]="planTitle" maxlength="255" required [disabled]="busy"></mat-form-field>
+        <div class="plan-review-actions"><button type="button" mat-button (click)="refreshPlanReview()" [disabled]="busy || planLoading">Actualizar revisión</button><button type="button" mat-button (click)="selectPlanEligible()" [disabled]="busy || planLoading">Seleccionar disponibles (máx. 100)</button></div>
+        @if (planLoading) { <p role="status">Cargando tratamientos para revisar…</p> }
+        @if (planError) { <p role="alert" class="plan-review-error">{{planError}}</p> }
+        @if (planPreview?.archived) { <p>El odontograma está archivado. Restaúralo antes de generar un plan.</p> }
+        @if (planPreview?.treatments?.length) {
+          <div class="plan-review-scroll"><table class="plan-review-table">
+            <thead><tr><th>Incluir</th><th>Tratamiento / hallazgos</th><th>Cantidad</th><th>Precio unitario</th><th>Importe</th><th>Disponibilidad</th></tr></thead>
+            <tbody>@for (row of planPreview!.treatments; track row.treatmentId) {
+              <tr><td><mat-checkbox [name]="'plan-item-' + row.treatmentId" [ngModel]="planSelected.has(row.treatmentId)" (ngModelChange)="togglePlanTreatment(row, $event)" [disabled]="busy || !row.eligible || !!planPreview?.archived || (!planSelected.has(row.treatmentId) && planSelected.size >= 100)" [attr.aria-label]="'Incluir ' + row.name"></mat-checkbox></td>
+                <td><strong>#{{row.treatmentId}} · {{row.name}}</strong><small>{{treatmentStatusLabels[row.clinicalStatus]}}</small>@for (finding of row.findings; track finding.findingId) { <small>Pieza {{finding.toothCode}} · {{conditionLabel(finding.condition)}} · {{surfaceLabel(finding.surface)}}</small> } @if (row.notes) { <small class="plan-review-note" [matTooltip]="row.notes">{{row.notes}}</small> }</td>
+                <td>{{row.quantity}}</td><td>{{row.unitPrice | currency:'MXN'}}</td><td>{{row.subtotal | currency:'MXN'}}</td><td>{{planEligibilityLabel(row.reason)}} @if (row.treatmentPlanId) { <small>Plan #{{row.treatmentPlanId}}</small> }</td>
+              </tr>
+            }</tbody>
+          </table></div>
+          <p>{{selectedPlanTreatments.length}} tratamientos seleccionados · Total estimado: <strong>{{planSubtotal | currency:'MXN'}}</strong></p>
+          <p>El borrador inicia sin descuento. Podrás ajustar la cotización desde el plan. Los tratamientos con cargo confirmado o que ya pertenecen a un plan no se moverán. Los anticipos existentes se conservan, sin aplicarse automáticamente.</p>
+          <mat-checkbox name="planReviewed" [(ngModel)]="planReviewed" required [disabled]="busy || !selectedPlanTreatments.length">He revisado la selección y el importe del borrador.</mat-checkbox>
+        } @else if (!planLoading && !planError) {
+          <app-no-data-found title="Sin tratamientos asociados" message="Asigna tratamientos a los hallazgos antes de generar un plan. El odontograma también puede conservarse solo como referencia."></app-no-data-found>
+        }
+      </form>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end"><button type="button" mat-button mat-dialog-close [disabled]="busy">Volver</button><button type="submit" mat-flat-button form="odontogram-plan-form" [disabled]="busy || planLoading || planForm.invalid || !planTitle.trim() || !planReviewed || !selectedPlanTreatments.length || !!planPreview?.archived">Crear borrador</button></mat-dialog-actions>
   </ng-template>
 </main>
