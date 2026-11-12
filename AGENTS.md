@@ -43,9 +43,11 @@ Estas referencias definen la dirección del producto, no obligan a copiar defect
 Consultar [docs/product-rules.md](docs/product-rules.md) antes de analizar o modificar tratamientos, odontogramas, planes o pagos. Apunta a la fuente funcional compartida en la API; evitar versiones duplicadas de esas reglas.
 
 - El catálogo de tratamientos es la fuente de los nuevos tratamientos y servicios cobrados; no habilitar captura libre equivalente.
-- Un paciente puede tener varios odontogramas. Citas, notas y tratamientos pueden existir sin odontograma.
-- Los tratamientos pueden ser independientes o pertenecer a un plan; un hallazgo puede quedar únicamente como referencia clínica.
-- Crear o aceptar un plan, asociar tratamientos o completar su estado clínico no genera un cargo. Mantener claras las acciones financieras explícitas.
+- Consultar [docs/mvp-functional-scope.md](docs/mvp-functional-scope.md) para el alcance vigente y fases de simplificación.
+- El MVP conserva pagos directos desde catálogo, notas generales y odontograma de referencia. Tratamientos del paciente, planes y sus integraciones quedan fuera de la experiencia objetivo.
+- Un paciente puede tener varios odontogramas adultos o pediátricos con hallazgos. Citas, notas y pagos no requieren odontograma ni plan.
+- No pedir precio unitario libre al registrar un pago. El importe recibido es un dato distinto del precio del catálogo.
+- Retirar controles según la fase autorizada, conservando referencias históricas y sin dejar cargos o adeudos existentes sin una operación compatible.
 - No trasladar detalles técnicos al médico, como claves de idempotencia, nombres de tablas o compatibilidad interna.
 
 ## Implementación y validación
