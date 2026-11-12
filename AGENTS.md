@@ -12,6 +12,8 @@ Odontofy ayuda al médico a gestionar su consulta de forma práctica y amigable.
 
 ## Referencias de experiencia
 
+Consultar [docs/ui-guidelines.md](docs/ui-guidelines.md) antes de diseñar o modificar interfaces. Define los patrones de interacción, presentación y validación visual que deben orientar el reanálisis y refactor.
+
 Antes de modificar una interfaz, revisar el módulo equivalente y sus diálogos en `src/app`:
 
 | Tarea | Referencia |
