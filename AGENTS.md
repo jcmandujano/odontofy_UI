@@ -38,6 +38,8 @@ Estas referencias definen la dirección del producto, no obligan a copiar defect
 
 ## Reglas funcionales que la UI debe respetar
 
+Consultar [docs/product-rules.md](docs/product-rules.md) antes de analizar o modificar tratamientos, odontogramas, planes o pagos. Apunta a la fuente funcional compartida en la API; evitar versiones duplicadas de esas reglas.
+
 - El catálogo de tratamientos es la fuente de los nuevos tratamientos y servicios cobrados; no habilitar captura libre equivalente.
 - Un paciente puede tener varios odontogramas. Citas, notas y tratamientos pueden existir sin odontograma.
 - Los tratamientos pueden ser independientes o pertenecer a un plan; un hallazgo puede quedar únicamente como referencia clínica.
