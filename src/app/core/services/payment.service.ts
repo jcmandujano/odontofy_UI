@@ -6,6 +6,11 @@ import { PaymentBalance } from '../models/payment-balance.model';
 import { ApiService } from './api.service';
 
 interface ApiBillingRecord {
+    sourceBillingRecordId?: number | null;
+    sourceDescription?: string;
+    amountPaid?: string;
+    outstandingAmount?: string;
+    hasInstallments?: boolean;
     advanceTreatmentName?: string | null;
     availableCredit?: string;
     recordKind?: 'LEGACY' | 'TREATMENT_PAYMENT';
@@ -61,9 +66,15 @@ export class PaymentService {
         );
     }
 
-    createPayment(patientId: number, payment: Payment) {
+    createPayment(patientId: number, payment: Payment, key: string = crypto.randomUUID()) {
         return this.api.post<ApiBillingRecord>(`/patients/${patientId}/billing-records`, paymentRequest(payment), {
-            headers: { 'Idempotency-Key': crypto.randomUUID() }
+            headers: { 'Idempotency-Key': key }
+        }).pipe(map(response => mapApiResponse(response, toUiPayment)));
+    }
+
+    createInstallment(patientId: number, recordId: number, input: { occurredOn: string; amountReceived: string; paymentMethod: string }, key: string) {
+        return this.api.post<ApiBillingRecord>(`/patients/${patientId}/billing-records/${recordId}/installments`, input, {
+            headers: { 'Idempotency-Key': key }
         }).pipe(map(response => mapApiResponse(response, toUiPayment)));
     }
 
@@ -97,6 +108,10 @@ const paymentRequest = (value: Payment) => {
 };
 
 const toUiPayment = (value: ApiBillingRecord): Payment => Object.assign(new Payment({
+    sourceBillingRecordId: value.sourceBillingRecordId,
+    amountPaid: value.amountPaid === undefined ? undefined : Number(value.amountPaid),
+    outstandingAmount: value.outstandingAmount === undefined ? undefined : Number(value.outstandingAmount),
+    hasInstallments: value.hasInstallments,
     recordKind: value.recordKind,
     id: value.id,
     patientId: value.patientId,
@@ -115,7 +130,7 @@ const toUiPayment = (value: ApiBillingRecord): Payment => Object.assign(new Paym
         description: item.description,
         unitPrice: Number(item.unitPrice)
     }))
-}), value.recordKind === 'TREATMENT_PAYMENT' ? { displayConcepts: value.advanceTreatmentName
+}), value.sourceBillingRecordId ? { displayConcepts: `Abono al registro #${value.sourceBillingRecordId}: ${value.sourceDescription || 'Servicios de catálogo'}` } : value.recordKind === 'TREATMENT_PAYMENT' ? { displayConcepts: value.advanceTreatmentName
     ? `Anticipo: ${value.advanceTreatmentName} · disponible $${Number(value.availableCredit ?? 0).toFixed(2)}`
     : 'Abono: ' + (value.allocations ?? []).map(row => row.description).join(', ') } : {});
 

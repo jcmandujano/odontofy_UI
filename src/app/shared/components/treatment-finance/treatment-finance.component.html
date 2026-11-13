@@ -1,6 +1,6 @@
 <section aria-label="Cargos y abonos" class="finance">
   <div class="heading"><h2>Cargos y abonos</h2><button type="button" mat-stroked-button (click)="load()" [disabled]="busy">Actualizar</button></div>
-  <p>El importe cotizado no es deuda hasta confirmar el cargo. Cada abono reduce el saldo sin volver a cobrar el tratamiento.</p>
+  @if (!confirmedOnly) { <p>El importe cotizado no es deuda hasta confirmar el cargo. Cada abono reduce el saldo sin volver a cobrar el tratamiento.</p> }
   <div class="summary"><span>Cargos confirmados <strong>{{summary.charged | currency:'MXN'}}</strong></span><span>Pagado <strong>{{summary.paid | currency:'MXN'}}</strong></span><span>Pendiente <strong>{{summary.balance | currency:'MXN'}}</strong></span></div>
   @if (busy) { <p role="status">Procesando…</p> }
   @if (error) { <p role="alert">{{error}}</p> }
@@ -17,12 +17,12 @@
           <button type="button" mat-button [disabled]="busy" (click)="openPay(row)">Registrar abono</button>
           <button type="button" mat-button [disabled]="busy || !availableCredits.length" (click)="openUseCredit(row)">Aplicar anticipo</button>
         }
-        <button type="button" mat-button [disabled]="busy || !row.catalogLinked || row.clinicalStatus === 'CANCELLED'" (click)="openAdvance(row)">Registrar anticipo</button>
+        @if (!confirmedOnly) { <button type="button" mat-button [disabled]="busy || !row.catalogLinked || row.clinicalStatus === 'CANCELLED'" (click)="openAdvance(row)">Registrar anticipo</button> }
         </td></tr>
       }</tbody>
     </table></div>
     <div class="heading"><button type="button" mat-stroked-button [disabled]="busy || !selected.size" (click)="openPay()">Abonar a seleccionados</button><button type="button" mat-stroked-button [disabled]="busy || !selected.size || !availableCredits.length" (click)="openUseCredit()">Aplicar anticipo a seleccionados</button><mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10,25,50]" (page)="page($event)"></mat-paginator></div>
-  } @else if (!busy && !error) { <app-no-data-found title="Sin tratamientos para confirmar" message="Registra tratamientos del catálogo, con o sin plan, para confirmar sus cargos cuando corresponda."></app-no-data-found> }
+  } @else if (!busy && !error) { <app-no-data-found [title]="confirmedOnly ? 'Sin cargos anteriores' : 'Sin tratamientos para confirmar'" [message]="confirmedOnly ? 'Los cargos confirmados previamente aparecerán aquí.' : 'Registra tratamientos del catálogo, con o sin plan, para confirmar sus cargos cuando corresponda.'"></app-no-data-found> }
 </section>
 <section class="finance" aria-label="Anticipos del paciente">
   <h2>Anticipos y saldo disponible</h2>
@@ -37,7 +37,7 @@
     </table></div>
     <mat-paginator [length]="creditTotal" [pageSize]="10" [pageIndex]="creditPageIndex" (page)="creditPage($event)"></mat-paginator>
     <p>Para aplicar un anticipo, ubica aquí su página y selecciona el cargo en la sección superior. Para corregir un recibo, cancélalo desde Pagos; sus aplicaciones también quedarán sin efecto.</p>
-  } @else if (!busy && !error) { <app-no-data-found title="Sin anticipos" message="Usa Registrar anticipo en un tratamiento del catálogo. No necesitas confirmar antes su cargo ni crear un plan."></app-no-data-found> }
+  } @else if (!busy && !error) { <app-no-data-found title="Sin anticipos" [message]="confirmedOnly ? 'No hay anticipos registrados para este paciente.' : 'Usa Registrar anticipo en un tratamiento del catálogo. No necesitas confirmar antes su cargo ni crear un plan.'"></app-no-data-found> }
 </section>
 <ng-template #advanceDialog>
   <h2 mat-dialog-title>Registrar anticipo</h2>

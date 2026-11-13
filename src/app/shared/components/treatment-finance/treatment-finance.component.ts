@@ -22,6 +22,7 @@ export class TreatmentFinanceComponent implements OnChanges {
   @Input({ required: true }) patientId = 0;
   @Input() treatmentPlanId?: number;
   @Input() scope = 'all';
+  @Input() confirmedOnly = false;
   @Output() financialChanged = new EventEmitter<void>();
   @ViewChild('confirmDialog') confirmDialog!: TemplateRef<unknown>;
   @ViewChild('payDialog') payDialog!: TemplateRef<unknown>;
@@ -46,7 +47,10 @@ export class TreatmentFinanceComponent implements OnChanges {
   load(): void {
     if (!this.patientId) return;
     this.busy = true; this.error = ''; this.selected.clear();
-    forkJoin({ charges: this.service.list(this.patientId, this.pageIndex + 1, this.pageSize, this.scope, this.treatmentPlanId), credits: this.service.credits(this.patientId, this.creditPageIndex + 1) }).subscribe({
+    const charges = this.confirmedOnly
+      ? this.service.list(this.patientId, this.pageIndex + 1, this.pageSize, this.scope, this.treatmentPlanId, true)
+      : this.service.list(this.patientId, this.pageIndex + 1, this.pageSize, this.scope, this.treatmentPlanId);
+    forkJoin({ charges, credits: this.service.credits(this.patientId, this.creditPageIndex + 1) }).subscribe({
       next: ({ charges: response, credits }) => { this.rows = response.data?.results ?? []; this.total = response.data?.total ?? 0; this.summary = response.meta?.summary ?? { charged: '0.00', paid: '0.00', balance: '0.00' }; this.credits = credits.data?.results ?? []; this.creditTotal = credits.data?.total ?? 0; this.availableCredit = credits.meta?.availableCredit ?? '0.00'; this.busy = false; },
       error: error => { this.error = error?.error?.message ?? 'No se pudieron cargar los cargos.'; this.busy = false; },
     });
