@@ -65,7 +65,7 @@
                                   <button type="button" mat-icon-button aria-label="Editar pago" (click)="openPaymentDialog(element)"><mat-icon svgIcon="editaCita"></mat-icon></button>
                                 }
                                 @if (element.recordKind !== 'TREATMENT_PAYMENT' && !element.sourceBillingRecordId && element.outstandingAmount > 0) {
-                                  <button type="button" mat-button (click)="openInstallment(element)">Registrar abono</button>
+                                  <button type="button" mat-icon-button aria-label="Registrar abono" matTooltip="Registrar abono" (click)="openInstallment(element)"><mat-icon svgIcon="add"></mat-icon></button>
                                 }
                                 <button type="button" mat-icon-button aria-label="Cancelar pago" (click)="deletePayment(element.id)"><mat-icon svgIcon="eliminaCita"></mat-icon></button>
                             </div>
