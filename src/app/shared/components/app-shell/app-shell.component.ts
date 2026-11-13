@@ -47,7 +47,6 @@ export class AppShellComponent implements OnInit, OnDestroy {
       { label: 'Resumen', route: '/patient-dashboard', section: 'patient-overview' },
       { label: 'Ficha', route: '/patient-file', section: 'patient-file' },
       { label: 'Notas de evolución', route: '/evolution-notes', section: 'evolution-notes' },
-      { label: 'Tratamientos', route: '/patient-treatment-plans', section: 'treatment-plans' },
       { label: 'Consentimientos', route: '/informed-consents', section: 'consents' },
       { label: 'Pagos', route: '/patient-payment', section: 'payments' },
       ...(featureFlags.patientOdontogram

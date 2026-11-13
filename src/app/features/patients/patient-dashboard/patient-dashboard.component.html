@@ -73,40 +73,6 @@
           </button>
         </article>
 
-        <article class="dashboard-panel summary-card">
-          <div class="card-heading">
-            <div>
-              <h2>Tratamiento activo</h2>
-            </div>
-          </div>
-
-          @if (activeTreatmentPlan) {
-            <div class="treatment-summary">
-              <div class="treatment-title">
-                <strong>{{ activeTreatmentPlan.title }}</strong>
-                <span class="status-pill">{{ treatmentStatusLabel }}</span>
-              </div>
-              @if (treatmentProgress !== null) {
-                <div class="progress-copy">
-                  <span>{{ completedTreatmentItems }} de {{ treatmentItems.length }} procedimientos completados</span>
-                  <strong>{{ treatmentProgress }}%</strong>
-                </div>
-                <div class="progress-track" aria-hidden="true">
-                  <span [style.width.%]="treatmentProgress"></span>
-                </div>
-              }
-              @if (nextTreatmentItem) {
-                <p class="next-item"><span>Siguiente procedimiento</span><strong>{{ nextTreatmentItem.name }}</strong></p>
-              }
-            </div>
-          } @else {
-            <p class="empty-copy">No hay un plan de tratamiento activo.</p>
-          }
-
-          <button type="button" class="card-action" (click)="goToTreatmentPlanDetail()">
-            {{ activeTreatmentPlan ? 'Ver plan' : 'Crear tratamiento' }}
-          </button>
-        </article>
 
       </div>
 

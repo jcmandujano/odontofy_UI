@@ -1,18 +1,14 @@
 
 import { Component, Inject } from '@angular/core';
 import { EvolutionNote } from '../../../core/models/evolution-note.model';
-import { TreatmentPlan, TreatmentPlanItem } from '../../../core/models/treatment-plan.model';
+import { TreatmentPlan } from '../../../core/models/treatment-plan.model';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { QuillModule } from 'ngx-quill';
-import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
-import { TreatmentPlanItemStatus } from '../../../core/models/treatment-plan.model';
 
 export interface EvolutionNoteMgmtDialogData {
   note?: EvolutionNote;
@@ -38,8 +34,6 @@ export interface EvolutionNoteMgmtDialogResult {
     FormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatSelectModule,
-    MatCheckboxModule,
     QuillModule
 ],
     templateUrl: './evolution-note-mgmt-dialog.component.html',
@@ -48,11 +42,8 @@ export interface EvolutionNoteMgmtDialogResult {
 export class EvolutionNoteMgmtDialogComponent {
   creationDate: Date
   noteContent: string = ''
-  treatmentPlans: TreatmentPlan[] = []
-  readonly generalPatientNoteValue = 'GENERAL_PATIENT_NOTE' as const
-  selectedTreatmentPlanId: number | typeof this.generalPatientNoteValue = this.generalPatientNoteValue
-  selectedTreatmentPlanItemId: number | null = null
-  markTreatmentAsCompleted = false
+  private originalNote?: EvolutionNote;
+  get dialogTitle(): string { return this.originalNote ? 'Editar nota' : 'Nueva nota'; }
   quillConfig = {
     toolbar: [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],// Tamaño de encabezado
@@ -71,14 +62,9 @@ export class EvolutionNoteMgmtDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<EvolutionNoteMgmtDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EvolutionNoteMgmtDialogData | EvolutionNote | null,
-    private treatmentPlanService: TreatmentPlanService,
   ) {
     const note = this.getDialogNote(data)
-    const dialogData = this.getDialogData(data)
-    this.treatmentPlans = dialogData?.treatmentPlans ?? []
-    const treatmentPlanId = dialogData?.treatment_plan_id ?? note?.treatment_plan_id ?? null
-    this.selectedTreatmentPlanId = treatmentPlanId ?? this.generalPatientNoteValue
-    this.selectedTreatmentPlanItemId = dialogData?.treatment_plan_item_id ?? note?.treatment_plan_item_id ?? null
+    this.originalNote = note;
 
     if(note){
       this.creationDate = new Date(note.createdAt)
@@ -87,59 +73,19 @@ export class EvolutionNoteMgmtDialogComponent {
       this.creationDate = new Date()
     }
 
-    if (this.isGeneralPatientNote) {
-      this.selectedTreatmentPlanItemId = null
-    }
-
-    this.ensureSelectedTreatmentPlanItems()
   }
 
   onSave(): void {
-    const treatmentPlanId = this.selectedTreatmentPlanId === this.generalPatientNoteValue
-      ? null
-      : this.selectedTreatmentPlanId
-    const treatmentPlanItemId = treatmentPlanId !== null ? this.selectedTreatmentPlanItemId ?? null : null
+    const occurredAt = this.creationDate?.toISOString();
+    if (!occurredAt || !Number.isFinite(Date.parse(occurredAt)) || !this.noteContent.trim()) return;
     const data = {
-      creationDate: this.creationDate.toISOString(),
+      creationDate: occurredAt,
       noteContent: this.noteContent,
-      treatment_plan_id: treatmentPlanId,
-      treatment_plan_item_id: treatmentPlanItemId,
-      markTreatmentAsCompleted: !!treatmentPlanItemId && this.markTreatmentAsCompleted
+      treatment_plan_id: this.originalNote?.treatment_plan_id ?? null,
+      treatment_plan_item_id: this.originalNote?.treatment_plan_item_id ?? null,
+      markTreatmentAsCompleted: false
     }
     this.dialogRef.close(data);
-  }
-
-  get selectedTreatmentPlanItems(): TreatmentPlanItem[] {
-    if (this.isGeneralPatientNote) {
-      return []
-    }
-
-    const selectedPlan = this.treatmentPlans.find(plan => plan.id === this.selectedTreatmentPlanId)
-    return selectedPlan?.TreatmentPlanItems ?? []
-  }
-
-  get isGeneralPatientNote(): boolean {
-    return this.selectedTreatmentPlanId === this.generalPatientNoteValue
-  }
-
-  onTreatmentPlanChange(): void {
-    this.selectedTreatmentPlanItemId = null
-    this.markTreatmentAsCompleted = false
-    this.ensureSelectedTreatmentPlanItems()
-  }
-
-  onTreatmentPlanItemChange(): void {
-    if (!this.canMarkTreatmentAsCompleted) {
-      this.markTreatmentAsCompleted = false
-    }
-  }
-
-  get selectedTreatmentPlanItem(): TreatmentPlanItem | undefined {
-    return this.selectedTreatmentPlanItems.find(item => item.id === this.selectedTreatmentPlanItemId)
-  }
-
-  get canMarkTreatmentAsCompleted(): boolean {
-    return !!this.selectedTreatmentPlanItem && this.selectedTreatmentPlanItem.status !== TreatmentPlanItemStatus.COMPLETED
   }
 
   isoToDate(fechaISO: string) {
@@ -171,36 +117,4 @@ export class EvolutionNoteMgmtDialogComponent {
     return undefined
   }
 
-  private getDialogData(data: EvolutionNoteMgmtDialogData | EvolutionNote | null): EvolutionNoteMgmtDialogData | undefined {
-    if (!data || !('treatmentPlans' in data || 'treatment_plan_id' in data || ('note' in data && typeof data.note !== 'string'))) {
-      return undefined
-    }
-
-    return data as EvolutionNoteMgmtDialogData
-  }
-
-  private ensureSelectedTreatmentPlanItems(): void {
-    if (this.selectedTreatmentPlanId === this.generalPatientNoteValue) {
-      return
-    }
-
-    const treatmentPlanId = this.selectedTreatmentPlanId
-    const selectedPlan = this.treatmentPlans.find(plan => plan.id === treatmentPlanId)
-    if (selectedPlan?.TreatmentPlanItems) {
-      return
-    }
-
-    this.treatmentPlanService.getTreatmentPlanDetail(treatmentPlanId).subscribe({
-      next: response => {
-        if (response.data) {
-          this.treatmentPlans = this.treatmentPlans.map(plan =>
-            plan.id === response.data!.id ? response.data! : plan
-          )
-        }
-      },
-      error: error => {
-        console.log('ERROR', error)
-      }
-    })
-  }
 }

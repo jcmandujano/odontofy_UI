@@ -251,3 +251,20 @@ table {
   border: 0;
   color: #407dda !important;
 }
+
+// The MVP list has date, note preview and two accessible actions.
+.info-table { table-layout: fixed; }
+.signin-header-column { width: 120px; }
+.nextdate-header-column { width: 112px; }
+.name-header-column { width: auto; }
+.dashboard_list_actons mat-icon { width: 20px; height: 20px; }
+button:focus-visible { outline: 2px solid $primary--blue; outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .pacientes_header_row > .col-6 { width: 100%; }
+  .nuevo_paciente_button_container { justify-content: flex-start; margin-top: 12px; }
+  .dashboard_agenda_icon { width: 32px; margin-right: 12px; }
+  .signin-header-column { width: 82px; }
+  .nextdate-header-column { width: 100px; }
+  .mat-mdc-cell, .mat-mdc-header-cell { padding: 6px; }
+}
