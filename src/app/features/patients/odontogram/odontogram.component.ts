@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 import {
@@ -25,25 +24,16 @@ import {
   OdontogramFindingInput,
   OdontogramSummary,
   OdontogramSurface,
-  OdontogramPlanPreview,
-  OdontogramPlanCandidate,
   quadrantsForDentition,
   toothAsset,
 } from '../../../core/models/odontogram.model';
-import {
-  TREATMENT_PLAN_ITEM_STATUS_LABELS,
-  TreatmentPlanItem,
-} from '../../../core/models/treatment-plan.model';
-import { UserConcept } from '../../../core/models/user-concept.model';
-import { UserConceptsService } from '../../../core/services/user-concepts.service';
 import { OdontogramService } from '../../../core/services/odontogram.service';
-import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-odontogram',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule,
+  imports: [CommonModule, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule,
     MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, NoDataFoundComponent],
   templateUrl: './odontogram.component.html',
   styleUrl: './odontogram.component.scss',
@@ -51,7 +41,6 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
 export class OdontogramComponent implements OnInit, OnDestroy {
   readonly conditions = ODONTOGRAM_CONDITIONS;
   readonly surfaces = ODONTOGRAM_SURFACES;
-  readonly treatmentStatusLabels = TREATMENT_PLAN_ITEM_STATUS_LABELS;
 
   patientId = 0;
   charts: OdontogramSummary[] = [];
@@ -73,35 +62,16 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   condition: OdontogramCondition = 'CARIES';
   surface: OdontogramSurface | '' = '';
   notes = '';
-  linkingFindingId: number | null = null;
-  patientTreatments: TreatmentPlanItem[] = [];
-  treatmentPage = 1; treatmentTotalPages = 0;
-  loadingTreatments = false; loadingCatalog = false; pickerError = '';
-  catalog: UserConcept[] = []; catalogSearch = ''; selectedConceptId = 0;
-  treatmentQuantity = 1; treatmentNotes = '';
-  private creationKey = '';
-  private pickerRequestId = 0;
-
   private readonly destroy$ = new Subject<void>();
   private requestedChartId = 0;
   private findingDialogRef: MatDialogRef<unknown> | null = null;
-  @ViewChild('planDialog') private planDialog!: TemplateRef<unknown>;
-  private planDialogRef: MatDialogRef<unknown> | null = null;
-  planPreview: OdontogramPlanPreview | null = null;
-  planSelected = new Set<number>();
-  planTitle = ''; planReviewed = false; planLoading = false; planError = '';
-  private planKey = '';
-  private planReviewRequestId = 0;
   @ViewChild('findingDialog') private findingDialog!: TemplateRef<unknown>;
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
     private readonly odontograms: OdontogramService,
-    private readonly treatments: TreatmentPlanService,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
-    private readonly catalogService: UserConceptsService,
   ) {}
 
   ngOnInit(): void {
@@ -119,53 +89,12 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.findingDialogRef?.close();
-    this.planDialogRef?.close();
     this.destroy$.complete();
   }
 
   canLeave(): boolean {
     return !this.dirty || window.confirm('Hay cambios sin guardar en el odontograma. ¿Deseas salir y descartarlos?');
   }
-  openPlanReview(): void {
-    if (!this.chart || this.chart.archivedAt || this.dirty || this.busy || this.loading || this.planDialogRef) return;
-    this.planTitle = this.chart.title ? `Plan · ${this.chart.title}`.slice(0, 255) : 'Plan de tratamiento';
-    this.planDialogRef = this.dialog.open(this.planDialog, { width: '960px', maxWidth: '96vw', maxHeight: '92vh', disableClose: true, panelClass: 'odontogram-plan-dialog', ariaLabel: 'Revisar borrador de plan de tratamiento' });
-    this.planDialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(() => { this.planDialogRef = null; this.planReviewRequestId++; this.planLoading = false; });
-    this.refreshPlanReview();
-  }
-  refreshPlanReview(): void {
-    if (!this.chart || this.busy) return;
-    const chartId = this.chart.id;
-    const requestId = ++this.planReviewRequestId;
-    this.planKey = crypto.randomUUID(); this.planSelected.clear(); this.planReviewed = false; this.planLoading = true; this.planError = ''; this.planPreview = null;
-    this.odontograms.planPreview(chartId).pipe(takeUntil(this.destroy$)).subscribe({
-      next: response => { if (this.chart?.id !== chartId || requestId !== this.planReviewRequestId) return; this.planPreview = response.data; this.planLoading = false; },
-      error: error => { if (requestId !== this.planReviewRequestId) return; this.planLoading = false; this.planError = this.errorMessage(error); },
-    });
-  }
-  togglePlanTreatment(row: OdontogramPlanCandidate, selected: boolean): void {
-    if (!row.eligible || this.busy) return;
-    if (selected && this.planSelected.size < 100) this.planSelected.add(row.treatmentId); else this.planSelected.delete(row.treatmentId);
-    this.planReviewed = false;
-  }
-  selectPlanEligible(): void { this.planSelected = new Set((this.planPreview?.treatments ?? []).filter(row => row.eligible).slice(0, 100).map(row => row.treatmentId)); this.planReviewed = false; }
-  get selectedPlanTreatments(): OdontogramPlanCandidate[] { return (this.planPreview?.treatments ?? []).filter(row => row.eligible && this.planSelected.has(row.treatmentId)); }
-  get planSubtotal(): string {
-    const total = this.selectedPlanTreatments.reduce((sum, row) => { const [whole, decimal = ''] = row.subtotal.split('.'); return sum + BigInt(whole) * 100n + BigInt(decimal.padEnd(2, '0')); }, 0n);
-    return `${total / 100n}.${String(total % 100n).padStart(2, '0')}`;
-  }
-  planEligibilityLabel(reason: OdontogramPlanCandidate['reason']): string {
-    return reason === 'ALREADY_IN_PLAN' ? 'Ya pertenece a un plan' : reason === 'CHARGE_CONFIRMED' ? 'Tiene cargo confirmado' : reason === 'CANCELLED' ? 'Tratamiento cancelado' : reason === 'CATALOG_REQUIRED' ? 'Requiere catálogo' : 'Disponible';
-  }
-  createPlan(): void {
-    if (!this.chart || this.chart.archivedAt || this.dirty || this.busy || this.planLoading || !this.planReviewed || !this.planTitle.trim() || !this.selectedPlanTreatments.length || this.planPreview?.archived) return;
-    this.busy = true; this.planError = '';
-    this.odontograms.createPlan(this.chart.id, { title: this.planTitle.trim(), expectedSubtotal: this.planSubtotal, treatments: this.selectedPlanTreatments.map(row => ({ treatmentId: row.treatmentId, revision: row.revision })) }, this.planKey).pipe(takeUntil(this.destroy$)).subscribe({
-      next: response => { this.busy = false; if (!response.data) return; this.planDialogRef?.close(); this.notify('Borrador creado. Se conservaron los tratamientos; no se generaron cargos.'); this.goToPlan(response.data.treatmentPlanId); },
-      error: error => { this.busy = false; this.planError = this.errorMessage(error); },
-    });
-  }
-
   get quadrants() {
     return quadrantsForDentition(this.chart?.dentition ?? 'ADULT');
   }
@@ -179,18 +108,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   get toothCodes(): string[] {
     return this.quadrants.flatMap(quadrant => quadrant.codes).sort();
   }
-
-  get linkingFinding(): OdontogramFinding | null {
-    return this.chart?.findings.find(finding => finding.id === this.linkingFindingId) ?? null;
-  }
-
-  get availableItems(): TreatmentPlanItem[] {
-    const linked = this.linkingFinding?.treatmentPlanItemIds ?? [];
-    return this.patientTreatments.filter(item => item.user_concept_id !== null && item.status !== 'CANCELLED' && !linked.includes(item.id));
-  }
-  get filteredCatalog(): UserConcept[] { const text = this.catalogSearch.trim().toLocaleLowerCase(); return this.catalog.filter(item => item.description.toLocaleLowerCase().includes(text)); }
-  get selectedConcept(): UserConcept | undefined { return this.catalog.find(item => item.id === this.selectedConceptId); }
-  get duplicateCatalogTreatment(): boolean { return !!this.selectedConceptId && !!this.linkingFinding?.treatmentPlanItems.some(item => item.userConceptId === this.selectedConceptId); }
 
   loadCharts(page = 1, preferredChartId?: number): void {
     if (!this.patientId) return;
@@ -273,7 +190,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   selectTooth(code: string): void {
     this.selectedToothCode = code;
     this.resetFindingForm();
-    this.linkingFindingId = null;
   }
 
   toothAsset(code: string): string {
@@ -331,6 +247,10 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     });
   }
 
+  get editingLinkedFinding(): boolean {
+    return this.editingIndex !== null && !!this.persistedFinding(this.draftFindings[this.editingIndex])?.treatmentPlanItemIds.length;
+  }
+
   editFinding(index: number): void {
     this.openFindingDialog(index);
   }
@@ -357,14 +277,13 @@ export class OdontogramComponent implements OnInit, OnDestroy {
       const previous = this.draftFindings[this.editingIndex];
       const persisted = this.persistedFinding(previous);
       if (persisted?.treatmentPlanItemIds.length && this.findingKey(previous) !== this.findingKey(next)) {
-        this.notify('Desvincula primero los tratamientos para cambiar la pieza, el hallazgo o la superficie. Puedes editar sus notas.'); return;
+        this.notify('Este hallazgo tiene referencias anteriores. Conserva la pieza, condición y superficie; puedes actualizar sus notas.'); return;
       }
       this.draftFindings[this.editingIndex] = next;
     } else {
       this.draftFindings = [...this.draftFindings, next];
     }
     this.dirty = true;
-    this.linkingFindingId = null;
     this.findingDialogRef?.close();
     this.resetFindingForm();
   }
@@ -373,10 +292,9 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     const finding = this.draftFindings[index];
     if (!finding) return;
     const persisted = this.persistedFinding(finding);
-    if (persisted?.treatmentPlanItemIds.length) { this.notify('Desvincula primero los tratamientos antes de quitar el hallazgo. Los tratamientos no se eliminarán.'); return; }
+    if (persisted?.treatmentPlanItemIds.length) { this.notify('Este hallazgo tiene referencias anteriores y se conserva en el expediente. Puedes actualizar sus notas.'); return; }
     this.draftFindings = this.draftFindings.filter((_, candidate) => candidate !== index);
     this.dirty = true;
-    this.linkingFindingId = null;
     this.resetFindingForm();
   }
 
@@ -423,79 +341,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     });
   }
 
-  openTreatmentPicker(finding: OdontogramFinding): void {
-    if (!this.chart || this.dirty || this.busy || this.loading) return;
-    this.linkingFindingId = finding.id;
-    this.patientTreatments = []; this.catalog = []; this.catalogSearch = ''; this.selectedConceptId = 0;
-    this.treatmentQuantity = 1; this.treatmentNotes = ''; this.pickerError = ''; this.creationKey = crypto.randomUUID();
-    if (this.chart.archivedAt) return;
-    this.loadTreatmentPage(1);
-    const chartId = this.chart.id; const findingId = finding.id;
-    this.loadingCatalog = true;
-    this.catalogService.listAllUserConcepts()
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: catalog => { if (this.chart?.id !== chartId || this.linkingFindingId !== findingId) return; this.catalog = catalog; this.loadingCatalog = false; },
-        error: error => { if (this.chart?.id !== chartId || this.linkingFindingId !== findingId) return; this.loadingCatalog = false; this.pickerError = this.errorMessage(error); },
-      });
-  }
-  loadTreatmentPage(page: number): void {
-    if (!this.chart || !this.linkingFindingId || page < 1) return;
-    const chartId = this.chart.id; const findingId = this.linkingFindingId; const request = ++this.pickerRequestId;
-    this.loadingTreatments = true; this.pickerError = '';
-    this.treatments.listPatientTreatments(this.patientId, page, 10, 'all').pipe(takeUntil(this.destroy$)).subscribe({
-      next: response => {
-        if (this.chart?.id !== chartId || this.linkingFindingId !== findingId || request !== this.pickerRequestId) return;
-        this.patientTreatments = response.data?.results ?? []; this.treatmentPage = page; this.treatmentTotalPages = response.data?.totalPages ?? 0; this.loadingTreatments = false;
-      },
-      error: error => { if (this.chart?.id !== chartId || this.linkingFindingId !== findingId || request !== this.pickerRequestId) return; this.loadingTreatments = false; this.pickerError = this.errorMessage(error); },
-    });
-  }
-  createTreatment(): void {
-    if (!this.chart || this.chart.archivedAt || this.dirty || this.busy || !this.linkingFindingId || !this.selectedConcept || this.duplicateCatalogTreatment || !(this.treatmentQuantity > 0)) return;
-    this.busy = true; this.pickerError = '';
-    this.odontograms.createTreatment(this.chart.id, this.linkingFindingId, { userConceptId: this.selectedConceptId, quantity: Number(this.treatmentQuantity).toFixed(2), notes: this.treatmentNotes.trim() || null }, this.creationKey)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: response => { this.busy = false; if (response.data) this.applyChart(response.data.odontogram, true); this.notify('Tratamiento independiente creado y asociado. No se generaron cargos ni pagos.'); },
-        error: error => { this.busy = false; this.pickerError = this.errorMessage(error); },
-      });
-  }
-
-  linkItem(itemId: number): void {
-    if (!this.chart || this.chart.archivedAt || this.dirty || !this.linkingFindingId || this.busy) return;
-    this.busy = true;
-    this.odontograms.link(this.chart.id, this.linkingFindingId, itemId)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: response => {
-          this.busy = false;
-          if (response.data) this.applyChart(response.data, true);
-          this.notify('Tratamiento vinculado al hallazgo.');
-        },
-        error: error => this.fail(error),
-      });
-  }
-
-  unlinkItem(findingId: number, itemId: number): void {
-    if (!this.chart || this.chart.archivedAt || this.busy || this.dirty || !window.confirm('¿Quitar solo la relación con este hallazgo? El tratamiento, su cargo y sus pagos se conservan.')) return;
-    this.busy = true;
-    this.odontograms.unlink(this.chart.id, findingId, itemId)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: response => {
-          this.busy = false;
-          if (response.data) this.applyChart(response.data, true);
-          this.notify('Tratamiento desvinculado.');
-        },
-        error: error => this.fail(error),
-      });
-  }
-
-  goToPlans(): void {
-    this.router.navigate(['/patient-treatment-plans', { id: this.patientId, tab: 'independent' }]);
-  }
-
-  goToPlan(planId: number): void {
-    this.router.navigate(['/treatment-plan-detail', { id: planId, patientId: this.patientId }]);
-  }
-
   private applyChart(chart: Odontogram, preserveTooth = false): void {
     const previousTooth = this.selectedToothCode;
     this.chart = chart;
@@ -505,7 +350,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     }));
     this.dirty = false;
     this.selectedToothCode = preserveTooth ? previousTooth : '';
-    this.linkingFindingId = null;
     this.resetFindingForm();
   }
 

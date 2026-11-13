@@ -14,7 +14,7 @@
     </div>
   </div>
   <div class="row filters_row">
-    <div class="col-4 flex-container">
+    <div class="col-12 flex-container">
       <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
         <mat-label>Buscar...</mat-label>
         <input matInput placeholder="" [(ngModel)]="searchCriteria" (keyup.enter)="onSearch()">
@@ -27,28 +27,6 @@
       <!--  <button mat-icon-button color="primary" class="searchButtton" (click)="searchByCriteria(searchCriteria)">
       <mat-icon svgIcon="search"></mat-icon>
     </button> -->
-  </div>
-  <div class="col-4">
-    <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
-      <mat-label>Plan de tratamiento</mat-label>
-      <mat-select [(ngModel)]="selectedTreatmentPlanId" (selectionChange)="onTreatmentPlanFilterChange()">
-        <mat-option [value]="null">Todos</mat-option>
-        @for (plan of treatmentPlans; track plan.id) {
-          <mat-option [value]="plan.id">{{plan.title}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div class="col-4">
-    <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
-      <mat-label>Procedimiento / ítem</mat-label>
-      <mat-select [(ngModel)]="selectedTreatmentPlanItemId" [disabled]="!selectedTreatmentPlanId" (selectionChange)="onTreatmentPlanItemFilterChange()">
-        <mat-option [value]="null">Todos los avances del plan</mat-option>
-        @for (item of selectedTreatmentPlanItems; track item.id) {
-          <mat-option [value]="item.id">{{getItemLabel(item)}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
   </div>
 </div>
 <div class="row">
@@ -65,27 +43,17 @@
           <td mat-cell *matCellDef="let element" class="name-content-column"> {{limpiarHtml(element.note)}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="planTratamiento">
-          <th mat-header-cell *matHeaderCellDef class="plan-header-column"> Plan de tratamiento </th>
-          <td mat-cell *matCellDef="let element" class="plan-content-column">
-            {{getTreatmentPlanTitle(element)}}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="procedimiento">
-          <th mat-header-cell *matHeaderCellDef class="procedure-header-column"> Procedimiento </th>
-          <td mat-cell *matCellDef="let element" class="procedure-content-column">
-            {{getTreatmentPlanItemDescription(element) || 'Sin procedimiento asociado'}}
-          </td>
-        </ng-container>
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="nextdate-header-column"> Acciones </th>
           <td mat-cell *matCellDef="let element" class="nextdate-content-column">
             <div class="dashboard_list_container">
               <div class="dashboard_list_actons">
-                <mat-icon class="dashboard_logout_icon" svgIcon="editaCita"
-                (click)="editarNotaDialog(element)"></mat-icon>
-                <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita"
-                (click)="eliminarNota(element.id)"></mat-icon>
+                <button type="button" mat-icon-button aria-label="Editar nota" (click)="editarNotaDialog(element)">
+                  <mat-icon svgIcon="editaCita"></mat-icon>
+                </button>
+                <button type="button" mat-icon-button aria-label="Eliminar nota" (click)="eliminarNota(element.id)">
+                  <mat-icon svgIcon="eliminaCita"></mat-icon>
+                </button>
               </div>
             </div>
           </td>

@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, Routes } from '@angular/router';
 import { LandingPageComponent } from './features/landing/components/landing-page/landing-page.component';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { SignupComponent } from './features/auth/components/signup/signup.component';
@@ -12,13 +13,20 @@ import { EvolutionNotesComponent } from './features/patients/evolution-notes/evo
 import { PatientPaymentsComponent } from './features/patients/patient-payments/patient-payments.component';
 import { InformedConsentsComponent } from './features/patients/informed-consents/informed-consents.component';
 import { OdontogramComponent } from './features/patients/odontogram/odontogram.component';
-import { PatientTreatmentPlansComponent } from './features/patients/patient-treatment-plans/patient-treatment-plans.component';
-import { TreatmentPlanDetailComponent } from './features/patients/treatment-plan-detail/treatment-plan-detail.component';
 import { AgendaComponent } from './features/dentist/agenda/agenda.component';
 import { SettingsComponent } from './features/settings/components/settings/settings.component';
 import { ResetPasswordComponent } from './features/auth/components/reset-password/reset-password.component';
 import { AuthGuard } from './core/guards/auth-guard.guard';
 import { AppShellComponent } from './shared/components/app-shell/app-shell.component';
+
+export const redirectLegacyTreatmentRoute: CanActivateFn = route => {
+  const router = inject(Router);
+  const rawId = route.paramMap.get(route.routeConfig?.path === 'treatment-plan-detail' ? 'patientId' : 'id');
+  const patientId = Number(rawId);
+  return Number.isSafeInteger(patientId) && patientId > 0
+    ? router.createUrlTree(['/patient-dashboard', { id: patientId }])
+    : router.createUrlTree(['/patient-list']);
+};
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -100,7 +108,8 @@ export const routes: Routes = [
       },
       {
         path: 'patient-treatment-plans',
-        component: PatientTreatmentPlansComponent,
+        component: PatientDashboardComponent,
+        canActivate: [redirectLegacyTreatmentRoute],
         data: {
           title: 'Tratamientos',
           primarySection: 'patients',
@@ -110,7 +119,8 @@ export const routes: Routes = [
       },
       {
         path: 'treatment-plan-detail',
-        component: TreatmentPlanDetailComponent,
+        component: PatientDashboardComponent,
+        canActivate: [redirectLegacyTreatmentRoute],
         data: {
           title: 'Detalle del plan',
           primarySection: 'patients',

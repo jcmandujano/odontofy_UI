@@ -63,6 +63,7 @@ export class EvolutionNoteService {
 }
 
 const noteRequest = (value: CreateEvolutionNoteRequest | UpdateEvolutionNoteRequest) => ({
+    ...(value.occurredAt !== undefined && { occurredAt: value.occurredAt }),
     ...(value.note !== undefined && { note: value.note }),
     ...(value.treatment_plan_id !== undefined && { treatmentPlanId: value.treatment_plan_id }),
     ...(value.treatment_plan_item_id !== undefined && { treatmentPlanItemId: value.treatment_plan_item_id })

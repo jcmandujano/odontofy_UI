@@ -2,22 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 import { Appointment } from '../../../core/models/appointment.model';
 import { EvolutionNote } from '../../../core/models/evolution-note.model';
 import { Patient } from '../../../core/models/patient.model';
-import {
-  TREATMENT_PLAN_STATUS_LABELS,
-  TreatmentPlan,
-  TreatmentPlanItem,
-  TreatmentPlanItemStatus,
-  TreatmentPlanStatus
-} from '../../../core/models/treatment-plan.model';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { EvolutionNoteService } from '../../../core/services/evolution-note.service';
 import { PacientesService } from '../../../core/services/patient.service';
-import { TreatmentPlanService } from '../../../core/services/treatment-plan.service';
 
 interface ClinicalAlert {
   label: string;
@@ -63,18 +55,15 @@ export class PatientDashboardComponent implements OnInit {
   clinicalAlerts: ClinicalAlert[] = [];
   familyHistory = '';
   nextAppointment: Appointment | null = null;
-  activeTreatmentPlan: TreatmentPlan | null = null;
   latestNote: EvolutionNote | null = null;
   loading = true;
 
-  readonly treatmentPlanStatusLabels = TREATMENT_PLAN_STATUS_LABELS;
 
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly patientsService: PacientesService,
     private readonly appointmentsService: AppointmentService,
-    private readonly treatmentPlansService: TreatmentPlanService,
     private readonly evolutionNotesService: EvolutionNoteService
   ) {}
 
@@ -94,31 +83,6 @@ export class PatientDashboardComponent implements OnInit {
 
   get hasDebt(): boolean {
     return (this.patient?.debt ?? 0) > 0;
-  }
-
-  get treatmentItems(): TreatmentPlanItem[] {
-    return this.activeTreatmentPlan?.TreatmentPlanItems ?? [];
-  }
-
-  get completedTreatmentItems(): number {
-    return this.treatmentItems.filter(item => item.status === TreatmentPlanItemStatus.COMPLETED).length;
-  }
-
-  get treatmentProgress(): number | null {
-    if (!this.treatmentItems.length) return null;
-    return Math.round((this.completedTreatmentItems / this.treatmentItems.length) * 100);
-  }
-
-  get nextTreatmentItem(): TreatmentPlanItem | null {
-    return this.treatmentItems.find(item =>
-      item.status !== TreatmentPlanItemStatus.COMPLETED &&
-      item.status !== TreatmentPlanItemStatus.CANCELLED
-    ) ?? null;
-  }
-
-  get treatmentStatusLabel(): string {
-    if (!this.activeTreatmentPlan) return '';
-    return this.treatmentPlanStatusLabels[this.activeTreatmentPlan.status] ?? this.activeTreatmentPlan.status;
   }
 
   get latestNotePreview(): string {
@@ -141,22 +105,6 @@ export class PatientDashboardComponent implements OnInit {
     this.router.navigate(['/patient-payment', { id: this.patientId }]);
   }
 
-  goToTreatmentPlans(): void {
-    this.router.navigate(['/patient-treatment-plans', { id: this.patientId }]);
-  }
-
-  goToTreatmentPlanDetail(): void {
-    if (!this.activeTreatmentPlan) {
-      this.goToTreatmentPlans();
-      return;
-    }
-
-    this.router.navigate(['/treatment-plan-detail', {
-      id: this.activeTreatmentPlan.id,
-      patientId: this.patientId
-    }]);
-  }
-
   private loadSummary(): void {
     const from = new Date();
     from.setHours(0, 0, 0, 0);
@@ -175,7 +123,6 @@ export class PatientDashboardComponent implements OnInit {
           map(response => response.data ?? []),
           catchError(() => of([] as Appointment[]))
         ),
-      treatmentPlan: this.loadActiveTreatmentPlan(),
       latestNote: this.evolutionNotesService.listNotes(this.patientId, 1, 1).pipe(
         map(response => response.data?.results[0] ?? null),
         catchError(() => of(null))
@@ -189,37 +136,9 @@ export class PatientDashboardComponent implements OnInit {
         .sort((left, right) =>
           new Date(left.appointment_datetime).getTime() - new Date(right.appointment_datetime).getTime()
         )[0] ?? null;
-      this.activeTreatmentPlan = result.treatmentPlan;
       this.latestNote = result.latestNote;
       this.loading = false;
     });
-  }
-
-  private loadActiveTreatmentPlan() {
-    return this.treatmentPlansService.listTreatmentPlansByPatient(this.patientId, 1, 100).pipe(
-      map(response => this.selectActiveTreatmentPlan(response.data?.results ?? [])),
-      switchMap(plan => {
-        if (!plan) return of(null);
-        return this.treatmentPlansService.getTreatmentPlanDetail(plan.id).pipe(
-          map(response => response.data ?? plan),
-          catchError(() => of(plan))
-        );
-      }),
-      catchError(() => of(null))
-    );
-  }
-
-  private selectActiveTreatmentPlan(plans: TreatmentPlan[]): TreatmentPlan | null {
-    const priority = new Map<TreatmentPlanStatus, number>([
-      [TreatmentPlanStatus.IN_PROGRESS, 0],
-      [TreatmentPlanStatus.ACCEPTED, 1],
-      [TreatmentPlanStatus.PROPOSED, 2],
-      [TreatmentPlanStatus.DRAFT, 3]
-    ]);
-
-    return plans
-      .filter(plan => priority.has(plan.status))
-      .sort((left, right) => (priority.get(left.status) ?? 99) - (priority.get(right.status) ?? 99))[0] ?? null;
   }
 
   private buildClinicalAlerts(patient: Patient | null): ClinicalAlert[] {

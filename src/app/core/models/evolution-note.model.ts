@@ -15,12 +15,14 @@ export class EvolutionNote {
 }
 
 export interface CreateEvolutionNoteRequest {
+    occurredAt?: string;
     note: string;
     treatment_plan_id?: number | null;
     treatment_plan_item_id?: number | null;
 }
 
 export interface UpdateEvolutionNoteRequest {
+    occurredAt?: string;
     note?: string;
     treatment_plan_id?: number | null;
     treatment_plan_item_id?: number | null;
