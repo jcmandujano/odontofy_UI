@@ -1,6 +1,10 @@
 import { PaymentConcept } from "./payment-concept.model";
 
 export class Payment{
+    sourceBillingRecordId?: number | null;
+    outstandingAmount?: number;
+    amountPaid?: number;
+    hasInstallments?: boolean;
     recordKind?: 'LEGACY' | 'TREATMENT_PAYMENT';
     id!: number;
     user_id!: number;
@@ -26,6 +30,7 @@ export class Payment{
             } else {
                 this.displayConcepts = ""; // Si no hay tratamientos, dejar vacío
             }
+            if (data.sourceBillingRecordId) this.displayConcepts = data.displayConcepts ?? `Abono al registro #${data.sourceBillingRecordId}`;
             if (data.recordKind === 'TREATMENT_PAYMENT') this.displayConcepts = data.displayConcepts ?? 'Abono a tratamiento';
         }
     }

@@ -16,9 +16,9 @@ export interface TreatmentCredit {
 @Injectable({ providedIn: 'root' })
 export class TreatmentChargeService {
   constructor(private api: ApiService) {}
-  list(patientId: number, page = 1, pageSize = 10, scope = 'all', treatmentPlanId?: number) {
+  list(patientId: number, page = 1, pageSize = 10, scope = 'all', treatmentPlanId?: number, confirmedOnly = false) {
     return this.api.get<TreatmentChargeRow[]>(`/patients/${patientId}/treatment-charges`, {
-      params: { page, pageSize, scope, ...(treatmentPlanId !== undefined && { treatmentPlanId }) }
+      params: { page, pageSize, scope, ...(treatmentPlanId !== undefined && { treatmentPlanId }), ...(confirmedOnly && { confirmedOnly: true }) }
     }).pipe(map(response => mapPaginatedApiResponse(response, row => row)));
   }
   confirm(patientId: number, treatmentId: number, occurredOn: string, discount: string, expectedTotal: string) {

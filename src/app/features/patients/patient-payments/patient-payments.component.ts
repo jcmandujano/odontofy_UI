@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { BillingInstallmentDialogComponent } from '../../../shared/dialogs/billing-installment-dialog/billing-installment-dialog.component';
 import { Payment } from '../../../core/models/payment.model';
 import { PacientesService } from '../../../core/services/patient.service';
 import { PaymentService } from '../../../core/services/payment.service';
@@ -53,6 +54,9 @@ export class PatientPaymentsComponent {
   dataSource: Payment[] = []
   patient: Patient | null = null;
   conceptList: UserConcept[] = []
+  hasTreatmentFinance = false;
+  showPreviousFinance = false;
+  private paymentDialogOpen = false;
   displayJointConcepts = ''
   selectedPatientId: number = 0
   length = 0;
@@ -80,12 +84,13 @@ export class PatientPaymentsComponent {
     this.spinner.show()
     forkJoin([
       this.pacientesService.findPatient(this.selectedPatientId),
-      this.userConceptsService.listUserConcepts(),
+      this.userConceptsService.listAllUserConcepts(),
       this.paymentService.listPayments(this.selectedPatientId, page, this.pageSize)
     ]).subscribe(
       ([patientsResponse, conceptsData, paymentData]) => {
         this.patient = patientsResponse.data;
-        this.conceptList = conceptsData.data?.results ?? []
+        this.conceptList = conceptsData
+        this.hasTreatmentFinance = paymentData.meta?.hasTreatmentFinance ?? false
         this.dataSource = (Array.isArray(paymentData.data?.results) ? paymentData.data.results : []).map((payment: Partial<Payment> | undefined) => new Payment(payment));
         this.length = paymentData.data?.total ?? 0;
         this.pageIndex = (paymentData.data?.page ?? 1) - 1;
@@ -104,14 +109,17 @@ export class PatientPaymentsComponent {
   }
 
   openPaymentDialog(payment?: Payment) {
-    if (payment?.recordKind === 'TREATMENT_PAYMENT') return;
+    if (this.paymentDialogOpen) return;
+    if (payment?.recordKind === 'TREATMENT_PAYMENT' || payment?.sourceBillingRecordId || payment?.hasInstallments) return;
 
     //if there is no contepts we show a message and return
-    if (this.conceptList.length === 0) {
+    if (!payment && this.conceptList.length === 0) {
       this.openSnackbar('No hay tratamientos disponibles. Por favor, crea un tratamiento en tus configuraciones antes de agregar un pago.', 'Ok');
       return;
     }
 
+    this.paymentDialogOpen = true;
+    const key = crypto.randomUUID();
     const dialogRef = this.dialog.open(PaymentMgmtDialogComponent, {
       width: '96vw',
       maxWidth: '1100px',
@@ -119,64 +127,31 @@ export class PatientPaymentsComponent {
       data: {
         patientData: this.patient,
         conceptsData: this.conceptList,
-        paymentData: payment
+        paymentData: payment,
+        submit: (result: PaymentDialogResult) => payment
+          ? this.paymentService.updatePayment(payment.id, this.selectedPatientId, this.paymentFromResult(result))
+          : this.paymentService.createPayment(this.selectedPatientId, this.paymentFromResult(result), key)
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const paymentData = result as PaymentDialogResult;
-        if (payment) {
-          //si la informacion de payment existe, quiere decir que es un actualizar
-          this.updatePayment(payment.id, paymentData)
-        } else {
-          //si la informacion de payment no existe, quiere decir que es un crear
-          this.createNewPayment(paymentData)
-        }
+    dialogRef.afterClosed().subscribe(result => { this.paymentDialogOpen = false; if (result) this.reloadPaymentsData(); });
+  }
 
-      }
+  private paymentFromResult(result: PaymentDialogResult): Payment {
+    return new Payment({
+      payment_date: result.paymentDate, income: result.income, discount: result.discount,
+      concepts: result.concepts.map(concept => ({ conceptId: concept.paymentConcept, paymentMethod: concept.paymentMethod, quantity: concept.quantity }))
     });
   }
 
-  createNewPayment(paymentData: PaymentDialogResult) {
-    const paymentInstance = new Payment({
-      payment_date: paymentData.paymentDate,
-      income: paymentData.income,
-      discount: paymentData.discount,
-      concepts: paymentData.concepts.map((concept) => ({
-        conceptId: concept.paymentConcept,
-        paymentMethod: concept.paymentMethod,
-        quantity: concept.quantity
-      }))
-    });
-    this.spinner.show()
-    this.paymentService.createPayment(this.selectedPatientId, paymentInstance).subscribe(response => {
-      this.reloadPaymentsData()
-    }, (error) => {
-      this.spinner.hide()
-      this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')
-    })
-  }
-
-  updatePayment(paymentId: number, paymentData: PaymentDialogResult) {
-    const paymentInstance = new Payment({
-      payment_date: paymentData.paymentDate,
-      income: paymentData.income,
-      discount: paymentData.discount,
-      concepts: paymentData.concepts.map((concept) => ({
-        id: concept.id,
-        conceptId: concept.paymentConcept,
-        paymentMethod: concept.paymentMethod,
-        quantity: concept.quantity
-      }))
-    });
-    this.spinner.show()
-    this.paymentService.updatePayment(paymentId, this.selectedPatientId, paymentInstance).subscribe(response => {
-      this.reloadPaymentsData()
-    }, (error) => {
-      this.spinner.hide()
-      this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')
-    })
+  openInstallment(payment: Payment): void {
+    if (this.paymentDialogOpen) return;
+    if (payment.recordKind === 'TREATMENT_PAYMENT' || payment.sourceBillingRecordId || !(Number(payment.outstandingAmount) > 0)) return;
+    this.paymentDialogOpen = true;
+    this.dialog.open(BillingInstallmentDialogComponent, {
+      width: '480px', maxWidth: '96vw', maxHeight: '90vh',
+      data: { patientId: this.selectedPatientId, payment }
+    }).afterClosed().subscribe(saved => { this.paymentDialogOpen = false; if (saved) this.reloadPaymentsData(); });
   }
 
   deletePayment(paymentId: number) {
@@ -207,6 +182,7 @@ export class PatientPaymentsComponent {
     this.spinner.show()
     this.paymentService.listPayments(this.selectedPatientId, page, this.pageSize).subscribe(response => {
       this.spinner.hide()
+      this.hasTreatmentFinance = response.meta?.hasTreatmentFinance ?? false
       this.dataSource = (Array.isArray(response.data?.results) ? response.data.results : []).map((payment: Partial<Payment> | undefined) => new Payment(payment));
       this.length = response.data?.total ?? 0;
       this.pageIndex = (response.data?.page ?? 1) - 1;

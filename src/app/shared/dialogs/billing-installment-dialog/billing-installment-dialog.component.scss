@@ -1,0 +1,4 @@
+@use "../../../../vars.scss" as *;
+h2 { color: $main--blue; }
+mat-form-field { display: block; width: 100%; }
+p { overflow-wrap: anywhere; }

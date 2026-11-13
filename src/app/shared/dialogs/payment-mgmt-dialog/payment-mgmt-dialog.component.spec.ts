@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Patient } from '../../../core/models/patient.model';
+import { Subject } from 'rxjs';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import {
   PaymentDialogResult,
@@ -60,6 +61,22 @@ describe('PaymentMgmtDialogComponent', () => {
     component.filterConcepts(0, 'limp');
 
     expect(component.filteredConceptsByRow[0].map(({ id }) => id)).toEqual([1]);
+  });
+
+  it('keeps capture open on server failure and prevents double submission while saving', () => {
+    const pending = new Subject<unknown>();
+    const submit = jasmine.createSpy('submit').and.returnValue(pending);
+    component.dialogData.submit = submit;
+    component.concepts.at(0).patchValue({ paymentMethod: 'CASH', quantity: 1 });
+    component.selectConcept({ option: { value: 1 } } as unknown as MatAutocompleteSelectedEvent, 0);
+    component.paymentFormGroup.patchValue({ income: 400 });
+    component.savePayment(); component.savePayment();
+    expect(submit).toHaveBeenCalledTimes(1);
+    expect(dialogRef.close).not.toHaveBeenCalled();
+    pending.error({ error: { message: 'Reintenta sin duplicar' } });
+    expect(component.paymentFormGroup.get('income')?.value).toBe(400);
+    expect(component.saving).toBeFalse();
+    expect(component.error).toBe('Reintenta sin duplicar');
   });
 
   it('calculates the global discount and sends numeric values', () => {

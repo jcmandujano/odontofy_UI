@@ -4,6 +4,18 @@
  flex: 1 1 auto;
 }
 
+.payments-scroll { max-width: 100%; overflow-x: auto; }
+.payments-scroll table { min-width: 900px; }
+.mat-column-actions { min-width: 220px; }
+.dashboard_list_actons { gap: 4px; }
+.previous-finance { margin: 16px 0 24px; }
+.previous-finance summary { color: $main--blue; cursor: pointer; padding: 12px 0; }
+button:focus-visible, summary:focus-visible { outline: 2px solid $main--blue; outline-offset: 2px; }
+@media (max-width: 600px) {
+  .pacientes_header_row > .col-6 { width: 100%; }
+  .pacientes_header_row .nuevo_paciente_button_container { justify-content: flex-start; margin-top: 12px; }
+}
+
 .container-fluid{
   width: 80vw;
 }

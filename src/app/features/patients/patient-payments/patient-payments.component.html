@@ -14,26 +14,18 @@
 
         </div>
     </div>
-    <app-treatment-finance [patientId]="selectedPatientId" (financialChanged)="reloadPaymentsData()"></app-treatment-finance>
-    <p>Los abonos a cargos confirmados se registran arriba. “Agregar pago” conserva el registro de servicios de catálogo sin cargo previo.</p>
-    <div class="row filters_row">
-        <div class="col-6 flex-container">
-           <!--  <mat-form-field appearance="outline" class="actions_inputs bg-transparente">
-                <mat-label>Buscar</mat-label>
-                <input matInput placeholder="">
-                <button matSuffix mat-icon-button aria-label="Clear">
-                    <mat-icon svgIcon="close"></mat-icon>
-                </button>
-            </mat-form-field>
-            <button mat-icon-button color="primary" class="searchButtton">
-                <mat-icon svgIcon="search"></mat-icon>
-            </button> -->
-        </div>
-    </div>
+    @if (hasTreatmentFinance) {
+      <details class="previous-finance" (toggle)="showPreviousFinance = $any($event.target).open">
+        <summary>Movimientos anteriores: cargos y anticipos</summary>
+        @if (showPreviousFinance) {
+          <app-treatment-finance [patientId]="selectedPatientId" [confirmedOnly]="true" (financialChanged)="reloadPaymentsData()"></app-treatment-finance>
+        }
+      </details>
+    }
     @if (dataSource && dataSource.length > 0) {
     <div class="row">
         <div class="col-12">
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
+            <div class="payments-scroll" tabindex="0" role="region" aria-label="Historial de pagos"><table mat-table [dataSource]="dataSource" class="mat-elevation-z0 info-table">
                 <ng-container matColumnDef="conceptos">
                     <th mat-header-cell *matHeaderCellDef class="concept-header-column"> Tratamiento(s) </th>
                     <td mat-cell *matCellDef="let element" class="concept-content-column"> {{element.displayConcepts}}
@@ -61,7 +53,7 @@
                 </ng-container>
                 <ng-container matColumnDef="adeudo">
                     <th mat-header-cell *matHeaderCellDef class="adeudo-header-column"> Adeudo </th>
-                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{element.debt |
+                    <td mat-cell *matCellDef="let element" class="total-content-column"> {{(element.sourceBillingRecordId || element.recordKind === 'TREATMENT_PAYMENT' ? null : element.outstandingAmount ?? element.debt) |
                         currency:'MXN':'symbol':'1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="actions">
@@ -69,12 +61,13 @@
                     <td mat-cell *matCellDef="let element" class="nextdate-content-column">
                         <div class="dashboard_list_container">
                             <div class="dashboard_list_actons">
-                                @if (element.recordKind !== 'TREATMENT_PAYMENT') {
-                                  <mat-icon class="dashboard_logout_icon" svgIcon="editaCita"
-                                      (click)="openPaymentDialog(element)"></mat-icon>
+                                @if (element.recordKind !== 'TREATMENT_PAYMENT' && !element.sourceBillingRecordId && !element.hasInstallments) {
+                                  <button type="button" mat-icon-button aria-label="Editar pago" (click)="openPaymentDialog(element)"><mat-icon svgIcon="editaCita"></mat-icon></button>
                                 }
-                                <mat-icon class="dashboard_logout_icon" svgIcon="eliminaCita"
-                                    (click)="deletePayment(element.id)"></mat-icon>
+                                @if (element.recordKind !== 'TREATMENT_PAYMENT' && !element.sourceBillingRecordId && element.outstandingAmount > 0) {
+                                  <button type="button" mat-button (click)="openInstallment(element)">Registrar abono</button>
+                                }
+                                <button type="button" mat-icon-button aria-label="Cancelar pago" (click)="deletePayment(element.id)"><mat-icon svgIcon="eliminaCita"></mat-icon></button>
                             </div>
                         </div>
                     </td>
@@ -82,7 +75,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;">
                 </tr>
-            </table>
+            </table></div>
         </div>
     </div>
     <div class="row">
@@ -95,7 +88,7 @@
     }
     @if (!dataSource || dataSource.length === 0) {
     <app-no-data-found [title]="'No tienes pagos generados.'"
-        [message]="'Los abonos a cargos confirmados aparecerán aquí. Puedes registrarlos en la sección Cargos y abonos.'">
+        [message]="'Selecciona «Agregar pago» para registrar servicios del catálogo.'">
     </app-no-data-found>
     }
 </div>

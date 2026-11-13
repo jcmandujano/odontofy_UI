@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Inject, ViewChild } from '@angular/core';
 import {
@@ -95,6 +96,8 @@ export class PaymentMgmtDialogComponent {
   selectedPatient: Patient;
   paymentData?: Payment;
 
+  saving = false;
+  error = '';
   private nextRowId = 1;
 
   constructor(
@@ -103,13 +106,21 @@ export class PaymentMgmtDialogComponent {
       patientData: Patient;
       conceptsData: UserConcept[];
       paymentData?: Payment;
+      submit?: (result: PaymentDialogResult) => Observable<unknown>;
     },
     public dialogRef: MatDialogRef<PaymentMgmtDialogComponent>,
     private readonly fb: FormBuilder,
     private readonly destroyRef: DestroyRef
   ) {
     this.selectedPatient = dialogData.patientData;
-    this.conceptList = dialogData.conceptsData;
+    this.conceptList = [...dialogData.conceptsData];
+    this.conceptList = this.conceptList.map(concept => {
+      const saved = dialogData.paymentData?.concepts.find(item => item.conceptId === concept.id);
+      return saved ? Object.assign(new UserConcept(), concept, { description: saved.description, unit_price: saved.unitPrice }) : concept;
+    });
+    for (const item of dialogData.paymentData?.concepts ?? []) {
+      if (!this.conceptList.some(concept => concept.id === item.conceptId)) this.conceptList.push(Object.assign(new UserConcept(), { id: item.conceptId, description: item.description, unit_price: item.unitPrice }));
+    }
     this.paymentData = dialogData.paymentData;
     this.paymentFormGroup = this.fb.group({
       paymentDate: [this.getCurrentDate(), Validators.required],
@@ -194,7 +205,7 @@ export class PaymentMgmtDialogComponent {
 
     const conceptGroup = this.concepts.at(formIndex) as FormGroup;
     conceptGroup.get('paymentConcept')?.setValue(selectedConcept.id, { emitEvent: false });
-    conceptGroup.get('unitPrice')?.setValue(Number(selectedConcept.unit_price), { emitEvent: false });
+    conceptGroup.get('unitPrice')?.setValue(Number(this.paymentData?.concepts.find(item => item.conceptId === selectedConcept.id)?.unitPrice ?? selectedConcept.unit_price), { emitEvent: false });
     this.recalculateRow(conceptGroup);
   }
 
@@ -212,6 +223,7 @@ export class PaymentMgmtDialogComponent {
   }
 
   savePayment(): void {
+    if (this.saving) return;
     this.recalculateSummary();
     if (this.paymentFormGroup.invalid) {
       this.markFormGroupTouched(this.paymentFormGroup);
@@ -234,7 +246,12 @@ export class PaymentMgmtDialogComponent {
       })),
     };
 
-    this.dialogRef.close(result);
+    if (!this.dialogData.submit) { this.dialogRef.close(result); return; }
+    this.saving = true; this.error = ''; this.dialogRef.disableClose = true; this.paymentFormGroup.disable({ emitEvent: false });
+    this.dialogData.submit(result).subscribe({
+      next: () => { this.saving = false; this.dialogRef.disableClose = false; this.dialogRef.close(true); },
+      error: error => { this.saving = false; this.dialogRef.disableClose = false; this.paymentFormGroup.enable({ emitEvent: false }); this.toggleDiscount(this.paymentFormGroup.get('applyDiscount')?.value); this.error = error?.error?.message ?? 'No se pudo guardar el pago. Revisa los datos y reintenta.'; },
+    });
   }
 
   getDisplayPaymentDate(): string {
@@ -285,7 +302,7 @@ export class PaymentMgmtDialogComponent {
     const selectedConcept = paymentConcept
       ? this.conceptList.find((concept) => concept.id === paymentConcept.conceptId)
       : undefined;
-    const unitPrice = Number(selectedConcept?.unit_price ?? 0);
+    const unitPrice = Number(paymentConcept?.unitPrice ?? selectedConcept?.unit_price ?? 0);
     const quantity = Number(paymentConcept?.quantity ?? 1);
     const conceptGroup = this.fb.group({
       id: [paymentConcept?.id ?? null],
