@@ -2,6 +2,10 @@
 
 :host { display: block; }
 .odontogram-page { padding-bottom: 35px; color: $gray--text; font: 400 14px/20px Roboto, sans-serif; }
+.creation-dialog { display: flex; flex-direction: column; gap: 12px; }
+.charts-scroll { max-width: 100%; overflow-x: auto; }
+.charts-scroll table { width: 100%; min-width: 620px; }
+.charts-scroll .mat-mdc-cell, .charts-scroll .mat-mdc-header-cell { border: 1px solid #C0D9FF; }
 h1, h2, h3, p { margin-top: 0; }
 h1, h2, h3 { font-family: 'Roboto Condensed', sans-serif; font-weight: 400; color: $primary--blue; letter-spacing: .01em; }
 h1 { margin: 0; font-size: 26px; line-height: 30px; }
@@ -14,23 +18,19 @@ h3 { margin-bottom: 8px; font-size: 18px; }
 .page-icon { flex: 0 0 50px; width: 50px; height: 50px; }
 .page-description { margin-bottom: 24px; }
 .small-label { color: $primary--blue; font: 400 14px/18px 'Roboto Condensed', sans-serif; }
-.section-heading p, .create-card p { margin-bottom: 0; }
+.section-heading p { margin-bottom: 0; }
 button { font-family: Roboto, sans-serif; }
 .app-primary-action:disabled { opacity: .55; cursor: not-allowed; }
 .secondary-action, .text-button { color: $primary--blue; font-weight: 400; letter-spacing: .02em; }
 .secondary-action { min-height: 40px; border-color: $light--blue; border-radius: 4px; }
 .text-button { white-space: normal; }
 mat-form-field { width: 100%; min-width: 0; }
-.create-card, .teeth-card { border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
-.create-card { display: grid; gap: 20px; padding: 20px; margin-bottom: 24px; }
-.create-fields { display: grid; grid-template-columns: minmax(170px, .8fr) minmax(200px, 1.3fr) auto; align-items: center; gap: 16px; }
+.teeth-card { border: 1px solid $light--blue; border-radius: 4px; background: #fff; }
 .message { padding: 16px; margin: 16px 0; border: 1px solid $light--blue; border-radius: 4px; color: $primary--blue; background: #EAF2FF; }
 .message-error { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-color: #f5baba; color: $warn--primary; background: #FDECEC; }
 .empty-actions { justify-content: center; flex-wrap: wrap; margin-top: 20px; }
 .chart-toolbar { margin-bottom: 20px; }
-.chart-picker, .chart-meta { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.chart-picker { flex: 1; }
-.chart-select { max-width: 440px; }
+.chart-meta { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .dentition-pill, .archive-pill, .finding-total { display: inline-flex; padding: 4px 10px; border-radius: 4px; color: $primary--blue; background: #EAF2FF; font-size: 12px; line-height: 16px; white-space: nowrap; }
 .archive-pill { background: #F2F2F2; color: $gray--text; }
 .chart-details { margin-bottom: 24px; }
@@ -67,15 +67,15 @@ mat-form-field { width: 100%; min-width: 0; }
 .saved-label { color: #219653; }
 @media (max-width: 767.98px) {
   .page-header, .chart-toolbar, .chart-details-row, .chart-footer { align-items: stretch; flex-direction: column; }
-  .page-header > button, .create-fields > button { justify-self: start; align-self: flex-start; }
-  .create-fields, .quadrant-grid { grid-template-columns: 1fr; }
-  .chart-picker, .chart-meta { flex-wrap: wrap; }
-  .chart-select, .chart-details-row mat-form-field { max-width: none; }
+  .page-header > button { justify-self: start; align-self: flex-start; }
+  .quadrant-grid { grid-template-columns: 1fr; }
+  .chart-meta { flex-wrap: wrap; }
+  .chart-details-row mat-form-field { max-width: none; }
   .footer-actions { justify-content: flex-end; flex-wrap: wrap; }
   .chart-footer { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-width: 420px) {
-  .teeth-card, .create-card { padding: 14px; }
+  .teeth-card { padding: 14px; }
   .tooth { min-height: 83px; }
   .tooth img { height: 48px; }
 }
