@@ -113,7 +113,7 @@ const toUiPayment = (value: ApiBillingRecord): Payment => Object.assign(new Paym
     amountPaid: value.amountPaid === undefined ? undefined : Number(value.amountPaid),
     outstandingAmount: value.outstandingAmount === undefined ? undefined : Number(value.outstandingAmount),
     hasInstallments: value.hasInstallments,
-    installments: value.installments?.map(item => ({ ...item, amountReceived: Number(item.amountReceived) })),
+    installments: value.installments?.filter(item => item.status === 'POSTED').map(item => ({ ...item, amountReceived: Number(item.amountReceived) })),
     recordKind: value.recordKind,
     id: value.id,
     patientId: value.patientId,

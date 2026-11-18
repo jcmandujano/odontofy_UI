@@ -8,10 +8,14 @@
 .payments-scroll table { min-width: 900px; }
 .mat-column-actions { min-width: 220px; }
 .dashboard_list_actons { gap: 4px; }
-.payment-detail { padding: 0 16px; color: #555; }
-.payment-detail-row { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(110px, 1fr) minmax(100px, 1fr) 48px; align-items: center; gap: 8px; }
-.payment-detail-row + .payment-detail-row { border-top: 1px solid #C0D9FF; }
-.payment-detail-row > span { min-height: 48px; display: flex; align-items: center; }
+.payments-scroll table { table-layout: fixed; }
+.payment-date { width: 12%; }
+.payment-amount { width: 10%; }
+.payment-actions { width: 220px; }
+.payment-detail-cell { padding: 0; }
+.installments-table { border-collapse: collapse; color: #7A7A7A; font-size: 14px; }
+.installments-table td { border: 1px solid #C0D9FF; height: 48px; padding: 0 16px; }
+.installments-table td:first-child { padding-left: 32px; }
 .previous-finance { margin: 16px 0 24px; }
 .previous-finance summary { color: $main--blue; cursor: pointer; padding: 12px 0; }
 button:focus-visible, summary:focus-visible { outline: 2px solid $main--blue; outline-offset: 2px; }
