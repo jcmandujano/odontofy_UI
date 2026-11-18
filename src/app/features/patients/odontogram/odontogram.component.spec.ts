@@ -39,7 +39,7 @@ describe('OdontogramComponent', () => {
 
   beforeEach(() => {
     odontograms = jasmine.createSpyObj<OdontogramService>('OdontogramService', [
-      'list', 'get', 'update', 'setCompletion', 'create', 'archive', 'restore', 'link', 'unlink', 'createTreatment', 'planPreview', 'createPlan',
+      'list', 'get', 'update', 'create', 'archive', 'restore', 'link', 'unlink', 'createTreatment', 'planPreview', 'createPlan',
     ]);
     odontograms.list.and.returnValue(of(response({
       total: 1, page: 1, perPage: 100, totalPages: 1, results: [chart],
@@ -72,13 +72,18 @@ describe('OdontogramComponent', () => {
     expect(component.chart?.id).toBe(10);
   });
 
-  it('persists completion and reopens the chart for editing', () => {
-    odontograms.setCompletion.and.returnValues(of(response({ ...chart, isCompleted: true })), of(response({ ...chart, isCompleted: false })));
-    component.toggleCompletion();
-    expect(component.chart?.isCompleted).toBeTrue();
-    component.toggleCompletion();
-    expect(odontograms.setCompletion).toHaveBeenCalledWith(10, false);
-    expect(component.chart?.isCompleted).toBeFalse();
+  it('saves the selected status with the chart and restores it when discarding changes', () => {
+    component.chartCompleted = true;
+    component.dirty = true;
+    odontograms.update.and.returnValue(of(response({ ...chart, isCompleted: true })));
+    component.saveChanges();
+    expect(odontograms.update).toHaveBeenCalledWith(10, 'Inicial', [], true);
+    expect(component.chartCompleted).toBeTrue();
+    component.chartCompleted = false;
+    component.dirty = true;
+    component.discardChanges();
+    expect(component.chartCompleted).toBeTrue();
+    expect(component.dirty).toBeFalse();
   });
 
   it('loads the patient chart and saves a structured finding', () => {
@@ -106,7 +111,7 @@ describe('OdontogramComponent', () => {
 
     expect(odontograms.update).toHaveBeenCalledWith(10, 'Inicial', [{
       toothCode: '16', condition: 'CARIES', surface: 'OCCLUSAL_INCISAL', notes: 'Lesión visible',
-    }]);
+    }], false);
     expect(component.dirty).toBeFalse();
     expect(component.selectedToothCode).toBe('16');
   });

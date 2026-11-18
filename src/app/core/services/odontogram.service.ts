@@ -40,10 +40,6 @@ export class OdontogramService {
     return this.api.patch<Odontogram>(`/odontograms/${odontogramId}`, { title, findings, ...(isCompleted === undefined ? {} : { isCompleted }) });
   }
 
-  setCompletion(odontogramId: number, isCompleted: boolean) {
-    return this.api.patch<Odontogram>(`/odontograms/${odontogramId}`, { isCompleted });
-  }
-
   archive(odontogramId: number) {
     return this.api.delete<Odontogram>(`/odontograms/${odontogramId}`);
   }
