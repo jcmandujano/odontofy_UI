@@ -23,6 +23,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserConcept } from '../../../core/models/user-concept.model';
 import { UserConceptsService } from '../../../core/services/user-concepts.service';
 import { NoDataFoundComponent } from '../../../shared/components/no-data-found/no-data-found.component';
@@ -38,6 +39,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
     CommonModule,
     MatPaginatorModule,
     MatButtonModule,
+    MatTooltipModule,
     MatFormFieldModule, //FORM MODULES
     ReactiveFormsModule, //FORM MODULES
     MatInputModule, //FORM MODULES
