@@ -1,6 +1,15 @@
 import { PaymentConcept } from "./payment-concept.model";
 
+export interface PaymentInstallment {
+    id: number;
+    occurredOn: string;
+    amountReceived: number;
+    paymentMethod: string | null;
+    status: 'POSTED' | 'CANCELLED';
+}
+
 export class Payment{
+    installments?: PaymentInstallment[];
     sourceBillingRecordId?: number | null;
     outstandingAmount?: number;
     amountPaid?: number;

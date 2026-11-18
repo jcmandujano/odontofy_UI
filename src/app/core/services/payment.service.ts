@@ -11,6 +11,7 @@ interface ApiBillingRecord {
     amountPaid?: string;
     outstandingAmount?: string;
     hasInstallments?: boolean;
+    installments?: Array<{ id: number; occurredOn: string; amountReceived: string; paymentMethod: string | null; status: 'POSTED' | 'CANCELLED' }>;
     advanceTreatmentName?: string | null;
     availableCredit?: string;
     recordKind?: 'LEGACY' | 'TREATMENT_PAYMENT';
@@ -49,7 +50,7 @@ export class PaymentService {
 
     listPayments(patientId: number, page = 1, limit = 10) {
         return this.api.get<ApiBillingRecord[]>(`/patients/${patientId}/billing-records`, {
-            params: { page, pageSize: limit }
+            params: { page, pageSize: limit, grouped: 'true' }
         }).pipe(map(response => mapPaginatedApiResponse(response, toUiPayment)));
     }
 
@@ -112,6 +113,7 @@ const toUiPayment = (value: ApiBillingRecord): Payment => Object.assign(new Paym
     amountPaid: value.amountPaid === undefined ? undefined : Number(value.amountPaid),
     outstandingAmount: value.outstandingAmount === undefined ? undefined : Number(value.outstandingAmount),
     hasInstallments: value.hasInstallments,
+    installments: value.installments?.map(item => ({ ...item, amountReceived: Number(item.amountReceived) })),
     recordKind: value.recordKind,
     id: value.id,
     patientId: value.patientId,
