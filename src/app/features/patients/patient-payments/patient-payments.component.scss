@@ -8,9 +8,10 @@
 .payments-scroll table { min-width: 900px; }
 .mat-column-actions { min-width: 220px; }
 .dashboard_list_actons { gap: 4px; }
-.payment-detail { padding: 16px; color: #555; }
+.payment-detail { padding: 0 16px; color: #555; }
 .payment-detail-row { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(110px, 1fr) minmax(100px, 1fr) 48px; align-items: center; gap: 8px; }
-.edit-hint { margin: 8px 0 0; font-size: 12px; }
+.payment-detail-row + .payment-detail-row { border-top: 1px solid #C0D9FF; }
+.payment-detail-row > span { min-height: 48px; display: flex; align-items: center; }
 .previous-finance { margin: 16px 0 24px; }
 .previous-finance summary { color: $main--blue; cursor: pointer; padding: 12px 0; }
 button:focus-visible, summary:focus-visible { outline: 2px solid $main--blue; outline-offset: 2px; }

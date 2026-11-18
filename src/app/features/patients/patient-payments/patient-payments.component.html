@@ -64,7 +64,7 @@
                     <td mat-cell *matCellDef="let element" class="nextdate-content-column">
                         <div class="dashboard_list_container">
                             <div class="dashboard_list_actons">
-                                @if (element.recordKind !== 'TREATMENT_PAYMENT') {
+                                @if (element.installments?.length) {
                                   <button type="button" mat-icon-button (click)="togglePayment(element)" [attr.aria-expanded]="expandedPaymentId === element.id" [attr.aria-controls]="'payment-detail-' + element.id" [attr.aria-label]="expandedPaymentId === element.id ? 'Ocultar abonos' : 'Ver abonos'" [matTooltip]="expandedPaymentId === element.id ? 'Ocultar abonos' : 'Ver abonos'"><mat-icon>{{expandedPaymentId === element.id ? 'expand_less' : 'expand_more'}}</mat-icon></button>
                                 }
                                 @if (element.recordKind !== 'TREATMENT_PAYMENT' && !element.sourceBillingRecordId && !element.hasInstallments) {
@@ -81,8 +81,6 @@
                 <ng-container matColumnDef="detail">
                     <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
                       <div class="payment-detail" [id]="'payment-detail-' + element.id">
-                        <strong>Detalle de pagos</strong>
-                        <div class="payment-detail-row"><span>Pago inicial</span><span>{{element.payment_date | date}}</span><span>{{element.income | currency:'MXN':'symbol':'1.2-2'}}</span><span></span></div>
                         @for (installment of element.installments || []; track installment.id) {
                           <div class="payment-detail-row">
                             <span>Abono @if (installment.status === 'CANCELLED') { · Cancelado }</span>
@@ -91,7 +89,6 @@
                             <span>@if (installment.status === 'POSTED') { <button type="button" mat-icon-button aria-label="Cancelar abono" matTooltip="Cancelar abono" (click)="deletePayment(installment.id, true)"><mat-icon svgIcon="eliminaCita"></mat-icon></button> }</span>
                           </div>
                         }
-                        @if (element.hasInstallments) { <p class="edit-hint">Para conservar el historial de abonos, este pago no se puede editar.</p> }
                       </div>
                     </td>
                 </ng-container>
