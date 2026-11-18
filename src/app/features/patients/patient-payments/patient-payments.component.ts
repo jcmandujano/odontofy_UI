@@ -53,6 +53,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 export class PatientPaymentsComponent {
   @ViewChild(TreatmentFinanceComponent) finance?: TreatmentFinanceComponent;
   displayedColumns: string[] = ['conceptos', 'fecha', 'total', 'descuento', 'ingreso', 'adeudo', 'actions'];
+  expandedPaymentId: number | null = null;
   dataSource: Payment[] = []
   patient: Patient | null = null;
   conceptList: UserConcept[] = []
@@ -153,14 +154,18 @@ export class PatientPaymentsComponent {
     this.dialog.open(BillingInstallmentDialogComponent, {
       width: '480px', maxWidth: '96vw', maxHeight: '90vh',
       data: { patientId: this.selectedPatientId, payment }
-    }).afterClosed().subscribe(saved => { this.paymentDialogOpen = false; if (saved) this.reloadPaymentsData(); });
+    }).afterClosed().subscribe(saved => { this.paymentDialogOpen = false; if (saved) { this.expandedPaymentId = payment.id; this.reloadPaymentsData(this.pageIndex + 1); } });
   }
 
-  deletePayment(paymentId: number) {
+  togglePayment(payment: Payment): void {
+    this.expandedPaymentId = this.expandedPaymentId === payment.id ? null : payment.id;
+  }
+
+  deletePayment(paymentId: number, installment = false) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Eliminar pago',
-        message: '¿Seguro que quieres eliminar este pago?'
+        title: installment ? 'Cancelar abono' : 'Cancelar pago',
+        message: installment ? '¿Seguro que quieres cancelar este abono? El saldo pendiente se actualizará.' : '¿Seguro que quieres cancelar este pago?'
       }
     });
 
@@ -169,7 +174,7 @@ export class PatientPaymentsComponent {
         this.spinner.show()
         this.paymentService.deletePayment(this.selectedPatientId, paymentId).subscribe(response => {
           this.openSnackbar(response.message, 'Ok')
-          this.reloadPaymentsData()
+          this.reloadPaymentsData(this.pageIndex + 1)
         }, (error) => {
           this.spinner.hide()
           this.openSnackbar(`Ocurrió un error: ${this.getErrorMessage(error)}`, 'Aceptar')

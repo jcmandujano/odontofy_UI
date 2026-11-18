@@ -87,7 +87,7 @@ describe('API v1 contract adapters', () => {
     TestBed.inject(PaymentService).listPayments(9).subscribe(response => {
       expect(response.data?.results[0].displayConcepts).toBe('Anticipo: Restauración · disponible $200.00');
     });
-    http.expectOne(`${environment.API_URL}/patients/9/billing-records?page=1&pageSize=10`).flush(envelope([{ id: 1, patientId: 9, recordKind: 'TREATMENT_PAYMENT', advanceTreatmentName: 'Restauración', availableCredit: '200.00', occurredOn: '2026-10-24', subtotal: '0.00', total: '0.00', discount: '0.00', amountReceived: '1200.00', balanceChange: '-1200.00', balanceAfter: '-200.00', paymentMethod: 'CASH', items: [], allocations: [] }]));
+    http.expectOne(`${environment.API_URL}/patients/9/billing-records?page=1&pageSize=10&grouped=true`).flush(envelope([{ id: 1, patientId: 9, recordKind: 'TREATMENT_PAYMENT', advanceTreatmentName: 'Restauración', availableCredit: '200.00', occurredOn: '2026-10-24', subtotal: '0.00', total: '0.00', discount: '0.00', amountReceived: '1200.00', balanceChange: '-1200.00', balanceAfter: '-200.00', paymentMethod: 'CASH', items: [], allocations: [] }]));
   });
 
   it('confirms an explicit treatment charge with a reviewed amount', () => {
@@ -113,7 +113,7 @@ describe('API v1 contract adapters', () => {
       expect(receipt.debt).toBe(600);
       expect(receipt.total).toBe(0);
     });
-    http.expectOne(`${environment.API_URL}/patients/9/billing-records?page=1&pageSize=10`).flush(envelope([{ id: 1, patientId: 9, recordKind: 'TREATMENT_PAYMENT', occurredOn: '2026-10-24', subtotal: '0.00', total: '0.00', discount: '0.00', amountReceived: '400.00', balanceChange: '-400.00', balanceAfter: '600.00', paymentMethod: 'CASH', items: [], allocations: [{ description: 'Restauración', amount: '400.00' }] }]));
+    http.expectOne(`${environment.API_URL}/patients/9/billing-records?page=1&pageSize=10&grouped=true`).flush(envelope([{ id: 1, patientId: 9, recordKind: 'TREATMENT_PAYMENT', occurredOn: '2026-10-24', subtotal: '0.00', total: '0.00', discount: '0.00', amountReceived: '400.00', balanceChange: '-400.00', balanceAfter: '600.00', paymentMethod: 'CASH', items: [], allocations: [{ description: 'Restauración', amount: '400.00' }] }]));
   });
 
   it('requests independent patient treatments with server pagination', () => {

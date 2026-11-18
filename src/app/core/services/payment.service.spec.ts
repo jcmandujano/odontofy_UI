@@ -36,4 +36,13 @@ describe('Catalog payments', () => {
     expect(result?.sourceBillingRecordId).toBe(9);
     expect(result?.displayConcepts).toBe('Abono al registro #9: Resina');
   });
+  it('requests grouped payments and preserves installment amounts and statuses', () => {
+    let result: Payment | undefined;
+    service.listPayments(3).subscribe(response => result = new Payment(response.data!.results[0]));
+    const req = http.expectOne(r => r.url.endsWith('/patients/3/billing-records'));
+    expect(req.request.params.get('grouped')).toBe('true');
+    req.flush({ data: [{ id: 9, patientId: 3, recordKind: 'LEGACY', occurredOn: '2026-11-10', subtotal: '1000.00', discount: '0.00', total: '1000.00', amountReceived: '400.00', amountPaid: '700.00', outstandingAmount: '300.00', balanceChange: '600.00', balanceAfter: '300.00', paymentMethod: 'CASH', items: [], installments: [{ id: 10, occurredOn: '2026-11-12', amountReceived: '300.00', paymentMethod: 'CASH', status: 'POSTED' }, { id: 11, occurredOn: '2026-11-13', amountReceived: '100.00', paymentMethod: 'CASH', status: 'CANCELLED' }] }] });
+    expect(result?.amountPaid).toBe(700);
+    expect(result?.installments).toEqual([{ id: 10, occurredOn: '2026-11-12', amountReceived: 300, paymentMethod: 'CASH', status: 'POSTED' }]);
+  });
 });
