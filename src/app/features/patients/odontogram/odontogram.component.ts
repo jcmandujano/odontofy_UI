@@ -55,6 +55,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   newDentition: OdontogramDentition = 'ADULT';
   newTitle = '';
   chartTitle = '';
+  chartCompleted = false;
   draftFindings: OdontogramFindingInput[] = [];
   dirty = false;
   selectedToothCode = '';
@@ -182,16 +183,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     this.busy = true;
     this.odontograms.archive(entry.id).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => { this.busy = false; this.notify('Odontograma eliminado de la lista.'); this.loadCharts(1); },
-      error: error => this.fail(error),
-    });
-  }
-
-  toggleCompletion(): void {
-    if (!this.chart || this.dirty || this.busy || this.chart.archivedAt) return;
-    this.busy = true;
-    const next = !this.chart.isCompleted;
-    this.odontograms.setCompletion(this.chart.id, next).pipe(takeUntil(this.destroy$)).subscribe({
-      next: response => this.finishLifecycle(response.data, next ? 'Odontograma finalizado.' : 'Odontograma en proceso.'),
       error: error => this.fail(error),
     });
   }
@@ -341,9 +332,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   saveChanges(): void {
     if (!this.chart || !this.dirty || this.busy || this.chart.archivedAt) return;
     this.busy = true;
-    const save = this.chart.isCompleted
-      ? this.odontograms.update(this.chart.id, this.chartTitle.trim() || null, this.draftFindings, false)
-      : this.odontograms.update(this.chart.id, this.chartTitle.trim() || null, this.draftFindings);
+    const save = this.odontograms.update(this.chart.id, this.chartTitle.trim() || null, this.draftFindings, this.chartCompleted);
     save
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: response => {
@@ -380,6 +369,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     const previousTooth = this.selectedToothCode;
     this.chart = chart;
     this.chartTitle = chart.title ?? '';
+    this.chartCompleted = !!chart.isCompleted;
     this.draftFindings = chart.findings.map(({ toothCode, condition, surface, notes }) => ({
       toothCode, condition, surface, notes,
     }));

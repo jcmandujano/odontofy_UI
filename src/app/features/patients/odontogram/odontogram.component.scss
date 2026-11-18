@@ -35,6 +35,7 @@ mat-form-field { width: 100%; min-width: 0; }
 .archive-pill { background: #F2F2F2; color: $gray--text; }
 .chart-details { margin-bottom: 24px; }
 .chart-details-row mat-form-field { max-width: 440px; }
+.chart-details-row .chart-status { max-width: 220px; }
 .chart-details-row > span { font-size: 13px; }
 .workspace { display: grid; gap: 28px; }
 .teeth-card { min-width: 0; padding: 20px; }
