@@ -6,9 +6,10 @@ import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dial
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -34,13 +35,14 @@ import { NoDataFoundComponent } from '../../../shared/components/no-data-found/n
   selector: 'app-odontogram',
   standalone: true,
   imports: [CommonModule, FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule,
-    MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, NoDataFoundComponent],
+    MatIconModule, MatInputModule, MatSelectModule, MatTooltipModule, MatTableModule, NoDataFoundComponent],
   templateUrl: './odontogram.component.html',
   styleUrl: './odontogram.component.scss',
 })
 export class OdontogramComponent implements OnInit, OnDestroy {
   readonly conditions = ODONTOGRAM_CONDITIONS;
   readonly surfaces = ODONTOGRAM_SURFACES;
+  readonly chartColumns = ['title', 'dentition', 'date', 'status', 'actions'];
 
   patientId = 0;
   charts: OdontogramSummary[] = [];
@@ -50,7 +52,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   loading = false;
   busy = false;
   error = '';
-  showCreate = false;
   newDentition: OdontogramDentition = 'ADULT';
   newTitle = '';
   chartTitle = '';
@@ -65,7 +66,9 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
   private requestedChartId = 0;
   private findingDialogRef: MatDialogRef<unknown> | null = null;
+  private createDialogRef: MatDialogRef<unknown> | null = null;
   @ViewChild('findingDialog') private findingDialog!: TemplateRef<unknown>;
+  @ViewChild('createDialog') private createDialog!: TemplateRef<unknown>;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -89,6 +92,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.findingDialogRef?.close();
+    this.createDialogRef?.close();
     this.destroy$.complete();
   }
 
@@ -125,8 +129,6 @@ export class OdontogramComponent implements OnInit, OnDestroy {
         this.loading = false;
         if (preferredChartId) {
           this.selectChart(preferredChartId);
-        } else if (page === 1 && !this.chart && entries.length) {
-          this.selectChart(entries.find(entry => !entry.archivedAt)?.id ?? entries[0].id);
         }
       },
       error: error => {
@@ -160,10 +162,38 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     });
   }
 
-  onChartSelect(event: MatSelectChange): void {
-    const previous = this.chart?.id;
-    this.selectChart(Number(event.value));
-    if (previous) event.source.value = this.chart?.id ?? previous;
+  openCreateDialog(): void {
+    if (this.busy || this.createDialogRef) return;
+    this.newTitle = '';
+    this.newDentition = 'ADULT';
+    this.createDialogRef = this.dialog.open(this.createDialog, { width: '480px', maxWidth: '92vw', ariaLabel: 'Nuevo odontograma' });
+    this.createDialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(() => { this.createDialogRef = null; });
+  }
+
+  backToList(): void {
+    if (!this.canLeave()) return;
+    this.chart = null;
+    this.dirty = false;
+    this.loadCharts(1);
+  }
+
+  deleteFromList(entry: OdontogramSummary): void {
+    if (this.busy || !window.confirm('¿Eliminar este odontograma? Se retirará de la lista y se conservará en el expediente.')) return;
+    this.busy = true;
+    this.odontograms.archive(entry.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => { this.busy = false; this.notify('Odontograma eliminado de la lista.'); this.loadCharts(1); },
+      error: error => this.fail(error),
+    });
+  }
+
+  toggleCompletion(): void {
+    if (!this.chart || this.dirty || this.busy || this.chart.archivedAt) return;
+    this.busy = true;
+    const next = !this.chart.isCompleted;
+    this.odontograms.setCompletion(this.chart.id, next).pipe(takeUntil(this.destroy$)).subscribe({
+      next: response => this.finishLifecycle(response.data, next ? 'Odontograma finalizado.' : 'Odontograma en proceso.'),
+      error: error => this.fail(error),
+    });
   }
 
   createChart(): void {
@@ -171,11 +201,13 @@ export class OdontogramComponent implements OnInit, OnDestroy {
     if (this.dirty && !window.confirm('Hay cambios sin guardar. ¿Deseas descartarlos y crear otro odontograma?')) return;
     const title = this.newTitle.trim();
     this.busy = true;
+    if (this.createDialogRef) this.createDialogRef.disableClose = true;
     this.odontograms.create(this.patientId, this.newDentition, title || null)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: response => {
           this.busy = false;
-          this.showCreate = false;
+          if (this.createDialogRef) this.createDialogRef.disableClose = false;
+          this.createDialogRef?.close();
           this.newTitle = '';
           if (response.data) {
             this.applyChart(response.data);
@@ -183,7 +215,7 @@ export class OdontogramComponent implements OnInit, OnDestroy {
           }
           this.notify('Odontograma creado. Selecciona una pieza para registrar hallazgos.');
         },
-        error: error => this.fail(error),
+        error: error => { if (this.createDialogRef) this.createDialogRef.disableClose = false; this.fail(error); },
       });
   }
 
@@ -309,7 +341,10 @@ export class OdontogramComponent implements OnInit, OnDestroy {
   saveChanges(): void {
     if (!this.chart || !this.dirty || this.busy || this.chart.archivedAt) return;
     this.busy = true;
-    this.odontograms.update(this.chart.id, this.chartTitle.trim() || null, this.draftFindings)
+    const save = this.chart.isCompleted
+      ? this.odontograms.update(this.chart.id, this.chartTitle.trim() || null, this.draftFindings, false)
+      : this.odontograms.update(this.chart.id, this.chartTitle.trim() || null, this.draftFindings);
+    save
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: response => {
           this.busy = false;

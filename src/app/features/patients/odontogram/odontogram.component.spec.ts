@@ -39,7 +39,7 @@ describe('OdontogramComponent', () => {
 
   beforeEach(() => {
     odontograms = jasmine.createSpyObj<OdontogramService>('OdontogramService', [
-      'list', 'get', 'update', 'create', 'archive', 'restore', 'link', 'unlink', 'createTreatment', 'planPreview', 'createPlan',
+      'list', 'get', 'update', 'setCompletion', 'create', 'archive', 'restore', 'link', 'unlink', 'createTreatment', 'planPreview', 'createPlan',
     ]);
     odontograms.list.and.returnValue(of(response({
       total: 1, page: 1, perPage: 100, totalPages: 1, results: [chart],
@@ -59,9 +59,27 @@ describe('OdontogramComponent', () => {
       dialog,
     );
     component.ngOnInit();
+    component.selectChart(10);
   });
 
   afterEach(() => component.ngOnDestroy());
+
+  it('returns to the list and opens a chart only when selected', () => {
+    component.backToList();
+    expect(component.chart).toBeNull();
+    expect(component.charts.length).toBe(1);
+    component.selectChart(10);
+    expect(component.chart?.id).toBe(10);
+  });
+
+  it('persists completion and reopens the chart for editing', () => {
+    odontograms.setCompletion.and.returnValues(of(response({ ...chart, isCompleted: true })), of(response({ ...chart, isCompleted: false })));
+    component.toggleCompletion();
+    expect(component.chart?.isCompleted).toBeTrue();
+    component.toggleCompletion();
+    expect(odontograms.setCompletion).toHaveBeenCalledWith(10, false);
+    expect(component.chart?.isCompleted).toBeFalse();
+  });
 
   it('loads the patient chart and saves a structured finding', () => {
     expect(odontograms.list).toHaveBeenCalledWith(7, 1);

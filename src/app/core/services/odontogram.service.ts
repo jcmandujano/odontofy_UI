@@ -20,7 +20,7 @@ export class OdontogramService {
 
   list(patientId: number, page = 1) {
     return this.api.get<OdontogramSummary[]>(`/patients/${patientId}/odontograms`, {
-      params: { page, pageSize: 100, status: 'all' },
+      params: { page, pageSize: 100, status: 'active' },
     }).pipe(map(response => mapPaginatedApiResponse(response, value => value)));
   }
 
@@ -36,8 +36,12 @@ export class OdontogramService {
     });
   }
 
-  update(odontogramId: number, title: string | null, findings: OdontogramFindingInput[]) {
-    return this.api.patch<Odontogram>(`/odontograms/${odontogramId}`, { title, findings });
+  update(odontogramId: number, title: string | null, findings: OdontogramFindingInput[], isCompleted?: boolean) {
+    return this.api.patch<Odontogram>(`/odontograms/${odontogramId}`, { title, findings, ...(isCompleted === undefined ? {} : { isCompleted }) });
+  }
+
+  setCompletion(odontogramId: number, isCompleted: boolean) {
+    return this.api.patch<Odontogram>(`/odontograms/${odontogramId}`, { isCompleted });
   }
 
   archive(odontogramId: number) {
